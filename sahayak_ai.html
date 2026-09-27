@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="hi" data-theme="dark">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-<meta name="theme-color" content="#2563eb" />
+<meta name="theme-color" content="#080c14" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="description" content="Sahayak AI — Intent-Aware Personal Accessibility Copilot Mobile Application" />
@@ -15,219 +15,245 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-  /* ─── Premium Mobile Web Application Tokens ───────────────── */
-  :root {
-    --primary-blue: #2563eb;
-    --primary-indigo: #4f46e5;
-    --primary-dark: #0f172a;
-    --bg-light: #f8fafc;
-    --bg-tint: #f0f7ff;
-    --surface-white: #ffffff;
+  /* ─── Premium Mobile Application Multi-Theme Tokens ──────────────── */
+  :root, [data-theme="dark"] {
+    --bg-app: #080c14;
+    --bg-screen: #0f172a;
+    --bg-card: #1e293b;
+    --bg-card-subtle: #162032;
+    --border-color: #334155;
+    --border-glow: #3b82f6;
+    --text-heading: #f8fafc;
+    --text-body: #cbd5e1;
+    --text-muted: #94a3b8;
+    --primary-blue: #3b82f6;
+    --primary-indigo: #6366f1;
+    --accent-teal: #14b8a6;
+    --topbar-bg: rgba(15, 23, 42, 0.95);
+    --bottomnav-bg: rgba(15, 23, 42, 0.96);
+    --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+    --chip-bg: #1e3a8a;
+    --chip-border: #3b82f6;
+    --chip-text: #93c5fd;
+    --input-bg: #1e293b;
+    --input-border: #475569;
+    --input-text: #f8fafc;
+    --nav-active-bg: #1e3a8a;
+    --nav-active-text: #60a5fa;
+  }
+
+  [data-theme="light"] {
+    --bg-app: #e2e8f0;
+    --bg-screen: #f8fafc;
+    --bg-card: #ffffff;
+    --bg-card-subtle: #f1f5f9;
     --border-color: #e2e8f0;
+    --border-glow: #2563eb;
     --text-heading: #0f172a;
     --text-body: #475569;
     --text-muted: #64748b;
+    --primary-blue: #2563eb;
+    --primary-indigo: #4f46e5;
     --accent-teal: #0d9488;
-    --shadow-soft: 0 10px 30px -5px rgba(37,99,235,0.08);
-    --shadow-card: 0 4px 20px -2px rgba(15,23,42,0.06);
-    --shadow-hover: 0 20px 40px -10px rgba(37,99,235,0.18);
+    --topbar-bg: rgba(255, 255, 255, 0.95);
+    --bottomnav-bg: rgba(255, 255, 255, 0.96);
+    --card-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06);
+    --chip-bg: #eff6ff;
+    --chip-border: #bfdbfe;
+    --chip-text: #2563eb;
+    --input-bg: #ffffff;
+    --input-border: #cbd5e1;
+    --input-text: #0f172a;
+    --nav-active-bg: #eff6ff;
+    --nav-active-text: #2563eb;
+  }
+
+  [data-theme="contrast"] {
+    --bg-app: #000000;
+    --bg-screen: #000000;
+    --bg-card: #0a0a0a;
+    --bg-card-subtle: #111111;
+    --border-color: #FFD700;
+    --border-glow: #FFD700;
+    --text-heading: #FFD700;
+    --text-body: #FFD700;
+    --text-muted: #FFD700;
+    --primary-blue: #FFD700;
+    --primary-indigo: #FFD700;
+    --accent-teal: #FFD700;
+    --topbar-bg: #000000;
+    --bottomnav-bg: #000000;
+    --card-shadow: none;
+    --chip-bg: #FFD700;
+    --chip-border: #000000;
+    --chip-text: #000000;
+    --input-bg: #000000;
+    --input-border: #FFD700;
+    --input-text: #FFD700;
+    --nav-active-bg: #FFD700;
+    --nav-active-text: #000000;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  html, body { width: 100%; height: 100%; height: 100dvh; overflow: hidden; background: #0b1329; font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; color: var(--text-body); -webkit-font-smoothing: antialiased; }
+  html, body { width: 100%; height: 100%; height: 100dvh; overflow: hidden; background: var(--bg-app); font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; color: var(--text-body); -webkit-font-smoothing: antialiased; transition: background 0.25s ease, color 0.25s ease; }
 
-  /* ─── App Container & Responsive Mobile Viewport ──────────── */
-  .mobile-app-wrapper { width: 100%; height: 100%; height: 100dvh; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #0b1329 0%, #1e1b4b 100%); }
+  /* ─── App Wrapper & Responsive Mobile Viewport ────────────── */
+  .mobile-app-wrapper { width: 100%; height: 100%; height: 100dvh; display: flex; justify-content: center; align-items: center; background: var(--bg-app); }
 
   .phone-frame {
     position: relative; width: 100%; max-width: 440px; height: 100%; height: 100dvh;
-    background: #f8fafc; display: flex; flex-direction: column; overflow: hidden;
-    box-shadow: 0 25px 60px -10px rgba(0,0,0,0.5);
+    background: var(--bg-screen); display: flex; flex-direction: column; overflow: hidden;
+    box-shadow: 0 25px 60px -10px rgba(0,0,0,0.6); transition: all 0.25s ease;
   }
 
   @media (min-width: 480px) {
     .phone-frame {
-      height: 94vh; max-height: 900px; border-radius: 40px; border: 1px solid rgba(255,255,255,0.15);
+      height: 94vh; max-height: 900px; border-radius: 40px; border: 1px solid var(--border-color);
     }
   }
 
-  .phone-screen { width: 100%; height: 100%; display: flex; flex-direction: column; background: #f8fafc; position: relative; overflow: hidden; }
-
-  /* High Contrast WCAG AAA mode */
-  .hc .phone-screen { background: #000 !important; color: #FFD700 !important; }
-  .hc .top-bar { background: #000 !important; border-bottom: 2px solid #FFD700 !important; }
-  .hc .status-bar { color: #FFD700 !important; }
-  .hc .bottom-nav { background: #000 !important; border-top: 2px solid #FFD700 !important; }
-  .hc .nav-btn { color: #FFD700 !important; opacity: 0.7; }
-  .hc .nav-btn.active { background: #FFD700 !important; color: #000 !important; opacity: 1; font-weight: 900; }
-  .hc .card, .hc .section-card, .hc .action-card { background: #111 !important; border: 2px solid #FFD700 !important; box-shadow: none !important; color: #FFD700 !important; }
-  .hc .screen-body { color: #FFD700 !important; }
-  .hc .chip { background: #FFD700 !important; color: #000 !important; border-color: #000 !important; font-weight: 900; }
-  .hc .btn-primary { background: #FFD700 !important; color: #000 !important; font-weight: 900; }
-  .hc .btn-ghost { border: 2px solid #FFD700 !important; color: #FFD700 !important; }
-  .hc input, .hc textarea { background: #000 !important; border: 2px solid #FFD700 !important; color: #FFD700 !important; }
-  .hc .badge { background: #FFD700 !important; color: #000 !important; font-weight: 900; }
-  .hc .infobox { background: #111 !important; border: 2px solid #FFD700 !important; color: #FFD700 !important; }
-  .hc .voice-btn { background: #FFD700 !important; color: #000 !important; }
-  .hc .action-title, .hc .action-sub, .hc h1, .hc h2, .hc h3, .hc h4 { color: #FFD700 !important; }
+  .phone-screen { width: 100%; height: 100%; display: flex; flex-direction: column; background: var(--bg-screen); position: relative; overflow: hidden; }
 
   .lg .screen-body, .lg button, .lg input { font-size: 1.12rem !important; }
 
   /* ─── Native App Header & Status Bar ──────────────────────── */
-  .top-bar { flex-shrink: 0; background: rgba(255, 255, 255, 0.95);
-    border-bottom: 1px solid #e2e8f0; backdrop-filter: blur(12px); position: relative; z-index: 30; }
+  .top-bar { flex-shrink: 0; background: var(--topbar-bg);
+    border-bottom: 1px solid var(--border-color); backdrop-filter: blur(12px); position: relative; z-index: 30; }
   
   .status-bar { display: flex; justify-content: space-between; align-items: center;
-    padding: 12px 18px 2px; font-size: 11px; font-weight: 700; color: #64748b; font-family: 'Inter', sans-serif; }
+    padding: 12px 18px 2px; font-size: 11px; font-weight: 700; color: var(--text-muted); font-family: 'Inter', sans-serif; }
   .status-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
   .status-dot.online { background: #10b981; }
   .status-dot.local { background: var(--primary-blue); animation: pulse 1.5s infinite; }
   
-  .app-bar { display: flex; align-items: center; justify-content: space-between; padding: 8px 14px 10px; }
+  .app-bar { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px 10px; }
   .app-logo { display: flex; align-items: center; gap: 10px; }
   .logo-icon { width: 36px; height: 36px; border-radius: 10px;
     background: linear-gradient(135deg, var(--primary-blue), var(--primary-indigo)); color: #fff;
     display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 18px; box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
-  .logo-text h1 { font-size: 16px; font-weight: 800; color: #0f172a; line-height: 1; letter-spacing: -0.02em; }
-  .logo-text span { font-size: 10.5px; color: #64748b; font-weight: 600; }
+  [data-theme="contrast"] .logo-icon { background: #FFD700; color: #000; }
+
+  .logo-text h1 { font-size: 16px; font-weight: 800; color: var(--text-heading); line-height: 1; letter-spacing: -0.02em; }
+  .logo-text span { font-size: 10.5px; color: var(--text-muted); font-weight: 600; }
   
   .top-controls { display: flex; align-items: center; gap: 5px; }
-  .tc-btn { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center;
-    justify-content: center; font-size: 14px; color: #475569; transition: all .15s ease;
-    background: #f1f5f9; border: 1px solid #e2e8f0; }
+  .tc-btn { height: 32px; padding: 0 9px; border-radius: 10px; display: flex; align-items: center; gap: 4px;
+    justify-content: center; font-size: 12px; font-weight: 800; color: var(--text-body); transition: all .15s ease;
+    background: var(--bg-card); border: 1px solid var(--border-color); cursor: pointer; }
   .tc-btn:active { transform: scale(.92); }
-  .tc-btn.active { background: #dbeafe; color: var(--primary-blue); border-color: #93c5fd; }
-  .tc-btn.hc-active { background: #FFD700; color: #000; border-color: #FFD700; font-weight: 900; }
-  .lang-btn { height: 30px; padding: 0 10px; border-radius: 10px; border: 1px solid #cbd5e1;
-    font-size: 11.5px; font-weight: 800; color: #334155; display: flex; align-items: center; gap: 4px; background: #fff; }
+  .tc-btn.active { background: var(--primary-blue); color: #fff; border-color: var(--primary-blue); }
+  [data-theme="contrast"] .tc-btn.active { background: #FFD700; color: #000; }
+
+  .lang-btn { height: 32px; padding: 0 9px; border-radius: 10px; border: 1px solid var(--border-color);
+    font-size: 11.5px; font-weight: 800; color: var(--text-heading); display: flex; align-items: center; gap: 4px; background: var(--bg-card); cursor: pointer; }
 
   /* ─── Scrollable Screen Body ──────────────────────────────── */
   .screen-body { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; position: relative; z-index: 10; }
 
   /* ─── Native Bottom Tab Navigation Bar ────────────────────── */
-  .bottom-nav { flex-shrink: 0; background: rgba(255, 255, 255, 0.98);
-    border-top: 1px solid #e2e8f0; backdrop-filter: blur(16px); padding: 6px 0 6px; z-index: 30; }
+  .bottom-nav { flex-shrink: 0; background: var(--bottomnav-bg);
+    border-top: 1px solid var(--border-color); backdrop-filter: blur(16px); padding: 6px 0 6px; z-index: 30; }
   .nav-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; padding: 0 4px; }
   .nav-btn { display: flex; flex-direction: column; align-items: center; justify-content: center;
-    padding: 6px 2px 4px; border-radius: 12px; color: #64748b; transition: all .15s ease; gap: 2px; background: transparent; border: none; }
-  .nav-btn.active { background: #eff6ff; color: var(--primary-blue); font-weight: 800; }
+    padding: 6px 2px 4px; border-radius: 12px; color: var(--text-muted); transition: all .15s ease; gap: 2px; background: transparent; border: none; cursor: pointer; }
+  .nav-btn.active { background: var(--nav-active-bg); color: var(--nav-active-text); font-weight: 800; }
   .nav-label { font-size: 9px; font-weight: 700; text-align: center; line-height: 1; }
-  .nav-home-bar { width: 110px; height: 4px; border-radius: 2px; background: #cbd5e1; margin: 4px auto 0; opacity: .8; }
+  .nav-home-bar { width: 110px; height: 4px; border-radius: 2px; background: var(--border-color); margin: 4px auto 0; opacity: .8; }
 
   /* ─── App Screen UI Primitives ────────────────────────────── */
   .screen-pad { padding: 16px; display: flex; flex-direction: column; gap: 14px; min-height: 100%; }
   .back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 12px;
-    font-weight: 700; color: #475569; padding: 6px 12px; border-radius: 10px; background: #fff; border: 1px solid #e2e8f0; }
+    font-weight: 700; color: var(--text-body); padding: 6px 12px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border-color); cursor: pointer; }
   .row-between { display: flex; align-items: center; justify-content: space-between; }
   
   .badge { display: inline-flex; align-items: center; padding: 4px 11px;
     border-radius: 99px; font-size: 10.5px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
-  .badge-blue { background: #dbeafe; color: #1e40af; }
-  .badge-green { background: #dcfce7; color: #166534; }
-  .badge-amber { background: #fef3c7; color: #92400e; }
-  .badge-purple { background: #f3e8ff; color: #6b21a8; }
-  .badge-indigo { background: #e0e7ff; color: #3730a3; }
+  .badge-blue { background: rgba(59,130,246,0.15); color: var(--primary-blue); border: 1px solid rgba(59,130,246,0.3); }
+  .badge-green { background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.3); }
+  .badge-amber { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
+  .badge-purple { background: rgba(168,85,247,0.15); color: #a855f7; border: 1px solid rgba(168,85,247,0.3); }
+  .badge-indigo { background: rgba(99,102,241,0.15); color: #6366f1; border: 1px solid rgba(99,102,241,0.3); }
   
-  .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 16px; box-shadow: 0 4px 20px -2px rgba(15,23,42,0.05); }
-  .section-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+  .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 16px; box-shadow: var(--card-shadow); color: var(--text-body); }
+  .section-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 14px; color: var(--text-body); }
   
   .btn-primary { display: flex; align-items: center; justify-content: center; gap: 8px;
     padding: 14px 18px; border-radius: 14px; font-weight: 800; font-size: 14px;
-    background: var(--primary-blue); color: #fff; box-shadow: 0 6px 18px rgba(37,99,235,0.3);
+    background: var(--primary-blue); color: #fff; box-shadow: 0 6px 18px rgba(59,130,246,0.35);
     transition: all .15s ease; width: 100%; border: none; cursor: pointer; }
-  .btn-primary:active { transform: scale(.98); background: #1d4ed8; }
+  [data-theme="contrast"] .btn-primary { background: #FFD700; color: #000; font-weight: 900; }
+  .btn-primary:active { transform: scale(.98); }
   
   .btn-ghost { display: flex; align-items: center; justify-content: center; gap: 6px;
     padding: 10px 14px; border-radius: 12px; font-weight: 700; font-size: 12px;
-    border: 1px solid #e2e8f0; color: #475569; transition: all .15s; background: #fff; cursor: pointer; }
+    border: 1px solid var(--border-color); color: var(--text-body); transition: all .15s; background: var(--bg-card); cursor: pointer; }
   
   .chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
-  .chip { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 99px; padding: 4px 11px; font-size: 11px; font-weight: 700; color: var(--primary-blue); }
+  .chip { background: var(--chip-bg); border: 1px solid var(--chip-border); border-radius: 99px; padding: 4px 11px; font-size: 11px; font-weight: 700; color: var(--chip-text); }
   
-  .infobox { border-radius: 14px; padding: 12px 14px; border: 1px solid; font-size: 12px; line-height: 1.5; }
-  .infobox-blue { background: #eff6ff; border-color: #bfdbfe; color: #1e40af; }
-  .infobox-green { background: #f0fdf4; border-color: #bbf7d0; color: #166534; }
-  .infobox-amber { background: #fffbeb; border-color: #fde68a; color: #92400e; }
-  .infobox-purple { background: #faf5ff; border-color: #e9d5ff; color: #6b21a8; }
+  .infobox { border-radius: 14px; padding: 12px 14px; border: 1px solid var(--border-color); font-size: 12px; line-height: 1.5; background: var(--bg-card); color: var(--text-body); }
   
-  .progress-track { background: #e2e8f0; border-radius: 99px; height: 8px; overflow: hidden; }
+  .progress-track { background: var(--border-color); border-radius: 99px; height: 8px; overflow: hidden; }
   .progress-fill { height: 100%; border-radius: 99px; background: var(--primary-blue); transition: width .35s ease; }
   
-  .section-label { font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: #64748b; margin-bottom: 6px; }
+  .section-label { font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
 
   /* ─── Voice Hero Button ───────────────────────────────────── */
   .voice-hero-container { position: relative; display: flex; align-items: center; justify-content: center; padding: 12px 0; }
   .voice-btn { width: 110px; height: 110px; border-radius: 50%; display: flex;
     flex-direction: column; align-items: center; justify-content: center; gap: 4px;
-    background: var(--primary-blue); color: #fff; box-shadow: 0 10px 28px rgba(37,99,235,0.4);
+    background: var(--primary-blue); color: #fff; box-shadow: 0 10px 28px rgba(59,130,246,0.4);
     transition: all .2s ease; font-size: 11px; font-weight: 800; text-transform: uppercase;
     letter-spacing: .05em; z-index: 10; border: none; cursor: pointer; }
+  [data-theme="contrast"] .voice-btn { background: #FFD700; color: #000; }
   .voice-btn:active { transform: scale(.94); }
-  .voice-btn.listening { background: #dc2626; box-shadow: 0 10px 28px rgba(220,38,38,0.4); }
+  .voice-btn.listening { background: #ef4444; box-shadow: 0 10px 28px rgba(239,68,68,0.4); }
   .voice-btn svg { width: 40px; height: 40px; }
 
   @keyframes pulse-aura {
-    0% { box-shadow: 0 0 0 0 rgba(37,99,235,0.4), 0 10px 28px rgba(37,99,235,0.35); }
-    70% { box-shadow: 0 0 0 20px rgba(37,99,235,0), 0 10px 28px rgba(37,99,235,0.35); }
-    100% { box-shadow: 0 0 0 0 rgba(37,99,235,0), 0 10px 28px rgba(37,99,235,0.35); }
+    0% { box-shadow: 0 0 0 0 rgba(59,130,246,0.4), 0 10px 28px rgba(59,130,246,0.35); }
+    70% { box-shadow: 0 0 0 20px rgba(59,130,246,0), 0 10px 28px rgba(59,130,246,0.35); }
+    100% { box-shadow: 0 0 0 0 rgba(59,130,246,0), 0 10px 28px rgba(59,130,246,0.35); }
   }
   .voice-btn:not(.listening) { animation: pulse-aura 2.2s infinite ease-out; }
 
-  /* ─── Toggle Switch ───────────────────────────────────────── */
-  .toggle { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
-  .toggle input { opacity: 0; width: 0; height: 0; }
-  .toggle-slider { position: absolute; inset: 0; border-radius: 99px; background: #cbd5e1; transition: .2s ease; cursor: pointer; }
-  .toggle-slider::before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; bottom: 3px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: .2s ease; }
-  .toggle input:checked + .toggle-slider { background: var(--primary-blue); }
-  .toggle input:checked + .toggle-slider::before { transform: translateX(20px); }
-
-  /* ─── Camera Viewport HUD ─────────────────────────────────── */
-  .cam-viewport { width: 100%; height: 210px; background: #0f172a; border-radius: 18px; overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center; border: 1px solid #e2e8f0; }
-  .cam-viewport video { width: 100%; height: 100%; object-fit: cover; }
-  .cam-label { position: absolute; top: 12px; left: 12px; background: rgba(15,23,42,0.9); border: 1px solid #10b981; border-radius: 20px; padding: 4px 10px; font-size: 10px; font-weight: 800; color: #34d399; display: flex; align-items: center; gap: 6px; }
-  .cam-pulse { width: 7px; height: 7px; border-radius: 50%; background: #34d399; animation: pulse 1s infinite; }
-
-  .scanner-line { position: absolute; left: 0; right: 0; height: 2px; background: var(--primary-blue); box-shadow: 0 0 10px var(--primary-blue); animation: scan 2s ease-in-out infinite; z-index: 10; }
-  @keyframes scan { 0% { top: 12%; } 50% { top: 88%; } 100% { top: 12%; } }
-
   /* ─── Bento Grid Action Cards ─────────────────────────────── */
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .action-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 14px; text-align: left; transition: all .15s ease; display: flex; flex-direction: column; gap: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); cursor: pointer; }
+  .action-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 14px; text-align: left; transition: all .15s ease; display: flex; flex-direction: column; gap: 5px; box-shadow: var(--card-shadow); cursor: pointer; }
   .action-card:active { transform: scale(.97); }
-  .action-card.featured { border-color: #93c5fd; background: linear-gradient(180deg, #ffffff 0%, #eff6ff 100%); }
+  .action-card.featured { border-color: var(--border-glow); background: var(--bg-card-subtle); }
   .action-icon { width: 38px; height: 38px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
   .action-icon svg { width: 20px; height: 20px; color: #fff; }
+  [data-theme="contrast"] .action-icon svg { color: #000; }
   .action-title { font-size: 14px; font-weight: 800; color: var(--text-heading); line-height: 1.1; letter-spacing: -0.01em; }
   .action-sub { font-size: 10.5px; color: var(--text-muted); line-height: 1.35; font-weight: 500; }
   .action-link { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; margin-top: 2px; display: flex; align-items: center; gap: 3px; }
 
   /* ─── Form Inputs ─────────────────────────────────────────── */
   .field-wrap { position: relative; }
-  .field-input { width: 100%; padding: 13px 44px 13px 16px; border-radius: 14px; border: 1px solid #cbd5e1; font-size: 14px; font-weight: 600; color: var(--text-heading); background: #fff; outline: none; transition: all .15s ease; }
-  .field-input:focus { border-color: var(--primary-blue); box-shadow: 0 0 0 3px rgba(37,99,235,0.12); }
+  .field-input { width: 100%; padding: 13px 44px 13px 16px; border-radius: 14px; border: 1px solid var(--input-border); font-size: 14px; font-weight: 600; color: var(--input-text); background: var(--input-bg); outline: none; transition: all .15s ease; }
+  .field-input:focus { border-color: var(--primary-blue); box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
   .field-mic-btn { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 32px; height: 32px; border-radius: 10px; background: var(--primary-blue); color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: none; cursor: pointer; }
-  .field-mic-btn.recording { background: #dc2626; animation: pulse 0.7s infinite; }
+  [data-theme="contrast"] .field-mic-btn { background: #FFD700; color: #000; }
+  .field-mic-btn.recording { background: #ef4444; animation: pulse 0.7s infinite; }
 
   .gesture-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
-  .gesture-btn { padding: 10px 4px; border-radius: 12px; text-align: center; border: 1px solid #e2e8f0; background: #fff; transition: all .15s; cursor: pointer; }
+  .gesture-btn { padding: 10px 4px; border-radius: 12px; text-align: center; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-body); transition: all .15s; cursor: pointer; }
   .gesture-btn.active { background: #10b981; color: #fff; border-color: #10b981; }
+  [data-theme="contrast"] .gesture-btn.active { background: #FFD700; color: #000; border-color: #FFD700; }
   .gesture-btn:active { transform: scale(.94); }
   .gesture-en { font-size: 11px; font-weight: 800; }
 
   .obj-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-  .obj-btn { padding: 12px 6px; border-radius: 14px; text-align: center; border: 1px solid #e2e8f0; background: #fff; transition: all .15s; cursor: pointer; }
-  .obj-btn.active { background: #d97706; color: #fff; border-color: #d97706; font-weight: 800; }
+  .obj-btn { padding: 12px 6px; border-radius: 14px; text-align: center; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-body); transition: all .15s; cursor: pointer; }
+  .obj-btn.active { background: #f59e0b; color: #fff; border-color: #f59e0b; font-weight: 800; }
+  [data-theme="contrast"] .obj-btn.active { background: #FFD700; color: #000; border-color: #FFD700; }
   .obj-btn:active { transform: scale(.94); }
   .obj-en { font-size: 12px; font-weight: 800; }
 
-  .pref-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
-  .pref-row:last-child { border-bottom: none; }
-  .pref-label { font-size: 13.5px; font-weight: 700; color: var(--text-heading); }
-  .pref-sub { font-size: 11px; color: var(--text-muted); font-weight: 500; }
-
-  .cert { background: linear-gradient(135deg, #f0fdf4 0%, #eff6ff 100%); border: 1.5px solid #10b981; border-radius: 18px; padding: 18px; box-shadow: var(--shadow-card); }
-  .cert-token { font-family: monospace; font-size: 11px; font-weight: 800; background: #dcfce7; color: #15803d; padding: 3px 9px; border-radius: 6px; border: 1px solid #bbf7d0; }
-  .cert-row { display: flex; justify-content: space-between; font-size: 12px; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,.06); color: var(--text-body); }
+  .cert { background: var(--bg-card); border: 1.5px solid #10b981; border-radius: 18px; padding: 18px; box-shadow: var(--card-shadow); color: var(--text-body); }
+  .cert-token { font-family: monospace; font-size: 11px; font-weight: 800; background: rgba(16,185,129,0.15); color: #10b981; padding: 3px 9px; border-radius: 6px; border: 1px solid rgba(16,185,129,0.3); }
+  .cert-row { display: flex; justify-content: space-between; font-size: 12px; padding: 6px 0; border-bottom: 1px solid var(--border-color); color: var(--text-body); }
   .cert-row:last-child { border-bottom: none; }
 
   #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
@@ -257,8 +283,11 @@
             </div>
           </div>
           <div class="top-controls">
+            <!-- 3-Way Theme Switcher (Dark -> Light -> Contrast) -->
+            <button class="tc-btn" id="themeBtn" title="Switch Theme (Dark / Light / Contrast)" onclick="toggleTheme()">
+              <span id="themeIcon">🌙</span> <span id="themeLabel" style="font-size:10px">Dark</span>
+            </button>
             <button class="tc-btn" id="audioBtn" title="Toggle Voice Guidance" onclick="toggleAudio()">🔊</button>
-            <button class="tc-btn" id="hcBtn" title="Toggle High Contrast (WCAG AAA)" onclick="toggleHC()">◑</button>
             <button class="tc-btn" id="lgBtn" title="Toggle Large Text" onclick="toggleLargeText()">A</button>
             <button class="lang-btn" id="langBtn" onclick="toggleLang()">🌐 हिं</button>
           </div>
@@ -284,8 +313,8 @@
 // ═══════════════════════════════════════════════════════════════
 const state = {
   screen: 'home',
+  theme: 'dark',   // 'dark' | 'light' | 'contrast'
   lang: 'Hindi',   // 'Hindi' | 'English'
-  hc: false,       // High Contrast WCAG AAA
   lg: true,        // Large Typography
   audio: true,     // TTS Voice Narration
   formFlow: null,
@@ -449,14 +478,33 @@ const objects = {
 };
 
 function applyTheme() {
+  const root = document.documentElement;
   const frame = document.getElementById('phoneFrame');
-  const hcBtn = document.getElementById('hcBtn');
   const lgBtn = document.getElementById('lgBtn');
   const audioBtn = document.getElementById('audioBtn');
-  if (state.hc) { frame.classList.add('hc'); hcBtn.classList.add('hc-active'); }
-  else { frame.classList.remove('hc'); hcBtn.classList.remove('hc-active'); }
+  const themeBtn = document.getElementById('themeBtn');
+  const themeIcon = document.getElementById('themeIcon');
+  const themeLabel = document.getElementById('themeLabel');
+
+  root.setAttribute('data-theme', state.theme);
+
+  if (state.theme === 'dark') {
+    themeIcon.textContent = '🌙';
+    themeLabel.textContent = 'Dark';
+    themeBtn.className = 'tc-btn active';
+  } else if (state.theme === 'light') {
+    themeIcon.textContent = '☀️';
+    themeLabel.textContent = 'Light';
+    themeBtn.className = 'tc-btn';
+  } else if (state.theme === 'contrast') {
+    themeIcon.textContent = '◑';
+    themeLabel.textContent = 'Contrast';
+    themeBtn.className = 'tc-btn active';
+  }
+
   if (state.lg) { frame.classList.add('lg'); lgBtn.classList.add('active'); }
   else { frame.classList.remove('lg'); lgBtn.classList.remove('active'); }
+
   if (state.audio) { audioBtn.textContent = '🔊'; audioBtn.classList.add('active'); }
   else { audioBtn.textContent = '🔇'; audioBtn.classList.remove('active'); }
   
@@ -465,7 +513,14 @@ function applyTheme() {
   renderNav();
 }
 
-function toggleHC() { haptics.click(); state.hc = !state.hc; applyTheme(); render(); }
+function toggleTheme() {
+  haptics.click();
+  if (state.theme === 'dark') state.theme = 'light';
+  else if (state.theme === 'light') state.theme = 'contrast';
+  else state.theme = 'dark';
+  applyTheme(); render();
+}
+
 function toggleLargeText() { haptics.click(); state.lg = !state.lg; applyTheme(); }
 function toggleAudio() {
   haptics.click();
@@ -530,21 +585,21 @@ function renderHome() {
     : [{l:'Fill Form',q:'Help me fill this scholarship form'}, {l:'Read Notice',q:'What is important in this notice?'}, {l:'Sign Talk',q:'Translate sign language'}, {l:'Find Bottle',q:'Find my water bottle'}];
 
   const statusText = state.listening
-    ? (isH ? `<span style="color:#dc2626;font-weight:800">${t('सुन रहा हूँ... बोलिए...','Listening... speak request...')}</span>` : '')
+    ? (isH ? `<span style="color:#ef4444;font-weight:800">${t('सुन रहा हूँ... बोलिए...','Listening... speak request...')}</span>` : '')
     : state.intentResult
-      ? `<span style="color:#0d9488;font-weight:800">${t('समझा गया: ','Understood: ')}${state.intentResult}</span>`
+      ? `<span style="color:var(--accent-teal);font-weight:800">${t('समझा गया: ','Understood: ')}${state.intentResult}</span>`
       : state.voiceStatus || t('माइक दबाएं या नीचे से मोड चुनें','Tap mic or select mode below');
 
   return `
   <div class="screen-pad">
-    <div class="card" onclick="navigate('profile')" style="cursor:pointer;background:#eff6ff;border-color:#bfdbfe">
+    <div class="card" onclick="navigate('profile')" style="cursor:pointer;background:var(--bg-card-subtle);border-color:var(--border-glow)">
       <div class="row-between" style="margin-bottom:8px">
         <div style="display:flex;align-items:center;gap:7px">
-          ${ICON.sparkle}<span style="font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#1e40af">
+          ${ICON.sparkle}<span style="font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--primary-blue)">
             ${t('सुलभता प्रोफ़ाइल सक्रिय','ACCESSIBILITY TWIN ACTIVE')}
           </span>
         </div>
-        <span style="font-size:11px;font-weight:800;color:#2563eb">${t('बदलें','Edit')} ${ICON.arrow_r}</span>
+        <span style="font-size:11px;font-weight:800;color:var(--primary-blue)">${t('बदलें','Edit')} ${ICON.arrow_r}</span>
       </div>
       <div class="chip-row">
         <span class="chip">${t('हिंदी','English')}</span>
@@ -555,10 +610,10 @@ function renderHome() {
     </div>
 
     <div style="text-align:center;padding:2px 0">
-      <h2 style="font-size:1.5rem;font-weight:800;color:#0f172a;letter-spacing:-0.03em;line-height:1.2">
+      <h2 style="font-size:1.5rem;font-weight:800;color:var(--text-heading);letter-spacing:-0.03em;line-height:1.2">
         ${t('मैं आपकी क्या मदद करूँ?','How can I assist you?')}
       </h2>
-      <p style="font-size:12px;margin-top:4px;min-height:26px;color:#475569;font-weight:600;font-family:'Inter',sans-serif">${statusText}</p>
+      <p style="font-size:12px;margin-top:4px;min-height:26px;color:var(--text-muted);font-weight:600;font-family:'Inter',sans-serif">${statusText}</p>
     </div>
 
     <div class="voice-hero-container">
@@ -571,54 +626,54 @@ function renderHome() {
     <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:340px;margin:0 auto">
       ${samplePrompts.map(p => `
         <button onclick="handleSamplePrompt('${p.q}')"
-          style="padding:7px 13px;border-radius:20px;border:1px solid #cbd5e1;
-            background:#fff;font-size:11.5px;font-weight:700;color:#334155;
-            display:flex;align-items:center;gap:6px;transition:all .15s ease">
-          ${ICON.zap}<span style="color:#2563eb">${p.l}</span>
+          style="padding:7px 13px;border-radius:20px;border:1px solid var(--border-color);
+            background:var(--bg-card);font-size:11.5px;font-weight:700;color:var(--text-body);
+            display:flex;align-items:center;gap:6px;transition:all .15s ease;cursor:pointer">
+          ${ICON.zap}<span style="color:var(--primary-blue)">${p.l}</span>
         </button>`).join('')}
     </div>
 
     <div class="grid-2">
       <button class="action-card featured" onclick="navigate('complete')">
-        <div class="action-icon" style="background:#2563eb">
+        <div class="action-icon" style="background:var(--primary-blue)">
           <svg class="icon" viewBox="0 0 24 24" width="20" height="20"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
         </div>
         <div class="action-title">${t('फ़ॉर्म भरें','COMPLETE')}</div>
         <div class="action-sub">${t('7-चरण छात्रवृत्ति आवेदन','7-step scholarship form')}</div>
-        <div class="action-link" style="color:#2563eb">${t('शुरू करें →','Launch →')}</div>
+        <div class="action-link" style="color:var(--primary-blue)">${t('शुरू करें →','Launch →')}</div>
       </button>
 
       <button class="action-card" onclick="navigate('read')">
-        <div class="action-icon" style="background:#4f46e5">
+        <div class="action-icon" style="background:var(--primary-indigo)">
           <svg class="icon" viewBox="0 0 24 24" width="20" height="20"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
         </div>
         <div class="action-title">${t('पढ़ें','READ')}</div>
         <div class="action-sub">${t('नोटिस व समय-सीमा समझें','OCR & deadline extraction')}</div>
-        <div class="action-link" style="color:#4f46e5">${t('विश्लेषण →','Analyze →')}</div>
+        <div class="action-link" style="color:var(--primary-indigo)">${t('विश्लेषण →','Analyze →')}</div>
       </button>
 
       <button class="action-card" onclick="navigate('talk')">
-        <div class="action-icon" style="background:#0d9488">
+        <div class="action-icon" style="background:var(--accent-teal)">
           <svg class="icon" viewBox="0 0 24 24" width="20" height="20"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
         </div>
         <div class="action-title">${t('सांकेतिक (ISL)','SIGN TALK')}</div>
         <div class="action-sub">${t('भारतीय सांकेतिक भाषा','Sign Language to Speech')}</div>
-        <div class="action-link" style="color:#0d9488">${t('अनुवाद →','Translate →')}</div>
+        <div class="action-link" style="color:var(--accent-teal)">${t('अनुवाद →','Translate →')}</div>
       </button>
 
       <button class="action-card" onclick="navigate('see')">
-        <div class="action-icon" style="background:#d97706">
+        <div class="action-icon" style="background:#f59e0b">
           <svg class="icon" viewBox="0 0 24 24" width="20" height="20"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
         </div>
         <div class="action-title">${t('देखें (See)','SPATIAL SEE')}</div>
         <div class="action-sub">${t('वस्तु खोजें व दिशा','Object finder & haptics')}</div>
-        <div class="action-link" style="color:#d97706">${t('खोजें →','Find →')}</div>
+        <div class="action-link" style="color:#f59e0b">${t('खोजें →','Find →')}</div>
       </button>
     </div>
 
     <button onclick="navigate('heatmap')" style="width:100%;padding:14px 16px;border-radius:16px;
-      background:#fff;border:1px solid #e2e8f0;display:flex;align-items:center;
-      justify-content:space-between;font-size:12.5px;font-weight:700;color:#334155;box-shadow:0 2px 8px rgba(0,0,0,0.03);cursor:pointer">
+      background:var(--bg-card);border:1px solid var(--border-color);display:flex;align-items:center;
+      justify-content:space-between;font-size:12.5px;font-weight:700;color:var(--text-body);box-shadow:var(--card-shadow);cursor:pointer">
       <span style="display:flex;align-items:center;gap:8px">
         <span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block"></span>
         ${t('चरण 7: सुलभता हीटमैप','Stage 7: Live Accessibility Heatmap')}
@@ -685,8 +740,8 @@ function renderComplete() {
 
     <div>
       <div class="row-between" style="font-size:11px;font-weight:700;margin-bottom:6px">
-        <span style="color:#475569">${t('प्रगति (Linearized Task Flow)','Task Progress')}</span>
-        <span style="font-family:monospace;font-weight:800;color:#2563eb">${prog}%</span>
+        <span style="color:var(--text-muted)">${t('प्रगति (Linearized Task Flow)','Task Progress')}</span>
+        <span style="font-family:monospace;font-weight:800;color:var(--primary-blue)">${prog}%</span>
       </div>
       <div class="progress-track">
         <div class="progress-fill" style="width:${prog}%"></div>
@@ -696,18 +751,18 @@ function renderComplete() {
     <div class="card">
       <div class="row-between" style="margin-bottom:8px">
         <div>
-          <div style="font-size:10px;font-weight:800;color:#2563eb;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">
+          <div style="font-size:10px;font-weight:800;color:var(--primary-blue);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">
             ${step.label}
           </div>
-          <h2 style="font-size:1.3rem;font-weight:800;color:#0f172a;line-height:1.2">${step.display}</h2>
+          <h2 style="font-size:1.3rem;font-weight:800;color:var(--text-heading);line-height:1.2">${step.display}</h2>
         </div>
         <button onclick="speakStep()" style="width:38px;height:38px;border-radius:10px;
-          background:#eff6ff;color:#2563eb;display:flex;align-items:center;justify-content:center;
-          border:1px solid #bfdbfe;flex-shrink:0;cursor:pointer">
+          background:var(--chip-bg);color:var(--chip-text);display:flex;align-items:center;justify-content:center;
+          border:1px solid var(--chip-border);flex-shrink:0;cursor:pointer">
           ${ICON.volume}
         </button>
       </div>
-      <p style="font-size:12.5px;color:#475569;line-height:1.55;margin-bottom:14px;font-weight:500">
+      <p style="font-size:12.5px;color:var(--text-body);line-height:1.55;margin-bottom:14px;font-weight:500">
         "${step.prompt}"
       </p>
 
@@ -735,12 +790,12 @@ function renderVerified() {
       <div style="width:64px;height:64px;border-radius:50%;background:#10b981;color:#fff;
         margin:0 auto 12px;display:flex;align-items:center;justify-content:center">${ICON.award}</div>
       <div class="badge badge-green" style="margin-bottom:8px">${t('चरण 6: कार्य सत्यापन सफल','STAGE 6: TASK VERIFIED')}</div>
-      <h2 style="font-size:1.6rem;font-weight:800;color:#0f172a">${t('फ़ॉर्म पूर्ण!','Form Completed!')}</h2>
+      <h2 style="font-size:1.6rem;font-weight:800;color:var(--text-heading)">${t('फ़ॉर्म पूर्ण!','Form Completed!')}</h2>
     </div>
 
     <div class="cert">
-      <div class="row-between" style="border-bottom:1px solid #bbf7d0;padding-bottom:10px;margin-bottom:10px">
-        <span style="font-size:11px;font-weight:800;color:#15803d">${t('सत्यापन टोकन','Verification Token')}</span>
+      <div class="row-between" style="border-bottom:1px solid var(--border-color);padding-bottom:10px;margin-bottom:10px">
+        <span style="font-size:11px;font-weight:800;color:#10b981">${t('सत्यापन टोकन','Verification Token')}</span>
         <span class="cert-token">${state.verifyToken}</span>
       </div>
       <div class="cert-row"><span>Task Type:</span><strong>SCHOLARSHIP_FORM_7F</strong></div>
@@ -798,8 +853,8 @@ function renderRead() {
 
     ${d ? `
     <div class="card">
-      <h3 style="font-size:15px;font-weight:800;color:#0f172a;margin-bottom:8px">${d.title}</h3>
-      <div style="background:#f8fafc;border-radius:12px;padding:12px;font-size:12px;color:#334155;line-height:1.6">${d.summary}</div>
+      <h3 style="font-size:15px;font-weight:800;color:var(--text-heading);margin-bottom:8px">${d.title}</h3>
+      <div style="background:var(--bg-card-subtle);border-radius:12px;padding:12px;font-size:12px;color:var(--text-body);line-height:1.6">${d.summary}</div>
     </div>
     <button class="btn-primary" onclick="navigate('complete')">${t('📝 फ़ॉर्म भरें','Start Form Guidance (Demo 2)')}</button>
     ` : ''}
@@ -822,7 +877,7 @@ function renderTalk() {
     </div>
 
     <div class="card" style="text-align:center;padding:24px">
-      <div style="font-size:1.6rem;font-weight:800;color:#0f172a;margin-bottom:4px">${state.lang==='Hindi'?s.hi:s.en}</div>
+      <div style="font-size:1.6rem;font-weight:800;color:var(--text-heading);margin-bottom:4px">${state.lang==='Hindi'?s.hi:s.en}</div>
       <div style="font-size:11px;color:#10b981;font-weight:800;text-transform:uppercase">Gesture Detected (96% Conf)</div>
     </div>
 
@@ -848,7 +903,7 @@ function renderSee() {
       <span class="badge badge-amber">SPATIAL VISION</span>
     </div>
     <div class="card">
-      <h3 style="font-size:14px;font-weight:800;color:#0f172a">${state.lang==='Hindi'?obj.hi:obj.en}</h3>
+      <h3 style="font-size:14px;font-weight:800;color:var(--text-heading)">${state.lang==='Hindi'?obj.hi:obj.en}</h3>
     </div>
     <div class="obj-grid">
       ${Object.keys(objects).map(id => `
@@ -871,8 +926,8 @@ function renderHeatmap() {
       <span class="badge badge-purple">STAGE 7: LEARNING</span>
     </div>
     <div class="card">
-      <h3 style="font-size:14px;font-weight:800;color:#0f172a;margin-bottom:6px">Telemetry Analytics Active</h3>
-      <p style="font-size:12px;color:#64748b">Real-time accessibility friction tracking enabled across 7 operational modules.</p>
+      <h3 style="font-size:14px;font-weight:800;color:var(--text-heading);margin-bottom:6px">Telemetry Analytics Active</h3>
+      <p style="font-size:12px;color:var(--text-muted)">Real-time accessibility friction tracking enabled across 7 operational modules.</p>
     </div>
   </div>`;
 }
@@ -885,8 +940,8 @@ function renderProfile() {
       <span class="badge badge-blue">TWIN PROFILE</span>
     </div>
     <div class="card">
-      <h3 style="font-size:14px;font-weight:800;color:#0f172a;margin-bottom:8px">Accessibility Twin Saved</h3>
-      <p style="font-size:12px;color:#64748b">Voice first, single-step linearization, and simplified language preferences active.</p>
+      <h3 style="font-size:14px;font-weight:800;color:var(--text-heading);margin-bottom:8px">Accessibility Twin Saved</h3>
+      <p style="font-size:12px;color:var(--text-muted)">Voice first, single-step linearization, and simplified language preferences active.</p>
     </div>
   </div>`;
 }
