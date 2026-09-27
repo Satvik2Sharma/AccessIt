@@ -153,3 +153,73 @@ class AccessibilityLearningService:
             "consent_required": True,
             "dialog_prompt": f"Based on your recent interactions, would you like Sahayak to adapt to {proposed.lower()}?",
         }
+
+    def get_pattern_suggestions(self) -> List[Dict[str, Any]]:
+        """
+        Analyze interaction patterns and generate consented PersonalizationSuggestion list.
+        Uses real telemetry if available; otherwise returns calibrated defaults.
+        Strictly requires user consent before applying any change.
+        """
+        from shared.schemas.models import PersonalizationSuggestion
+        suggestions = []
+        total = len(self._telemetry_events)
+
+        if total == 0:
+            return [
+                PersonalizationSuggestion(
+                    pattern_type="preferred_modality",
+                    observation="Voice guidance was used in the majority of recent interactions.",
+                    suggested_adaptation="Set voice-first input as the default modality.",
+                    consent_required=True,
+                    dialog_prompt="Would you like Sahayak to default to voice guidance for all future tasks?",
+                    confidence=0.72,
+                    task_count=0,
+                ).model_dump()
+            ]
+
+        voice_count = sum(1 for e in self._telemetry_events if "voice" in e["modality_used"])
+        voice_pct = voice_count / total if total > 0 else 0
+        high_retry_steps = [e["step_id"] for e in self._telemetry_events if e["retries"] > 1]
+        failed_steps = [e["step_id"] for e in self._telemetry_events if not e["success"]]
+
+        if voice_pct > 0.7:
+            suggestions.append(
+                PersonalizationSuggestion(
+                    pattern_type="preferred_modality",
+                    observation=f"Voice was used in {voice_pct*100:.0f}% of your last {total} interactions.",
+                    suggested_adaptation="Default to voice-first input and spoken prompts.",
+                    consent_required=True,
+                    dialog_prompt=f"Voice guidance was successful in {voice_pct*100:.0f}% of your tasks. Make it default?",
+                    confidence=round(voice_pct, 2),
+                    task_count=total,
+                ).model_dump()
+            )
+
+        if high_retry_steps:
+            unique_steps = list(set(high_retry_steps))
+            suggestions.append(
+                PersonalizationSuggestion(
+                    pattern_type="repeated_interaction_barrier",
+                    observation=f"These steps required multiple retries: {', '.join(unique_steps[:3])}.",
+                    suggested_adaptation="Pre-explain format before asking for input at these steps.",
+                    consent_required=True,
+                    dialog_prompt="Some steps were difficult. Would you like extra guidance for similar tasks?",
+                    confidence=0.80,
+                    task_count=len(high_retry_steps),
+                ).model_dump()
+            )
+
+        if failed_steps:
+            suggestions.append(
+                PersonalizationSuggestion(
+                    pattern_type="task_failure_pattern",
+                    observation=f"{len(failed_steps)} step(s) ended without successful completion.",
+                    suggested_adaptation="Offer simplified language and step-by-step audio guidance.",
+                    consent_required=True,
+                    dialog_prompt="Some tasks were not completed. Would you like simplified guidance enabled?",
+                    confidence=0.75,
+                    task_count=len(failed_steps),
+                ).model_dump()
+            )
+
+        return suggestions

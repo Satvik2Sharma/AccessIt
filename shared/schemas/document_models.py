@@ -27,22 +27,26 @@ class DocumentSummary(BaseModel):
 
 
 class DocumentQuestion(BaseModel):
-    document_id: str = Field(description="Active document or session ID")
     question: str = Field(description="User question in natural language (Hindi, English, Hinglish)")
+    document_id: Optional[str] = Field(default="default_doc", description="Active document or session ID")
+    document_context: Optional[str] = Field(default=None, description="Extracted text or document context")
     twin_id: Optional[str] = "default_user"
     language: Optional[str] = "English"
 
 
 class DocumentAnswer(BaseModel):
-    document_id: str
     question: str
     answer: str
-    spoken_answer: str
+    document_id: Optional[str] = "default_doc"
+    spoken_answer: Optional[str] = None
     supporting_extracted_info: List[str] = Field(default_factory=list)
     confidence: float = Field(default=0.92, ge=0.0, le=1.0)
     source_section: Optional[str] = Field(default=None, description="e.g. 'Eligibility', 'Deadlines', 'Fee'")
     related_actions: List[str] = Field(default_factory=list)
     language: str = "English"
+    answer_hi: Optional[str] = None
+    source_snippet: Optional[str] = None
+    found_in_document: bool = True
 
 
 class DocumentTask(BaseModel):

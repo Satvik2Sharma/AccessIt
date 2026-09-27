@@ -81,7 +81,7 @@ class SceneAnalysis(BaseModel):
     """
     Structured environmental understanding for assistive guidance.
     """
-    scene_description: str
+    scene_description: str = Field(default="")
     scene_type: str = Field(default="indoor", description="'indoor', 'outdoor', 'corridor', 'office', 'classroom'")
     detected_objects: List[VisionObject] = Field(default_factory=list)
     detected_texts: List[TextDetection] = Field(default_factory=list)
@@ -91,6 +91,14 @@ class SceneAnalysis(BaseModel):
     suggested_action: str = Field(default="Proceed straight ahead")
     spoken_scene_summary: str = Field(default="")
     language: str = Field(default="English")
+    objects: List[Any] = Field(default_factory=list)
+    text_regions: List[str] = Field(default_factory=list)
+    labels: List[str] = Field(default_factory=list)
+    spatial_relationships: List[str] = Field(default_factory=list)
+    relevant_objects: List[Any] = Field(default_factory=list)
+    confidence: float = Field(default=0.0, ge=0.0, le=1.0)
+    task_context: Optional[str] = None
+    summary: Optional[str] = None
 
 
 class SpatialGuidanceRequest(BaseModel):

@@ -220,3 +220,63 @@ from shared.schemas.task_models import (
     PersonalizationProfile,
 )
 
+
+# ====================================================
+# Extended AI Capabilities Schemas
+# ====================================================
+
+class SpatialObject(BaseModel):
+    """A detected physical object with spatial metadata."""
+    label: str
+    confidence: float = Field(ge=0.0, le=1.0)
+    bbox: Optional[List[float]] = None  # [xmin, ymin, xmax, ymax] normalized 0-1
+    direction: Optional[str] = None  # e.g. "2 o'clock"
+    horizontal_zone: Optional[str] = None  # left, center, right
+    elevation: Optional[str] = None  # eye_level, table_level, floor_level
+    proximity: Optional[str] = None  # very_close, arm_reach, nearby, several_steps
+    associated_text: Optional[str] = None
+    haptic_cue: Optional[str] = None
+
+
+class VoiceCommand(BaseModel):
+    """Represents a parsed voice utterance."""
+    raw_text: str
+    language: str = "English"
+    intent: Optional[str] = None
+    confidence: float = Field(default=0.0, ge=0.0, le=1.0)
+    entities: Dict[str, Any] = Field(default_factory=dict)
+    source: str = "stt"  # stt, text_input, test
+
+
+class NavigationInstruction(BaseModel):
+    """A single navigation guidance instruction."""
+    direction: str  # left, right, forward, stop, slight_left, slight_right
+    description: str
+    description_hi: Optional[str] = None
+    urgency: str = "NORMAL"  # NORMAL, HIGH, EMERGENCY
+    haptic_cue: Optional[str] = None
+    obstacle_detected: bool = False
+    obstacle_label: Optional[str] = None
+
+
+class RecoveryAction(BaseModel):
+    """An error recovery action suggestion."""
+    failure_type: str
+    strategy: str
+    description: str
+    description_hi: Optional[str] = None
+    can_retry: bool = True
+    max_retries: int = 3
+    user_instruction: str
+    user_instruction_hi: Optional[str] = None
+
+
+class PersonalizationSuggestion(BaseModel):
+    """A consented personalization adaptation proposal."""
+    pattern_type: str  # preferred_language, preferred_modality, barrier_type, etc.
+    observation: str
+    suggested_adaptation: str
+    consent_required: bool = True
+    dialog_prompt: str
+    confidence: float = Field(default=0.0, ge=0.0, le=1.0)
+    task_count: int = 0
