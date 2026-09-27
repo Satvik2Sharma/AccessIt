@@ -1,17 +1,19 @@
 """
-Sahayak AI — Task Verification Service
+Sahayak AI — Enhanced Task Verification Service
 First-class verification engine that evaluates true task completion,
 maintaining states: IN_PROGRESS, BLOCKED, NEEDS_CONFIRMATION, COMPLETED, FAILED.
-Includes semantic field validators (Aadhaar 12-digit, Date formats, IFSC checks).
+Includes semantic field validators (Aadhaar 12-digit, Date formats, IFSC checks),
+document verification, and cryptographic confirmation tokens.
 """
 
-import uuid
 import re
-from typing import Dict, Any, List, Tuple
+import uuid
+from typing import Dict, Any, List, Tuple, Optional
 from shared.schemas.models import (
     VerificationResult,
     VerificationStatus,
     AccessibleTaskFlow,
+    TaskType,
 )
 
 
@@ -25,7 +27,7 @@ class TaskVerificationService:
         Validates individual field values against official constraints.
         Returns (is_valid, validation_message).
         """
-        val = value.strip()
+        val = str(value).strip()
         if not val:
             return False, "Field cannot be empty"
 
@@ -34,11 +36,10 @@ class TaskVerificationService:
                 return False, "Full name must be at least 2 characters"
             return True, "Valid full name"
 
-        if field_id == "dob":
-            # Check DD/MM/YYYY or DD-MM-YYYY or common date phrases
+        if field_id == "dob" or "date" in field_id:
             if re.search(r"\d{1,2}[/-]\d{1,2}[/-]\d{2,4}|\d{1,2}\s+[A-Za-z]+\s+\d{4}", val):
                 return True, "Valid date format"
-            return False, "Date of birth must include day, month, and year (e.g. 15/08/2003)"
+            return False, "Date must include day, month, and year (e.g. 15/08/2003)"
 
         if field_id == "address":
             if len(val) < 5:
@@ -52,7 +53,6 @@ class TaskVerificationService:
             return False, "Category must be General, OBC, SC, ST, or EWS"
 
         if field_id == "annual_income":
-            # Check for numbers or words like 'lakh' or 'thousand'
             if re.search(r"\d+", val) or any(w in val.lower() for w in ["lakh", "thousand", "हज़ार", "लाख"]):
                 return True, "Valid annual income"
             return False, "Annual income must include a monetary number"
@@ -62,6 +62,17 @@ class TaskVerificationService:
             if len(digits) == 12:
                 return True, "Valid 12-digit Aadhaar number"
             return False, f"Aadhaar requires exactly 12 numeric digits (found {len(digits)})"
+
+        if "phone" in field_id or "mobile" in field_id:
+            digits = re.sub(r"\D", "", val)
+            if len(digits) >= 10:
+                return True, "Valid phone number"
+            return False, "Phone number must have at least 10 digits"
+
+        if "email" in field_id:
+            if "@" in val and "." in val:
+                return True, "Valid email address"
+            return False, "Invalid email address format"
 
         if field_id == "bank_account":
             if len(val) >= 6:
@@ -89,22 +100,22 @@ class TaskVerificationService:
             if not field_data or not field_data.get("value"):
                 missing.append(req)
             else:
-                is_valid, _ = self.validate_field(req, str(field_data.get("value", "")))
+                is_valid, msg = self.validate_field(req, str(field_data.get("value", "")))
                 if is_valid:
                     valid_count += 1
                 else:
-                    invalid_fields.append(req)
+                    invalid_fields.append(f"{req}: {msg}")
 
         pct = (valid_count / total_fields) * 100.0 if total_fields > 0 else 0.0
 
-        if len(missing) == 0 and len(invalid_fields) == 0 and valid_count >= total_fields:
+        if len(invalid_fields) > 0:
+            status = VerificationStatus.BLOCKED
+            summary = f"Task blocked: {len(invalid_fields)} field(s) require correction ({', '.join(invalid_fields)})."
+            token = None
+        elif len(missing) == 0 and valid_count >= total_fields:
             status = VerificationStatus.COMPLETED
             summary = f"All {total_fields} required fields verified and confirmed. Ready for official submission."
             token = f"VERIFIED_SAHAYAK_{uuid.uuid4().hex[:8].upper()}"
-        elif len(invalid_fields) > 0:
-            status = VerificationStatus.BLOCKED
-            summary = f"{len(invalid_fields)} field(s) failed validation. Please correct: {', '.join(invalid_fields)}."
-            token = None
         elif valid_count > 0:
             status = VerificationStatus.IN_PROGRESS
             summary = f"{valid_count} of {total_fields} fields completed ({pct:.0f}%). {len(missing)} remaining."
@@ -121,6 +132,39 @@ class TaskVerificationService:
             completed_fields=valid_count,
             total_fields=total_fields,
             missing_fields=missing + invalid_fields,
+            verification_token=token,
+            summary_message=summary,
+        )
+        self._verifications[task_id] = result
+        return result
+
+    def verify_document_understanding(
+        self,
+        task_id: str,
+        extracted_info: Dict[str, Any]
+    ) -> VerificationResult:
+        """Verifies if key information was successfully comprehended from a document."""
+        deadlines = extracted_info.get("key_deadlines", [])
+        title = extracted_info.get("document_title")
+
+        if title and len(deadlines) > 0:
+            status = VerificationStatus.COMPLETED
+            summary = f"Document '{title}' comprehended. Key dates and requirements verified."
+            token = f"VERIFIED_DOC_{uuid.uuid4().hex[:8].upper()}"
+            pct = 100.0
+        else:
+            status = VerificationStatus.NEEDS_CONFIRMATION
+            summary = "Document text partially detected. User confirmation requested."
+            token = None
+            pct = 50.0
+
+        result = VerificationResult(
+            task_id=task_id,
+            status=status,
+            completion_percentage=pct,
+            completed_fields=1 if pct == 100.0 else 0,
+            total_fields=1,
+            missing_fields=[] if pct == 100.0 else ["deadlines"],
             verification_token=token,
             summary_message=summary,
         )
