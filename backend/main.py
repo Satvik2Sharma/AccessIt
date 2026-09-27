@@ -1,38 +1,55 @@
 """
-Sahayak AI — FastAPI Application Core
-Orchestrates the 7-stage Intent-Aware Accessibility Pipeline.
+Sahayak AI — FastAPI Orchestrator Core
+Coordinates the 7-stage Intent-Aware Accessibility Pipeline across:
+- Accessibility Twin
+- Intent Engine
+- Barrier Engine & Compiler
+- Real OCR Form & Document Understanding
+- ISL Sign Language Interpreter
+- Spatial Vision & 12-Hour Clock Direction
+- Scene Understanding & Object + OCR Fusion
+- Voice Assistant & TTS Contracts
+- Smart Navigation & Obstacle Guidance
+- Multimodal Assistance, Verification & Telemetry Learning
 """
 
 import sys
 import os
+import logging
+from typing import Optional, Dict, Any
 
 # Ensure project root is in python path
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
-from typing import Optional, Dict, Any, List
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Query
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from backend.config import settings
 from shared.schemas.models import (
     AccessibilityTwin,
-    TaskType,
-    AccessibleTaskFlow,
-    VerificationResult,
-    VerificationStatus,
-    InteractionHeatmapItem,
+    PipelineStage,
+    RecoveryStatus,
+    RecoveryResult,
 )
-from ai.accessibility.twin import AccessibilityTwinService
-from ai.intent.intent_engine import IntentEngine
-from ai.barrier.barrier_engine import BarrierEngine
-from ai.task.task_engine import TaskEngine
-from ai.compiler.flow_compiler import AccessibleTaskFlowCompiler
-from ai.assistance.assistance_engine import AccessibilityAssistanceEngine
-from ai.verification.verification_service import TaskVerificationService
-from ai.learning.learning_service import AccessibilityLearningService
+from backend.services.pipeline_service import pipeline_service
+
+# Routers
+from backend.routes.complete import router as complete_router
+from backend.routes.read import router as read_router
+from backend.routes.isl import router as isl_router
+from backend.routes.see import router as see_router
+from backend.routes.voice import router as voice_router
+from backend.routes.scene import router as scene_router
+from backend.routes.assistance import router as assistance_router
+from backend.routes.navigation import router as navigation_router
+from backend.routes.verification import router as verification_router
+from backend.routes.learning import router as learning_router
+
+logger = logging.getLogger("sahayak.api")
 
 # Initialize FastAPI application
 app = FastAPI(
@@ -50,15 +67,25 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize Core AI Engines
-twin_service = AccessibilityTwinService()
-intent_engine = IntentEngine()
-barrier_engine = BarrierEngine()
-task_engine = TaskEngine()
-flow_compiler = AccessibleTaskFlowCompiler()
-assistance_engine = AccessibilityAssistanceEngine()
-verification_service = TaskVerificationService()
-learning_service = AccessibilityLearningService()
+
+# Global Exception Handler with Structured Recovery Result
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    logger.error(f"Unhandled exception on {request.url}: {exc}", exc_info=True)
+    recovery = pipeline_service.build_recovery_result(
+        stage=PipelineStage.UNKNOWN,
+        error_message=str(exc),
+        fallback_used=True,
+        strategy="GLOBAL_SAFE_RECOVERY",
+    )
+    return JSONResponse(
+        status_code=500,
+        content={
+            "error": "Internal Pipeline Recoverable Error",
+            "detail": str(exc),
+            "recovery": recovery.dict(),
+        },
+    )
 
 
 # ----------------------------------------------------
@@ -90,26 +117,32 @@ async def health_check():
             "assistance_engine": True,
             "verification_service": True,
             "learning_service": True,
+            "spatial_vision": True,
+            "scene_fusion": True,
+            "voice_assistant": True,
+            "smart_navigation": True,
+            "document_qa": True,
+            "session_service": True,
         },
     }
 
 
 # ----------------------------------------------------
-# 2. Accessibility Twin
+# 2. Accessibility Twin Profile Endpoints
 # ----------------------------------------------------
 
 @app.get(f"{settings.api_prefix}/accessibility/profile", response_model=AccessibilityTwin)
 async def get_profile(twin_id: str = "default_user"):
-    return twin_service.get_twin(twin_id)
+    return pipeline_service.twin_service.get_twin(twin_id)
 
 
 @app.post(f"{settings.api_prefix}/accessibility/profile", response_model=AccessibilityTwin)
 async def update_profile(twin: AccessibilityTwin):
-    return twin_service.update_twin(twin)
+    return pipeline_service.twin_service.update_twin(twin)
 
 
 # ----------------------------------------------------
-# 3. Intent Engine
+# 3. Intent Engine Endpoint
 # ----------------------------------------------------
 
 class IntentRequest(BaseModel):
@@ -119,8 +152,8 @@ class IntentRequest(BaseModel):
 
 @app.post(f"{settings.api_prefix}/intent")
 async def classify_intent(request: IntentRequest):
-    twin = twin_service.get_twin(request.twin_id)
-    task_type, confidence, rationale = intent_engine.classify_intent(request.query, twin)
+    twin = pipeline_service.twin_service.get_twin(request.twin_id)
+    task_type, confidence, rationale = pipeline_service.intent_engine.classify_intent(request.query, twin)
     return {
         "query": request.query,
         "intent": task_type.value,
@@ -131,200 +164,18 @@ async def classify_intent(request: IntentRequest):
 
 
 # ----------------------------------------------------
-# 4. Form Completion Pipeline (Main Demo 2)
+# Register Modular Domain Routers
 # ----------------------------------------------------
-
-class FormRespondRequest(BaseModel):
-    task_id: str
-    field_id: str
-    value: str
-    confirmation_received: bool = True
-    twin_id: Optional[str] = "default_user"
-
-
-@app.post(f"{settings.api_prefix}/complete/analyze", response_model=AccessibleTaskFlow)
-async def analyze_form_for_completion(
-    image: Optional[UploadFile] = File(None),
-    twin_id: str = Form("default_user"),
-):
-    """
-    Analyzes form document with REAL OCR, detects barriers against user's Accessibility Twin,
-    and compiles a personalized AccessibleTaskFlow.
-    """
-    twin = twin_service.get_twin(twin_id)
-    task_id = task_engine.create_form_task(total_fields=7)
-
-    # Process Real OCR on uploaded image (or demo form fallback on disk)
-    image_bytes = await image.read() if image else None
-    discovered_fields = assistance_engine.ocr_engine.extract_form_fields(image_bytes)
-
-    # Detect Barriers
-    barriers = barrier_engine.detect_barriers(
-        task_type=TaskType.FORM_COMPLETION,
-        task_context={"total_fields": len(discovered_fields) or 7, "document_type": "physical_form"},
-        twin=twin,
-    )
-
-    # Compile Accessible Flow
-    flow = flow_compiler.compile_form_flow(
-        task_id=task_id,
-        twin=twin,
-        barriers=barriers,
-    )
-
-    # Initialize verification state
-    verification_service.verify_form_task(
-        task_id=task_id,
-        total_fields=flow.total_steps,
-        completed_fields={},
-        required_field_ids=[s.field_id for s in flow.steps],
-    )
-
-    return flow
-
-
-@app.post(f"{settings.api_prefix}/complete/respond")
-async def submit_form_field_response(req: FormRespondRequest):
-    """
-    Submits user answer (voice/text), validates input constraints, updates state, and advances.
-    """
-    twin = twin_service.get_twin(req.twin_id)
-
-    # 1. Semantic Field Validation
-    is_valid, validation_msg = verification_service.validate_field(req.field_id, req.value)
-    if not is_valid:
-        current_task = task_engine.get_task(req.task_id) or {"completed_fields": 0, "total_fields": 7, "fields": {}}
-        ver = verification_service.get_verification(req.task_id)
-        return {
-            "task_id": req.task_id,
-            "field_completed": req.field_id,
-            "is_valid": False,
-            "validation_error": validation_msg,
-            "completed_fields_count": current_task["completed_fields"],
-            "total_fields": current_task["total_fields"],
-            "verification": ver,
-            "next_step": None,
-            "is_complete": False,
-        }
-
-    # 2. Update Task State
-    task = task_engine.update_field(
-        task_id=req.task_id,
-        field_id=req.field_id,
-        value=req.value,
-        confirmed=req.confirmation_received,
-    )
-
-    # 3. Record Learning Telemetry
-    learning_service.record_interaction(
-        step_id=req.field_id,
-        modality_used="voice" if twin.motor.voice_input else "touch",
-        duration_seconds=3.2,
-        retries=0,
-        success=True,
-    )
-
-    # 4. Run First-Class Verification
-    required_ids = ["full_name", "dob", "address", "category", "annual_income", "aadhaar", "bank_account"]
-    ver_result = verification_service.verify_form_task(
-        task_id=req.task_id,
-        total_fields=len(required_ids),
-        completed_fields=task["fields"],
-        required_field_ids=required_ids,
-    )
-
-    # 5. Find Next Step
-    completed_keys = set(task["fields"].keys())
-    next_step = None
-    flow = flow_compiler.compile_form_flow(req.task_id, twin, [])
-    for step in flow.steps:
-        if step.field_id not in completed_keys:
-            next_step = step
-            break
-
-    return {
-        "task_id": req.task_id,
-        "completed_field": req.field_id,
-        "is_valid": True,
-        "validation_message": validation_msg,
-        "completed_fields_count": task["completed_fields"],
-        "total_fields": task["total_fields"],
-        "verification": ver_result,
-        "next_step": next_step,
-        "is_complete": ver_result.status == VerificationStatus.COMPLETED,
-    }
-
-
-# ----------------------------------------------------
-# 5. Document Understanding Pipeline (Demo 1)
-# ----------------------------------------------------
-
-@app.post(f"{settings.api_prefix}/read")
-async def read_and_understand_document(
-    image: Optional[UploadFile] = File(None),
-    query: str = Form("What is important in this notice?"),
-    twin_id: str = Form("default_user"),
-):
-    twin = twin_service.get_twin(twin_id)
-    image_bytes = await image.read() if image else None
-
-    # Detect barriers
-    barriers = barrier_engine.detect_barriers(
-        task_type=TaskType.UNDERSTAND_DOCUMENT,
-        task_context={"document_language": "English"},
-        twin=twin,
-    )
-
-    # Assist
-    result = assistance_engine.assist_understand_document(image_bytes, query, twin)
-    result["barriers_detected"] = barriers
-    return result
-
-
-# ----------------------------------------------------
-# 6. Sign Communication Pipeline (Demo 3)
-# ----------------------------------------------------
-
-@app.post(f"{settings.api_prefix}/isl/predict")
-async def predict_sign_language(
-    image: Optional[UploadFile] = File(None),
-    twin_id: str = Form("default_user"),
-):
-    twin = twin_service.get_twin(twin_id)
-    image_bytes = await image.read() if image else None
-    return assistance_engine.assist_sign_communication(image_bytes, twin)
-
-
-# ----------------------------------------------------
-# 7. Object Finding / Directional Guidance (Optional Wow Demo)
-# ----------------------------------------------------
-
-@app.post(f"{settings.api_prefix}/see")
-async def see_and_find_object(
-    target_object: str = Form("bottle"),
-    twin_id: str = Form("default_user"),
-):
-    twin = twin_service.get_twin(twin_id)
-    return assistance_engine.assist_find_object(target_object, twin)
-
-
-# ----------------------------------------------------
-# 8. Verification & Learning Heatmap Endpoints
-# ----------------------------------------------------
-
-@app.post(f"{settings.api_prefix}/task/verify", response_model=VerificationResult)
-async def verify_task_status(task_id: str = Query(...)):
-    return verification_service.get_verification(task_id)
-
-
-@app.get(f"{settings.api_prefix}/learning/heatmap")
-async def get_heatmap():
-    heatmap = learning_service.get_interaction_heatmap()
-    recommendation = learning_service.get_personalization_recommendation()
-    return {
-        "heatmap": heatmap,
-        "recommendation": recommendation,
-    }
+app.include_router(complete_router, prefix=settings.api_prefix)
+app.include_router(read_router, prefix=settings.api_prefix)
+app.include_router(isl_router, prefix=settings.api_prefix)
+app.include_router(see_router, prefix=settings.api_prefix)
+app.include_router(voice_router, prefix=settings.api_prefix)
+app.include_router(scene_router, prefix=settings.api_prefix)
+app.include_router(assistance_router, prefix=settings.api_prefix)
+app.include_router(navigation_router, prefix=settings.api_prefix)
+app.include_router(verification_router, prefix=settings.api_prefix)
+app.include_router(learning_router, prefix=settings.api_prefix)
 
 
 if __name__ == "__main__":

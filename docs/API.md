@@ -1,218 +1,144 @@
-# Sahayak AI — REST & WebSocket API Specification
+# Sahayak AI — Complete REST API Specification
 
-**API Engine**: FastAPI Asynchronous Core  
 **Base URL**: `/api/v1`  
-**Data Exchange**: Normalized JSON & Multipart Image Streams
+**Data Exchange**: Normalized JSON & Multipart Image Streams  
+**Architecture**: FastAPI 7-Stage Intent-Aware Accessibility Orchestrator
 
 ---
 
-## 1. System Endpoints
+## Complete API Endpoint Directory (22 Endpoints)
 
-### `GET /api/v1/health`
-Health check endpoint reporting orchestrator status and loaded model states.
-* **Response (200 OK)**:
-```json
-{
-  "status": "healthy",
-  "version": "1.0.0",
-  "system": "Sahayak AI Orchestrator",
-  "engines": {
-    "intent": true,
-    "barrier": true,
-    "compiler": true,
-    "verification": true,
-    "learning": true,
-    "vision": "ready (heuristic/YOLO)",
-    "ocr": "ready (EasyOCR/Tesseract)",
-    "isl": "ready (MediaPipe)"
-  }
-}
-```
+| Category | Method | Path | Status | Purpose |
+| :--- | :--- | :--- | :--- | :--- |
+| **System** | `GET` | `/health` | `IMPLEMENTED` | Orchestrator health & engine readiness |
+| **Profile** | `GET` | `/accessibility/profile` | `IMPLEMENTED` | Fetch user's Accessibility Twin |
+| **Profile** | `POST` | `/accessibility/profile` | `IMPLEMENTED` | Update Accessibility Twin preferences |
+| **Intent** | `POST` | `/intent` | `IMPLEMENTED` | Multilingual intent classification |
+| **Form** | `POST` | `/complete/analyze` | `IMPLEMENTED` | Real OCR form scan & flow compilation |
+| **Form** | `POST` | `/complete/respond` | `IMPLEMENTED` | Submit field response with validation |
+| **Document** | `POST` | `/read` | `IMPLEMENTED` | OCR document notice extraction |
+| **Document** | `POST` | `/read/qa` | `IMPLEMENTED` | Multi-turn Document Q&A |
+| **Document** | `POST` | `/read/tasks` | `IMPLEMENTED` | Convert document info into actionable tasks |
+| **ISL** | `POST` | `/isl/predict` | `IMPLEMENTED` | ISL gesture classification & spoken output |
+| **Vision** | `POST` | `/see` | `IMPLEMENTED` | Object finder & directional guidance |
+| **Vision** | `POST` | `/see/spatial` | `IMPLEMENTED` | 12-hour clock spatial guidance & proximity |
+| **Scene** | `POST` | `/scene/analyze` | `IMPLEMENTED` | Comprehensive scene understanding |
+| **Scene** | `POST` | `/scene/fusion` | `IMPLEMENTED` | Fuses detected objects with OCR signage |
+| **Voice** | `POST` | `/voice/command` | `IMPLEMENTED` | Voice command parsing & multimodal response |
+| **Voice** | `POST` | `/voice/tts` | `INTERFACE/CONTRACT ONLY` | TTS audio SSML contract |
+| **Assistance**| `POST` | `/assistance/multimodal` | `IMPLEMENTED` | Unified voice + visual + haptic guidance |
+| **Navigation**| `POST` | `/navigation/guide` | `IMPLEMENTED` | Step-by-step navigation & obstacle alert |
+| **Navigation**| `GET` | `/navigation/session` | `IMPLEMENTED` | Navigation session state & obstacle history |
+| **Verification**| `POST` | `/task/verify` | `IMPLEMENTED` | Task verification status & certificate token |
+| **Verification**| `POST` | `/verification/check` | `IMPLEMENTED` | Detailed multi-field schema verification |
+| **Learning** | `GET` | `/learning/heatmap` | `IMPLEMENTED` | Interaction friction heatmap & telemetry |
+| **Learning** | `GET` | `/learning/personalization` | `IMPLEMENTED` | Fetch personalization settings |
+| **Learning** | `POST` | `/learning/personalization` | `IMPLEMENTED` | Update personalization settings |
 
 ---
 
-## 2. Intent & Pipeline Endpoints
+## Detailed Endpoints & Payloads
 
-### `POST /api/v1/intent`
-Classifies raw user query into task intent and identifies initial parameters.
+### 1. Document Q&A (`POST /api/v1/read/qa`)
 * **Request**:
 ```json
 {
-  "query": "Help me fill this scholarship form",
-  "twin": {
-    "language": "Hindi",
-    "visual": { "large_text": true }
-  }
+  "document_id": "doc_842a19c0",
+  "question": "What is the application deadline?",
+  "twin_id": "default_user",
+  "language": "English"
 }
 ```
 * **Response (200 OK)**:
 ```json
 {
-  "intent": "FORM_COMPLETION",
-  "confidence": 0.95,
-  "suggested_pipeline_stage": "DETECT_BARRIERS",
-  "task_summary": "Guide user step-by-step through form completion"
-}
-```
-
----
-
-## 3. Core Task Workflows
-
-### `POST /api/v1/complete/analyze`
-Extracts fields from a form image, performs barrier analysis, and compiles the first step of an `AccessibleTaskFlow`.
-* **Request**: Multipart Form Data
-  * `image`: Binary file (form image / camera frame)
-  * `twin_json`: JSON string of `AccessibilityTwin`
-* **Response (200 OK)**:
-```json
-{
-  "task_id": "task_form_84712",
-  "task_type": "FORM_COMPLETION",
-  "total_fields": 7,
-  "barriers_detected": [
-    {
-      "category": "VISUAL",
-      "severity": "HIGH",
-      "description": "Dense multi-column layout with 9pt font size"
-    },
-    {
-      "category": "MOTOR",
-      "severity": "MEDIUM",
-      "description": "Requires manual handwriting or precise capacitive typing"
-    }
-  ],
-  "accessible_flow": {
-    "strategy": "ONE_STEP_AT_A_TIME_VOICE",
-    "total_steps": 7,
-    "current_step_index": 0,
-    "current_step": {
-      "field_id": "full_name",
-      "label": "Full Name",
-      "spoken_prompt": "आपकी फ़ॉर्म में 7 ज़रूरी जानकारियां हैं। पहला सवाल: आपका पूरा नाम क्या है?",
-      "display_prompt": "चरण 1/7: अपना पूरा नाम बताएं",
-      "input_type": "VOICE_OR_TEXT",
-      "is_required": true
-    }
-  }
-}
-```
-
-### `POST /api/v1/complete/respond`
-Submits an answer to the current step, validates input, updates verification state, and returns the next step.
-* **Request**:
-```json
-{
-  "task_id": "task_form_84712",
-  "field_id": "full_name",
-  "value": "Satvik Sharma",
-  "confirmation_received": true
-}
-```
-* **Response (200 OK)**:
-```json
-{
-  "task_id": "task_form_84712",
-  "field_completed": "full_name",
-  "fields_remaining": 6,
-  "verification_status": "IN_PROGRESS",
-  "completion_percentage": 14.3,
-  "next_step": {
-    "field_id": "dob",
-    "label": "Date of Birth",
-    "spoken_prompt": "धन्यवाद सात्विक। आपकी जन्मतिथि क्या है?",
-    "display_prompt": "चरण 2/7: जन्मतिथि बताएं (दिन, महीना, साल)",
-    "input_type": "VOICE_OR_TEXT"
-  }
-}
-```
-
----
-
-## 4. Document & Scene Understanding
-
-### `POST /api/v1/read`
-Analyzes a document image, detects deadlines, certificates required, and produces a simplified summary.
-* **Request**: Multipart Form Data (`image`, `query`, `twin_json`)
-* **Response (200 OK)**:
-```json
-{
-  "document_title": "National Merit Scholarship Notice 2026",
-  "key_deadlines": ["September 30, 2026"],
-  "required_documents": ["Income Certificate", "Aadhaar Card", "Class 10 Marksheet"],
-  "simplified_summary": "यह छात्रवृत्ति सूचना है। अंतिम तिथि 30 सितंबर है। आपको आय प्रमाण पत्र और आधार कार्ड की आवश्यकता होगी।",
-  "audio_summary_url": "/api/v1/speech/synthesize?id=notice_sum_01"
-}
-```
-
-### `POST /api/v1/see`
-Performs object detection, scene fusion, and directional spatial guidance.
-* **Request**: Multipart Form Data (`image`, `target_object` [optional])
-* **Response (200 OK)**:
-```json
-{
-  "scene_summary": "A table with a water bottle on the right and paperwork in the center.",
-  "objects": [
-    {
-      "label": "bottle",
-      "confidence": 0.92,
-      "relative_position": "slightly to your right",
-      "distance_estimate": "near",
-      "bbox": [280, 150, 420, 600]
-    }
-  ],
-  "haptic_cue": "PULSE_RIGHT"
-}
-```
-
----
-
-## 5. Indian Sign Language (ISL) Recognition
-
-### `POST /api/v1/isl/predict`
-Takes an image frame or landmark tensor, extracts hand coordinates via MediaPipe, and classifies static/dynamic sign.
-* **Request**: Multipart image or JSON landmark sequence
-* **Response (200 OK)**:
-```json
-{
-  "sign_detected": "HELP",
+  "document_id": "doc_842a19c0",
+  "question": "What is the application deadline?",
+  "answer": "The application deadline is September 30, 2026.",
+  "spoken_answer": "The application deadline is September 30, 2026.",
+  "supporting_extracted_info": ["September 30, 2026"],
   "confidence": 0.94,
-  "sign_type": "DYNAMIC_EMERGENCY",
-  "spoken_output": "Help",
-  "haptic_feedback": "SUCCESS_DOUBLE_PULSE"
+  "source_section": "Key Deadlines",
+  "related_actions": ["Set Reminder for Deadline", "Prepare Aadhaar & Income Certificate"],
+  "language": "English",
+  "haptic_cue": "TOUCH_CONFIRM"
 }
 ```
 
----
-
-## 6. Verification & Learning
-
-### `POST /api/v1/task/verify`
-Evaluates complete state of an active task and returns an official verification status.
+### 2. Spatial Vision (`POST /api/v1/see/spatial`)
+* **Request**:
+```json
+{
+  "target_object": "water bottle",
+  "twin_id": "default_user",
+  "current_heading_degrees": 0.0
+}
+```
 * **Response (200 OK)**:
 ```json
 {
-  "task_id": "task_form_84712",
-  "status": "COMPLETED",
-  "completion_rate": 1.0,
-  "missing_fields": [],
-  "verification_token": "VERIFIED_SAHAYAK_9824",
-  "message": "All required fields completed and validated."
+  "label": "water bottle",
+  "relative_direction": "to your right",
+  "clock_hour": 4,
+  "clock_direction": "at 4 o'clock",
+  "elevation": "table/waist level",
+  "relative_proximity": "within arm's reach",
+  "spoken_guidance": "Your water bottle is at 4 o'clock, table/waist level, within arm's reach.",
+  "display_guidance": "Water bottle: at 4 o'clock | table/waist level (within arm's reach)",
+  "haptic_cue": "PULSE_RIGHT",
+  "haptic_intensity": "MEDIUM",
+  "normalized_coordinates": {"x": 0.7, "y": 0.56},
+  "area_ratio": 0.137,
+  "found": true
 }
 ```
 
-### `GET /api/v1/learning/heatmap`
-Returns local interaction complexity heatmap aggregated across user steps.
+### 3. Voice Assistant Command (`POST /api/v1/voice/command`)
+* **Request**:
+```json
+{
+  "transcript": "scholarship form bharna hai",
+  "twin_id": "default_user",
+  "active_session_id": null
+}
+```
 * **Response (200 OK)**:
 ```json
 {
-  "total_tasks_completed": 5,
-  "preferred_modality": "voice",
-  "complexity_heatmap": [
-    { "interaction": "document_upload", "complexity": "HIGH", "color": "RED", "avg_retries": 2.4 },
-    { "interaction": "address_input", "complexity": "MEDIUM", "color": "YELLOW", "avg_retries": 1.1 },
-    { "interaction": "name_input", "complexity": "LOW", "color": "GREEN", "avg_retries": 0.0 }
-  ],
-  "adaptation_recommendation": "Default to voice input and single-field auto-advance."
+  "transcript": "scholarship form bharna hai",
+  "detected_language": "hi",
+  "classified_intent": "FORM_COMPLETION",
+  "intent_confidence": 0.95,
+  "suggested_action": "START_FORM_COMPLETION",
+  "spoken_reply": "मैंने फ़ॉर्म भरने का इरादा पहचाना है। आइए चरण दर चरण फ़ॉर्म पूरा करते हैं।",
+  "display_reply": "मैंने फ़ॉर्म भरने का इरादा पहचाना है। आइए चरण दर चरण फ़ॉर्म पूरा करते हैं।",
+  "session_id": "voice_3a9f01bc",
+  "parameters": {"rationale": "High confidence pattern match for form filling in Hindi"},
+  "haptic_cue": "TOUCH_CONFIRM"
+}
+```
+
+### 4. Smart Navigation (`POST /api/v1/navigation/guide`)
+* **Request**:
+```json
+{
+  "session_id": null,
+  "target_destination": "exit",
+  "detected_labels": ["door", "clear path"],
+  "twin_id": "default_user"
+}
+```
+* **Response (200 OK)**:
+```json
+{
+  "session_id": "nav_40bc1829",
+  "direction": "Slightly to your left",
+  "clock_direction": "11 o'clock",
+  "instruction": "Exit door is 5 steps ahead at 11 o'clock. Clear path ahead.",
+  "spoken_guidance": "The exit door is ahead at 11 o'clock, about 5 steps away. Path is clear.",
+  "urgency": "NORMAL",
+  "obstacles_in_path": [],
+  "haptic_cue": "DOUBLE_PULSE_CENTER",
+  "is_destination_reached": false
 }
 ```

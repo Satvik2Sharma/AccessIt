@@ -170,3 +170,53 @@ class InteractionHeatmapItem(BaseModel):
     color: str  # GREEN, YELLOW, RED
     reason: str
     retry_count: int = 0
+
+
+# ----------------------------------------------------
+# Re-exports of specialized domain schemas
+# ----------------------------------------------------
+from shared.schemas.vision_models import (
+    VisionObject,
+    TextDetection,
+    ObjectTextRelation,
+    SceneAnalysis,
+    SpatialGuidanceRequest,
+    SpatialGuidanceResponse,
+)
+from shared.schemas.document_models import (
+    DocumentSummary,
+    DocumentQuestion,
+    DocumentAnswer,
+    DocumentTask,
+    DocumentTaskExtractionRequest,
+    DocumentTaskExtractionResponse,
+)
+from shared.schemas.form_models import (
+    FormFieldAnalysis,
+    FormRespondRequest,
+    FormRespondResponse,
+)
+from shared.schemas.isl_models import (
+    HandLandmark,
+    ISLPredictionRequest,
+    ISLPredictionResponse,
+)
+from shared.schemas.task_models import (
+    VoiceCommandRequest,
+    VoiceCommandResponse,
+    TTSRequest,
+    TTSResponse,
+    AssistancePriority,
+    AssistanceResponse,
+    MultimodalAssistanceRequest,
+    ObstacleType,
+    NavigationObstacle,
+    NavigationState,
+    NavigationGuidanceRequest,
+    NavigationGuidanceResponse,
+    PipelineStage,
+    RecoveryStatus,
+    RecoveryResult,
+    PersonalizationProfile,
+)
+
