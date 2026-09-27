@@ -2,387 +2,513 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<meta name="theme-color" content="#0a0e1a" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#2563eb" />
 <meta name="description" content="Sahayak AI — Intent-Aware Personal Accessibility Copilot" />
-<title>Sahayak AI (सहायक AI) — Accessibility Copilot</title>
+<title>Sahayak AI (सहायक AI) — Multipurpose Accessibility Copilot Platform</title>
 
-<!-- Typography: Plus Jakarta Sans & Inter -->
+<!-- Fonts: Plus Jakarta Sans & Inter -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-  /* ─── Restrained Premium Design System Tokens ─────────────── */
+  /* ─── Modern SaaS Landing Page Theme Tokens ───────────────── */
   :root {
-    --bg-dark: #0a0e1a;
-    --bg-screen: #f8fafc;
-    --surface-card: #ffffff;
-    --surface-subtle: #f1f5f9;
-    --border-light: #e2e8f0;
-    --border-subtle: #cbd5e1;
-    
-    --text-primary: #0f172a;
-    --text-secondary: #475569;
+    --primary-blue: #2563eb;
+    --primary-indigo: #4f46e5;
+    --primary-dark: #0f172a;
+    --bg-light: #f8fafc;
+    --bg-tint: #f0f7ff;
+    --surface-white: #ffffff;
+    --border-color: #e2e8f0;
+    --text-heading: #0f172a;
+    --text-body: #475569;
     --text-muted: #64748b;
-    
-    --brand-blue: #2563eb;
-    --brand-blue-dark: #1d4ed8;
-    --brand-blue-light: #eff6ff;
-    
     --accent-teal: #0d9488;
-    --accent-teal-light: #ccfbf1;
-    --accent-cyan: #0891b2;
-
-    --hc-yellow: #FFD700;
-    
-    --radius-sm: 10px;
-    --radius-md: 16px;
-    --radius-lg: 22px;
-    --radius-pill: 9999px;
-    
-    --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.04);
-    --shadow-md: 0 4px 16px -2px rgba(15, 23, 42, 0.06);
-    --shadow-lg: 0 12px 32px -4px rgba(15, 23, 42, 0.08);
+    --shadow-soft: 0 10px 30px -5px rgba(37,99,235,0.08);
+    --shadow-card: 0 4px 20px -2px rgba(15,23,42,0.06);
+    --shadow-hover: 0 20px 40px -10px rgba(37,99,235,0.18);
   }
 
-  /* ─── Reset & Core ────────────────────────────────────────── */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
-    background: var(--bg-dark); -webkit-tap-highlight-color: transparent; user-select: none; color: var(--text-primary);
-    -webkit-font-smoothing: antialiased; }
-  button { cursor: pointer; border: none; background: none; font-family: inherit; color: inherit; }
-  input, textarea { font-family: inherit; }
-  ::-webkit-scrollbar { display: none; }
+  html { scroll-behavior: smooth; font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; }
+  body { background: var(--bg-light); color: var(--text-body); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+  button { cursor: pointer; border: none; font-family: inherit; }
 
-  /* ─── Mobile Smartphone Device Mockup ─────────────────────── */
-  #root { display: flex; align-items: center; justify-content: center;
-    min-height: 100vh; padding: 20px; background: radial-gradient(circle at 50% 0%, #1e293b 0%, #0a0e1a 100%); }
+  /* ─── Global Top Navigation Bar ────────────────────────────── */
+  .header-nav { position: fixed; top: 0; left: 0; right: 0; height: 72px; background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-color); z-index: 1000;
+    display: flex; align-items: center; justify-content: space-between; padding: 0 5%; }
   
-  .phone-frame { position: relative; width: 100%; max-width: 400px;
-    height: min(870px, 96vh); background: #0f172a; border-radius: 48px;
-    padding: 10px; box-shadow: 0 30px 80px -15px rgba(0,0,0,0.85),
-      0 0 0 6px #1e293b, inset 0 0 0 1.5px rgba(255,255,255,0.1); }
-  
-  .phone-screen { width: 100%; height: 100%; border-radius: 40px; overflow: hidden;
-    display: flex; flex-direction: column; background: var(--bg-screen);
-    transition: background 0.25s ease, color 0.25s ease; position: relative; }
+  .brand-logo { display: flex; align-items: center; gap: 12px; font-weight: 900; font-size: 20px; color: var(--text-heading); }
+  .logo-mark { width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg, var(--primary-blue), var(--primary-indigo));
+    display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px; font-weight: 900;
+    box-shadow: 0 4px 14px rgba(37,99,235,0.35); }
 
-  /* ─── Device Camera Notch ─────────────────────────────────── */
+  .nav-links { display: flex; items-center; gap: 32px; list-style: none; font-weight: 700; font-size: 14px; color: var(--text-body); }
+  .nav-links a:hover { color: var(--primary-blue); }
+
+  .nav-actions { display: flex; align-items: center; gap: 12px; }
+  .btn-nav-primary { padding: 10px 22px; border-radius: 99px; background: var(--primary-blue); color: #fff;
+    font-weight: 800; font-size: 13px; box-shadow: 0 4px 14px rgba(37,99,235,0.3); transition: all 0.2s ease; }
+  .btn-nav-primary:hover { background: #1d4ed8; transform: translateY(-1px); }
+
+  /* ─── Hero Section with Wave Divider ─────────────────────── */
+  .hero-section { position: relative; padding: 140px 5% 100px;
+    background: linear-gradient(135deg, #1e1b4b 0%, #2563eb 60%, #0d9488 100%);
+    color: #fff; text-align: center; overflow: hidden; }
+
+  .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; border-radius: 99px;
+    background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); font-size: 12px; font-weight: 800;
+    margin-bottom: 24px; border: 1px solid rgba(255,255,255,0.25); text-transform: uppercase; letter-spacing: 0.05em; }
+
+  .hero-title { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; line-height: 1.15; letter-spacing: -0.03em;
+    max-width: 900px; margin: 0 auto 20px; }
+
+  .hero-subtitle { font-size: 1.15rem; color: rgba(255,255,255,0.85); max-width: 680px; margin: 0 auto 36px; font-weight: 500; }
+
+  .hero-cta-group { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
+  
+  .btn-hero-primary { padding: 16px 36px; border-radius: 99px; background: #fff; color: var(--primary-blue);
+    font-size: 15px; font-weight: 800; box-shadow: 0 10px 30px rgba(0,0,0,0.25); transition: all 0.2s ease; }
+  .btn-hero-primary:hover { transform: translateY(-2px); box-shadow: 0 15px 40px rgba(0,0,0,0.3); }
+  
+  .btn-hero-secondary { padding: 16px 32px; border-radius: 99px; background: rgba(255,255,255,0.12); color: #fff;
+    font-size: 15px; font-weight: 700; border: 1px solid rgba(255,255,255,0.3); backdrop-filter: blur(10px); transition: all 0.2s ease; }
+  .btn-hero-secondary:hover { background: rgba(255,255,255,0.2); }
+
+  /* Wave Curve Divider */
+  .hero-wave { position: absolute; bottom: -1px; left: 0; right: 0; width: 100%; height: 60px; fill: var(--bg-light); }
+
+  /* ─── Stats Banner ────────────────────────────────────────── */
+  .stats-banner { max-width: 1100px; margin: -40px auto 60px; position: relative; z-index: 20;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; padding: 0 20px; }
+
+  .stat-card { background: var(--surface-white); border: 1px solid var(--border-color); border-radius: 20px;
+    padding: 24px; text-align: center; box-shadow: var(--shadow-card); }
+  .stat-number { font-size: 2.2rem; font-weight: 900; color: var(--primary-blue); line-height: 1; margin-bottom: 6px; }
+  .stat-label { font-size: 13px; font-weight: 700; color: var(--text-muted); }
+
+  /* ─── Interactive Live App Showcase Section ──────────────── */
+  .showcase-section { max-width: 1200px; margin: 0 auto 80px; padding: 0 20px; text-align: center; }
+  .section-tag { font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.08em; color: var(--primary-blue); margin-bottom: 8px; }
+  .section-heading { font-size: 2.2rem; font-weight: 900; color: var(--text-heading); margin-bottom: 12px; letter-spacing: -0.02em; }
+  .section-desc { font-size: 1.05rem; color: var(--text-body); max-width: 620px; margin: 0 auto 40px; }
+
+  /* Integrated Mobile Interactive Frame */
+  .app-preview-container { display: flex; justify-content: center; align-items: center; padding: 20px 0; }
+  
+  /* Smartphone Container */
+  .phone-frame { position: relative; width: 100%; max-width: 410px;
+    height: 840px; background: #0f172a; border-radius: 48px;
+    padding: 10px; box-shadow: 0 25px 60px -10px rgba(15,23,42,0.4), 0 0 0 8px #1e293b; text-align: left; }
+  
+  .phone-screen { width: 100%; height: 100%; border-radius: 38px; overflow: hidden;
+    display: flex; flex-direction: column; background: #f8fafc; position: relative; }
+
   .phone-pill { position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
-    width: 116px; height: 26px; background: #000; border-radius: 16px; z-index: 40;
-    display: flex; align-items: center; justify-content: flex-end; padding-right: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.5); }
-  .phone-pill-dot { width: 8px; height: 8px; border-radius: 50%; background: #0f172a;
-    box-shadow: inset 0 0 0 2px #1e293b; }
+    width: 112px; height: 24px; background: #000; border-radius: 16px; z-index: 40;
+    display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; }
+  .phone-pill-dot { width: 8px; height: 8px; border-radius: 50%; background: #0f172a; box-shadow: inset 0 0 0 2px #1e293b; }
 
-  /* ─── High Contrast Mode (WCAG AAA) ───────────────────────── */
-  .hc .phone-screen { background: #000 !important; color: var(--hc-yellow) !important; }
-  .hc .top-bar { background: #000 !important; border-bottom: 2px solid var(--hc-yellow) !important; }
-  .hc .status-bar { color: var(--hc-yellow) !important; }
-  .hc .bottom-nav { background: #000 !important; border-top: 2px solid var(--hc-yellow) !important; }
-  .hc .nav-btn { color: var(--hc-yellow) !important; opacity: 0.65; }
-  .hc .nav-btn.active { background: var(--hc-yellow) !important; color: #000 !important; opacity: 1; font-weight: 900; }
-  .hc .card, .hc .section-card, .hc .action-card { background: #111 !important; border: 2px solid var(--hc-yellow) !important; box-shadow: none !important; color: var(--hc-yellow) !important; }
-  .hc .screen-body { color: var(--hc-yellow) !important; }
-  .hc .chip { background: var(--hc-yellow) !important; color: #000 !important; border-color: #000 !important; font-weight: 900; }
-  .hc .btn-primary { background: var(--hc-yellow) !important; color: #000 !important; font-weight: 900; box-shadow: none !important; }
-  .hc .btn-ghost { border: 2px solid var(--hc-yellow) !important; color: var(--hc-yellow) !important; }
-  .hc input, .hc textarea { background: #000 !important; border: 2px solid var(--hc-yellow) !important; color: var(--hc-yellow) !important; }
-  .hc .badge { background: var(--hc-yellow) !important; color: #000 !important; font-weight: 900; }
-  .hc .infobox { background: #111 !important; border: 2px solid var(--hc-yellow) !important; color: var(--hc-yellow) !important; }
-  .hc .voice-btn { background: var(--hc-yellow) !important; color: #000 !important; box-shadow: 0 0 0 12px rgba(255,215,0,0.2) !important; }
-  .hc .action-title, .hc .action-sub, .hc h1, .hc h2, .hc h3, .hc h4 { color: var(--hc-yellow) !important; }
+  /* High Contrast inside Phone */
+  .hc .phone-screen { background: #000 !important; color: #FFD700 !important; }
+  .hc .top-bar { background: #000 !important; border-bottom: 2px solid #FFD700 !important; }
+  .hc .status-bar { color: #FFD700 !important; }
+  .hc .bottom-nav { background: #000 !important; border-top: 2px solid #FFD700 !important; }
+  .hc .nav-btn { color: #FFD700 !important; opacity: 0.7; }
+  .hc .nav-btn.active { background: #FFD700 !important; color: #000 !important; opacity: 1; font-weight: 900; }
+  .hc .card, .hc .section-card, .hc .action-card { background: #111 !important; border: 2px solid #FFD700 !important; box-shadow: none !important; color: #FFD700 !important; }
+  .hc .screen-body { color: #FFD700 !important; }
+  .hc .chip { background: #FFD700 !important; color: #000 !important; border-color: #000 !important; font-weight: 900; }
+  .hc .btn-primary { background: #FFD700 !important; color: #000 !important; font-weight: 900; }
+  .hc .btn-ghost { border: 2px solid #FFD700 !important; color: #FFD700 !important; }
+  .hc input, .hc textarea { background: #000 !important; border: 2px solid #FFD700 !important; color: #FFD700 !important; }
+  .hc .badge { background: #FFD700 !important; color: #000 !important; font-weight: 900; }
+  .hc .infobox { background: #111 !important; border: 2px solid #FFD700 !important; color: #FFD700 !important; }
+  .hc .voice-btn { background: #FFD700 !important; color: #000 !important; }
+  .hc .action-title, .hc .action-sub, .hc h1, .hc h2, .hc h3, .hc h4 { color: #FFD700 !important; }
 
-  /* ─── Large Text Mode ─────────────────────────────────────── */
   .lg .screen-body, .lg button, .lg input { font-size: 1.12rem !important; }
-  .lg h1 { font-size: 1.95rem !important; }
-  .lg h2 { font-size: 1.5rem !important; }
-  .lg h3 { font-size: 1.3rem !important; }
 
-  /* ─── Top Bar ─────────────────────────────────────────────── */
-  .top-bar { flex-shrink: 0; background: rgba(255, 255, 255, 0.94);
-    border-bottom: 1px solid var(--border-light); backdrop-filter: blur(12px); position: relative; z-index: 30; }
+  /* ─── Phone App Header ────────────────────────────────────── */
+  .top-bar { flex-shrink: 0; background: rgba(255, 255, 255, 0.95);
+    border-bottom: 1px solid #e2e8f0; backdrop-filter: blur(12px); position: relative; z-index: 30; }
   .status-bar { display: flex; justify-content: space-between; align-items: center;
-    padding: 14px 18px 2px; font-size: 11px; font-weight: 700; color: var(--text-muted); font-family: 'Inter', sans-serif; }
+    padding: 14px 18px 2px; font-size: 11px; font-weight: 700; color: #64748b; font-family: 'Inter', sans-serif; }
   .status-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
   .status-dot.online { background: #10b981; }
-  .status-dot.local { background: var(--brand-blue); animation: pulse 1.5s infinite; }
+  .status-dot.local { background: var(--primary-blue); animation: pulse 1.5s infinite; }
   
-  .app-bar { display: flex; align-items: center; justify-content: space-between; padding: 8px 14px 10px; }
-  .app-logo { display: flex; align-items: center; gap: 10px; }
-  .logo-icon { width: 34px; height: 34px; border-radius: var(--radius-sm);
-    background: var(--brand-blue); color: #fff;
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 900; font-size: 16px; box-shadow: 0 2px 8px rgba(37,99,235,0.25); }
-  .logo-text h1 { font-size: 15.5px; font-weight: 800; color: var(--text-primary); line-height: 1; letter-spacing: -0.02em; }
-  .logo-text span { font-size: 10px; color: var(--text-muted); font-weight: 600; }
+  .app-bar { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px 10px; }
+  .app-logo { display: flex; align-items: center; gap: 8px; }
+  .logo-icon { width: 34px; height: 34px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--primary-blue), var(--primary-indigo)); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 16px; box-shadow: 0 2px 8px rgba(37,99,235,0.25); }
+  .logo-text h1 { font-size: 15px; font-weight: 800; color: #0f172a; line-height: 1; letter-spacing: -0.02em; }
+  .logo-text span { font-size: 10px; color: #64748b; font-weight: 600; }
   
   .top-controls { display: flex; align-items: center; gap: 4px; }
-  .tc-btn { width: 34px; height: 34px; border-radius: var(--radius-sm); display: flex; align-items: center;
-    justify-content: center; font-size: 15px; color: var(--text-secondary); transition: all .15s ease;
-    background: var(--surface-subtle); border: 1px solid var(--border-light); }
+  .tc-btn { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center;
+    justify-content: center; font-size: 14px; color: #475569; transition: all .15s ease;
+    background: #f1f5f9; border: 1px solid #e2e8f0; }
   .tc-btn:active { transform: scale(.92); }
-  .tc-btn.active { background: var(--brand-blue-light); color: var(--brand-blue); border-color: #93c5fd; }
-  .tc-btn.hc-active { background: var(--hc-yellow); color: #000; border-color: var(--hc-yellow); font-weight: 900; }
-  .lang-btn { height: 30px; padding: 0 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);
-    font-size: 11px; font-weight: 700; color: var(--text-secondary); display: flex; align-items: center; gap: 4px;
-    background: #fff; box-shadow: var(--shadow-sm); }
+  .tc-btn.active { background: #dbeafe; color: var(--primary-blue); border-color: #93c5fd; }
+  .tc-btn.hc-active { background: #FFD700; color: #000; border-color: #FFD700; font-weight: 900; }
+  .lang-btn { height: 28px; padding: 0 8px; border-radius: 8px; border: 1px solid #cbd5e1;
+    font-size: 11px; font-weight: 700; color: #475569; display: flex; align-items: center; gap: 4px; background: #fff; }
 
-  /* ─── Screen Body ─────────────────────────────────────────── */
   .screen-body { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; position: relative; z-index: 10; }
 
-  /* ─── Bottom Navigation ───────────────────────────────────── */
+  /* ─── Phone App Navigation ────────────────────────────────── */
   .bottom-nav { flex-shrink: 0; background: rgba(255, 255, 255, 0.96);
-    border-top: 1px solid var(--border-light); backdrop-filter: blur(12px); padding: 6px 0 4px; z-index: 30; }
+    border-top: 1px solid #e2e8f0; backdrop-filter: blur(12px); padding: 5px 0 3px; z-index: 30; }
   .nav-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; padding: 0 4px; }
   .nav-btn { display: flex; flex-direction: column; align-items: center; justify-content: center;
-    padding: 5px 2px 4px; border-radius: var(--radius-sm); color: var(--text-muted); transition: all .15s ease; gap: 2px; }
-  .nav-btn.active { background: var(--brand-blue-light); color: var(--brand-blue); font-weight: 800; }
+    padding: 5px 2px 3px; border-radius: 10px; color: #64748b; transition: all .15s ease; gap: 1px; }
+  .nav-btn.active { background: #eff6ff; color: var(--primary-blue); font-weight: 800; }
   .nav-label { font-size: 9px; font-weight: 700; text-align: center; line-height: 1; }
-  .nav-home-bar { width: 96px; height: 4px; border-radius: 2px; background: var(--border-subtle);
-    margin: 6px auto 0; opacity: .7; }
+  .nav-home-bar { width: 96px; height: 4px; border-radius: 2px; background: #cbd5e1; margin: 4px auto 0; opacity: .7; }
 
-  /* ─── Clean Card & Component Primitives ───────────────────── */
-  .screen-pad { padding: 16px; display: flex; flex-direction: column; gap: 14px; min-height: 100%; }
-  .back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 12px;
-    font-weight: 700; color: var(--text-secondary); padding: 6px 12px; border-radius: var(--radius-sm); background: #fff;
-    border: 1px solid var(--border-light); box-shadow: var(--shadow-sm); }
+  /* ─── App Screen UI Primitives ────────────────────────────── */
+  .screen-pad { padding: 14px; display: flex; flex-direction: column; gap: 12px; min-height: 100%; }
+  .back-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 12px;
+    font-weight: 700; color: #475569; padding: 5px 10px; border-radius: 8px; background: #fff; border: 1px solid #e2e8f0; }
   .row-between { display: flex; align-items: center; justify-content: space-between; }
   
   .badge { display: inline-flex; align-items: center; padding: 3px 10px;
-    border-radius: var(--radius-pill); font-size: 10px; font-weight: 800; letter-spacing: .04em;
-    text-transform: uppercase; border: 1px solid transparent; }
-  .badge-blue { background: #dbeafe; color: #1e40af; border-color: #bfdbfe; }
-  .badge-green { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
-  .badge-amber { background: #fef3c7; color: #92400e; border-color: #fde68a; }
-  .badge-purple { background: #f3e8ff; color: #6b21a8; border-color: #e9d5ff; }
-  .badge-indigo { background: #e0e7ff; color: #3730a3; border-color: #c7d2fe; }
+    border-radius: 99px; font-size: 10px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+  .badge-blue { background: #dbeafe; color: #1e40af; }
+  .badge-green { background: #dcfce7; color: #166534; }
+  .badge-amber { background: #fef3c7; color: #92400e; }
+  .badge-purple { background: #f3e8ff; color: #6b21a8; }
+  .badge-indigo { background: #e0e7ff; color: #3730a3; }
   
-  .card { background: var(--surface-card); border: 1px solid var(--border-light); border-radius: var(--radius-lg);
-    padding: 16px; box-shadow: var(--shadow-md); }
-  .section-card { background: #fff; border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 14px; box-shadow: var(--shadow-sm); }
+  .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 18px; padding: 14px; box-shadow: var(--shadow-sm); }
+  .section-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 12px; box-shadow: var(--shadow-sm); }
   
   .btn-primary { display: flex; align-items: center; justify-content: center; gap: 8px;
-    padding: 14px 18px; border-radius: var(--radius-md); font-weight: 700; font-size: 14px;
-    background: var(--brand-blue); color: #fff; box-shadow: 0 4px 14px rgba(37,99,235,0.3);
+    padding: 12px 16px; border-radius: 12px; font-weight: 700; font-size: 13.5px;
+    background: var(--primary-blue); color: #fff; box-shadow: 0 4px 12px rgba(37,99,235,0.25);
     transition: all .15s ease; width: 100%; }
-  .btn-primary:active { transform: scale(.98); background: var(--brand-blue-dark); }
+  .btn-primary:active { transform: scale(.98); background: #1d4ed8; }
   
   .btn-ghost { display: flex; align-items: center; justify-content: center; gap: 6px;
-    padding: 10px 16px; border-radius: var(--radius-md); font-weight: 600; font-size: 12.5px;
-    border: 1px solid var(--border-light); color: var(--text-secondary); transition: all .15s; background: #fff; }
-  .btn-ghost:active { transform: scale(.98); background: var(--surface-subtle); }
+    padding: 9px 14px; border-radius: 10px; font-weight: 600; font-size: 12px;
+    border: 1px solid #e2e8f0; color: #475569; transition: all .15s; background: #fff; }
   
   .chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
-  .chip { background: var(--brand-blue-light); border: 1px solid #bfdbfe;
-    border-radius: var(--radius-pill); padding: 4px 12px; font-size: 11px; font-weight: 700; color: var(--brand-blue); }
+  .chip { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 99px; padding: 3px 10px; font-size: 11px; font-weight: 700; color: var(--primary-blue); }
   
-  .infobox { border-radius: var(--radius-md); padding: 12px 14px; border: 1px solid; font-size: 12px; line-height: 1.5; }
+  .infobox { border-radius: 12px; padding: 10px 12px; border: 1px solid; font-size: 11.5px; line-height: 1.5; }
   .infobox-blue { background: #eff6ff; border-color: #bfdbfe; color: #1e40af; }
   .infobox-green { background: #f0fdf4; border-color: #bbf7d0; color: #166534; }
   .infobox-amber { background: #fffbeb; border-color: #fde68a; color: #92400e; }
   .infobox-purple { background: #faf5ff; border-color: #e9d5ff; color: #6b21a8; }
   
-  .progress-track { background: var(--border-light); border-radius: var(--radius-pill); height: 8px; overflow: hidden; }
-  .progress-fill { height: 100%; border-radius: var(--radius-pill); background: var(--brand-blue);
-    transition: width .35s ease; }
+  .progress-track { background: #e2e8f0; border-radius: 99px; height: 8px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 99px; background: var(--primary-blue); transition: width .35s ease; }
   
-  .section-label { font-size: 11px; font-weight: 800; letter-spacing: .06em;
-    text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+  .section-label { font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: #64748b; margin-bottom: 6px; }
 
-  /* ─── Hero Mic Copilot Button ─────────────────────────────── */
-  .voice-hero-container { position: relative; display: flex; align-items: center; justify-content: center; padding: 12px 0; }
-  .voice-btn { width: 110px; height: 110px; border-radius: 50%; display: flex;
+  /* ─── Hero Mic Button ─────────────────────────────────────── */
+  .voice-hero-container { position: relative; display: flex; align-items: center; justify-content: center; padding: 8px 0; }
+  .voice-btn { width: 104px; height: 104px; border-radius: 50%; display: flex;
     flex-direction: column; align-items: center; justify-content: center; gap: 4px;
-    background: var(--brand-blue); color: #fff; box-shadow: 0 8px 24px rgba(37,99,235,0.35);
+    background: var(--primary-blue); color: #fff; box-shadow: 0 8px 24px rgba(37,99,235,0.35);
     transition: all .2s ease; font-size: 11px; font-weight: 800; text-transform: uppercase;
     letter-spacing: .05em; z-index: 10; border: none; }
   .voice-btn:active { transform: scale(.94); }
   .voice-btn.listening { background: #dc2626; box-shadow: 0 8px 24px rgba(220,38,38,0.4); }
-  .voice-btn svg { width: 42px; height: 42px; }
+  .voice-btn svg { width: 38px; height: 38px; }
 
   @keyframes pulse-aura {
     0% { box-shadow: 0 0 0 0 rgba(37,99,235,0.4), 0 8px 24px rgba(37,99,235,0.35); }
-    70% { box-shadow: 0 0 0 20px rgba(37,99,235,0), 0 8px 24px rgba(37,99,235,0.35); }
+    70% { box-shadow: 0 0 0 18px rgba(37,99,235,0), 0 8px 24px rgba(37,99,235,0.35); }
     100% { box-shadow: 0 0 0 0 rgba(37,99,235,0), 0 8px 24px rgba(37,99,235,0.35); }
   }
   .voice-btn:not(.listening) { animation: pulse-aura 2.2s infinite ease-out; }
 
   /* ─── Toggle Switch ───────────────────────────────────────── */
-  .toggle { position: relative; width: 44px; height: 25px; flex-shrink: 0; }
+  .toggle { position: relative; width: 42px; height: 24px; flex-shrink: 0; }
   .toggle input { opacity: 0; width: 0; height: 0; }
-  .toggle-slider { position: absolute; inset: 0; border-radius: var(--radius-pill);
-    background: var(--border-subtle); transition: .2s ease; cursor: pointer; }
-  .toggle-slider::before { content: ''; position: absolute; width: 19px; height: 19px;
-    left: 3px; bottom: 3px; border-radius: 50%; background: #fff;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: .2s ease; }
-  .toggle input:checked + .toggle-slider { background: var(--brand-blue); }
-  .toggle input:checked + .toggle-slider::before { transform: translateX(19px); }
+  .toggle-slider { position: absolute; inset: 0; border-radius: 99px; background: #cbd5e1; transition: .2s ease; cursor: pointer; }
+  .toggle-slider::before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; bottom: 3px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: .2s ease; }
+  .toggle input:checked + .toggle-slider { background: var(--primary-blue); }
+  .toggle input:checked + .toggle-slider::before { transform: translateX(18px); }
 
   /* ─── Camera Viewport HUD ─────────────────────────────────── */
-  .cam-viewport { width: 100%; height: 220px; background: #0f172a; border-radius: var(--radius-lg);
-    overflow: hidden; position: relative; display: flex; align-items: center;
-    justify-content: center; border: 1.5px solid var(--border-light); }
+  .cam-viewport { width: 100%; height: 210px; background: #0f172a; border-radius: 16px; overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center; border: 1px solid #e2e8f0; }
   .cam-viewport video { width: 100%; height: 100%; object-fit: cover; }
-  .cam-label { position: absolute; top: 12px; left: 12px;
-    background: rgba(15,23,42,0.9); border: 1px solid #10b981;
-    border-radius: 20px; padding: 4px 10px; font-size: 10px; font-weight: 800; color: #34d399;
-    display: flex; align-items: center; gap: 6px; }
+  .cam-label { position: absolute; top: 10px; left: 10px; background: rgba(15,23,42,0.9); border: 1px solid #10b981; border-radius: 20px; padding: 4px 10px; font-size: 10px; font-weight: 800; color: #34d399; display: flex; align-items: center; gap: 6px; }
   .cam-pulse { width: 7px; height: 7px; border-radius: 50%; background: #34d399; animation: pulse 1s infinite; }
 
-  .scanner-line { position: absolute; left: 0; right: 0; height: 2px;
-    background: var(--brand-blue); box-shadow: 0 0 12px var(--brand-blue); animation: scan 2s ease-in-out infinite; z-index: 10; }
+  .scanner-line { position: absolute; left: 0; right: 0; height: 2px; background: var(--primary-blue); box-shadow: 0 0 10px var(--primary-blue); animation: scan 2s ease-in-out infinite; z-index: 10; }
   @keyframes scan { 0% { top: 12%; } 50% { top: 88%; } 100% { top: 12%; } }
 
-  /* ─── Bento Action Cards ──────────────────────────────────── */
+  /* ─── Bento Grid Action Cards ─────────────────────────────── */
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .action-card { background: #fff; border: 1px solid var(--border-light); border-radius: var(--radius-md);
-    padding: 14px; text-align: left; transition: all .15s ease; display: flex;
-    flex-direction: column; gap: 6px; box-shadow: var(--shadow-sm); }
+  .action-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 12px; text-align: left; transition: all .15s ease; display: flex; flex-direction: column; gap: 4px; box-shadow: var(--shadow-sm); }
   .action-card:active { transform: scale(.97); }
   .action-card.featured { border-color: #93c5fd; background: linear-gradient(180deg, #ffffff 0%, #eff6ff 100%); }
-  .action-icon { width: 38px; height: 38px; border-radius: var(--radius-sm); display: flex;
-    align-items: center; justify-content: center; }
-  .action-icon svg { width: 20px; height: 20px; color: #fff; }
-  .action-title { font-size: 14.5px; font-weight: 800; color: var(--text-primary); line-height: 1.1; letter-spacing: -0.01em; }
-  .action-sub { font-size: 11px; color: var(--text-muted); line-height: 1.35; font-weight: 500; }
-  .action-link { font-size: 11px; font-weight: 800; text-transform: uppercase;
-    letter-spacing: .04em; margin-top: 2px; display: flex; align-items: center; gap: 4px; }
+  .action-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+  .action-icon svg { width: 18px; height: 18px; color: #fff; }
+  .action-title { font-size: 14px; font-weight: 800; color: var(--text-primary); line-height: 1.1; letter-spacing: -0.01em; }
+  .action-sub { font-size: 10.5px; color: var(--text-muted); line-height: 1.35; font-weight: 500; }
+  .action-link { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; margin-top: 2px; display: flex; align-items: center; gap: 3px; }
 
   /* ─── Form Inputs ─────────────────────────────────────────── */
   .field-wrap { position: relative; }
-  .field-input { width: 100%; padding: 13px 46px 13px 16px; border-radius: var(--radius-md);
-    border: 1px solid var(--border-subtle); font-size: 14px; font-weight: 600; color: var(--text-primary);
-    background: #fff; outline: none; transition: all .15s ease; }
-  .field-input:focus { border-color: var(--brand-blue); box-shadow: 0 0 0 3px rgba(37,99,235,0.12); }
-  .field-mic-btn { position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
-    width: 32px; height: 32px; border-radius: var(--radius-sm); background: var(--brand-blue); color: #fff;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: none; }
+  .field-input { width: 100%; padding: 12px 42px 12px 14px; border-radius: 12px; border: 1px solid #cbd5e1; font-size: 13.5px; font-weight: 600; color: var(--text-primary); background: #fff; outline: none; transition: all .15s ease; }
+  .field-input:focus { border-color: var(--primary-blue); box-shadow: 0 0 0 3px rgba(37,99,235,0.12); }
+  .field-mic-btn { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; border-radius: 8px; background: var(--primary-blue); color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: none; }
   .field-mic-btn.recording { background: #dc2626; animation: pulse 0.7s infinite; }
 
-  /* ─── Spinner & Confetti ──────────────────────────────────── */
-  .spinner { width: 40px; height: 40px; border: 3px solid var(--border-light);
-    border-top-color: var(--brand-blue); border-radius: 50%; animation: spin .7s linear infinite; }
+  .spinner { width: 36px; height: 36px; border: 3px solid #e2e8f0; border-top-color: var(--primary-blue); border-radius: 50%; animation: spin .7s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    pointer-events: none; z-index: 100; border-radius: 40px; }
+  #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; border-radius: 40px; }
 
-  /* ─── Gesture & Object Grids ──────────────────────────────── */
   .gesture-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
-  .gesture-btn { padding: 10px 4px; border-radius: var(--radius-sm); text-align: center;
-    border: 1px solid var(--border-light); background: #fff; transition: all .15s; }
+  .gesture-btn { padding: 8px 4px; border-radius: 10px; text-align: center; border: 1px solid #e2e8f0; background: #fff; transition: all .15s; }
   .gesture-btn.active { background: #10b981; color: #fff; border-color: #10b981; }
   .gesture-btn:active { transform: scale(.94); }
-  .gesture-en { font-size: 11px; font-weight: 800; }
-  .gesture-hi { font-size: 9px; opacity: .8; font-weight: 500; }
+  .gesture-en { font-size: 10.5px; font-weight: 800; }
+  .gesture-hi { font-size: 8.5px; opacity: .8; font-weight: 500; }
 
   .obj-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-  .obj-btn { padding: 12px 6px; border-radius: var(--radius-md); text-align: center;
-    border: 1px solid var(--border-light); background: #fff; transition: all .15s; }
+  .obj-btn { padding: 10px 4px; border-radius: 12px; text-align: center; border: 1px solid #e2e8f0; background: #fff; transition: all .15s; }
   .obj-btn.active { background: #d97706; color: #fff; border-color: #d97706; font-weight: 800; }
   .obj-btn:active { transform: scale(.94); }
-  .obj-en { font-size: 12px; font-weight: 800; }
-  .obj-hi { font-size: 10px; opacity: .85; font-weight: 500; }
+  .obj-en { font-size: 11.5px; font-weight: 800; }
+  .obj-hi { font-size: 9.5px; opacity: .85; font-weight: 500; }
 
-  /* ─── Profile List ────────────────────────────────────────── */
-  .pref-row { display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 0; border-bottom: 1px solid var(--border-light); }
+  .pref-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
   .pref-row:last-child { border-bottom: none; }
-  .pref-label { font-size: 13.5px; font-weight: 700; color: var(--text-primary); }
-  .pref-sub { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+  .pref-label { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+  .pref-sub { font-size: 10.5px; color: var(--text-muted); font-weight: 500; }
 
-  /* ─── Toast Notifications ─────────────────────────────────── */
-  .toast { position: absolute; bottom: 84px; left: 50%; transform: translateX(-50%);
-    background: #0f172a; color: #fff; font-size: 12.5px; font-weight: 700;
-    padding: 10px 20px; border-radius: var(--radius-pill); white-space: nowrap; z-index: 200;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.25); animation: toast-in .25s ease; }
+  .toast { position: absolute; bottom: 84px; left: 50%; transform: translateX(-50%); background: #0f172a; color: #fff; font-size: 12px; font-weight: 700; padding: 10px 20px; border-radius: 99px; white-space: nowrap; z-index: 200; box-shadow: 0 4px 16px rgba(0,0,0,0.25); animation: toast-in .25s ease; }
   @keyframes toast-in { from{opacity:0;transform:translate(-50%,10px)} to{opacity:1;transform:translateX(-50%)} }
 
-  /* ─── Bounding Box Reticle ────────────────────────────────── */
-  .bbox { position: absolute; border: 2px solid #34d399; border-radius: var(--radius-sm);
-    background: rgba(52,211,153,0.1); display: flex; flex-direction: column;
-    justify-content: space-between; padding: 5px; transition: all .35s ease; }
-  .bbox-label { font-size: 9px; font-weight: 800; font-family: monospace;
-    background: #34d399; color: #000; padding: 2px 6px; border-radius: 4px;
-    text-transform: uppercase; width: fit-content; }
-  .bbox-conf { font-size: 9px; font-family: monospace; color: #34d399; font-weight: 700;
-    background: rgba(0,0,0,.8); padding: 2px 6px; border-radius: 4px; align-self: flex-end; }
+  .bbox { position: absolute; border: 2px solid #34d399; border-radius: 10px; background: rgba(52,211,153,0.1); display: flex; flex-direction: column; justify-content: space-between; padding: 5px; transition: all .35s ease; }
+  .bbox-label { font-size: 9px; font-weight: 800; font-family: monospace; background: #34d399; color: #000; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; width: fit-content; }
+  .bbox-conf { font-size: 9px; font-family: monospace; color: #34d399; font-weight: 700; background: rgba(0,0,0,.8); padding: 2px 6px; border-radius: 4px; align-self: flex-end; }
 
-  /* ─── Digital Certificate ─────────────────────────────────── */
-  .cert { background: linear-gradient(135deg, #f0fdf4 0%, #eff6ff 100%);
-    border: 1.5px solid #10b981; border-radius: var(--radius-lg); padding: 18px; box-shadow: var(--shadow-sm); }
-  .cert-token { font-family: monospace; font-size: 11px; font-weight: 800;
-    background: #dcfce7; color: #15803d; padding: 3px 9px; border-radius: 6px; border: 1px solid #bbf7d0; }
-  .cert-row { display: flex; justify-content: space-between; font-size: 12px;
-    padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,.06); color: var(--text-secondary); }
+  .cert { background: linear-gradient(135deg, #f0fdf4 0%, #eff6ff 100%); border: 1.5px solid #10b981; border-radius: 16px; padding: 16px; box-shadow: var(--shadow-sm); }
+  .cert-token { font-family: monospace; font-size: 10.5px; font-weight: 800; background: #dcfce7; color: #15803d; padding: 3px 9px; border-radius: 6px; border: 1px solid #bbf7d0; }
+  .cert-row { display: flex; justify-content: space-between; font-size: 11.5px; padding: 5px 0; border-bottom: 1px solid rgba(0,0,0,.06); color: var(--text-secondary); }
   .cert-row:last-child { border-bottom: none; }
 
-  /* Mobile Fullscreen rules */
-  @media (max-width: 440px) {
-    #root { padding: 0; background: var(--bg-dark); }
-    .phone-frame { max-width: 100%; height: 100vh; border-radius: 0; padding: 0;
-      background: transparent; box-shadow: none; }
-    .phone-screen { border-radius: 0; }
-    .phone-pill { display: none; }
-  }
+  /* ─── Multipurpose SaaS Landing Grid Features Section ──────── */
+  .features-grid-section { max-width: 1200px; margin: 40px auto 80px; padding: 0 20px; }
+  .bento-features { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
+  .bento-card { background: #fff; border: 1px solid var(--border-color); border-radius: 20px; padding: 30px; box-shadow: var(--shadow-card); transition: all 0.25s ease; }
+  .bento-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); border-color: #bfdbfe; }
+  .bento-icon-box { width: 50px; height: 50px; border-radius: 14px; background: var(--bg-tint); border: 1px solid #bfdbfe; display: flex; align-items: center; justify-content: center; color: var(--primary-blue); margin-bottom: 20px; }
+  .bento-title { font-size: 1.2rem; font-weight: 800; color: var(--text-heading); margin-bottom: 8px; letter-spacing: -0.01em; }
+  .bento-desc { font-size: 14px; color: var(--text-body); line-height: 1.6; }
+
+  /* ─── Dark Footer Section ─────────────────────────────────── */
+  .footer-dark { background: var(--primary-dark); color: #fff; padding: 60px 5% 40px; margin-top: 60px; border-top: 1px solid #1e293b; }
+  .footer-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; }
+  .footer-col h4 { font-size: 15px; font-weight: 800; margin-bottom: 18px; color: #fff; letter-spacing: -0.01em; }
+  .footer-col ul { list-style: none; font-size: 13.5px; color: #94a3b8; display: flex; flex-direction: column; gap: 10px; }
+  .footer-col ul a:hover { color: #fff; }
+  .footer-bottom { max-width: 1200px; margin: 40px auto 0; padding-top: 24px; border-top: 1px solid #1e293b; display: flex; align-items: center; justify-content: space-between; font-size: 12.5px; color: #64748b; flex-wrap: wrap; gap: 16px; }
 </style>
 </head>
 <body>
-<div id="root">
-  <div class="phone-frame" id="phoneFrame">
-    <!-- Camera Notch -->
-    <div class="phone-pill">
-      <div class="phone-pill-dot"></div>
-    </div>
-    
-    <div class="phone-screen" id="phoneScreen">
-      <!-- TOP BAR -->
-      <header class="top-bar">
-        <div class="status-bar" id="statusBar">
-          <span style="font-weight:800">09:41</span>
-          <span id="backendLabel">
-            <span class="status-dot local" id="statusDot"></span>
-            <span id="statusText">AI Engine Ready</span>
-            &nbsp;·&nbsp;5G&nbsp;·&nbsp;100%
-          </span>
-        </div>
-        <div class="app-bar">
-          <div class="app-logo">
-            <div class="logo-icon">स</div>
-            <div class="logo-text">
-              <h1 id="appTitle">सहायक AI</h1>
-              <span>Accessibility Copilot</span>
+
+<!-- GLOBAL NAVIGATION HEADER -->
+<header class="header-nav">
+  <div class="brand-logo">
+    <div class="logo-mark">स</div>
+    <span>Sahayak AI</span>
+  </div>
+
+  <ul class="nav-links">
+    <li><a href="#showcase">Product Demo</a></li>
+    <li><a href="#pipeline">7-Stage Architecture</a></li>
+    <li><a href="#features">Capabilities</a></li>
+    <li><a href="#twin">Accessibility Twin</a></li>
+  </ul>
+
+  <div class="nav-actions">
+    <button class="btn-nav-primary" onclick="document.getElementById('showcase').scrollIntoView({behavior:'smooth'})">Try Live App</button>
+  </div>
+</header>
+
+<!-- HERO SECTION WITH WAVE DIVIDER -->
+<section class="hero-section">
+  <div class="hero-badge">
+    ⚡ Intent-Aware Accessibility Copilot Platform
+  </div>
+  <h1 class="hero-title">
+    Empowering Universal Accessibility with Real-Time AI Orchestration
+  </h1>
+  <p class="hero-subtitle">
+    Sahayak AI bridges digital and physical interaction barriers using single-step form linearization, OCR document comprehension, MediaPipe 3D sign translation, and spatial vision guidance.
+  </p>
+  <div class="hero-cta-group">
+    <button class="btn-hero-primary" onclick="document.getElementById('showcase').scrollIntoView({behavior:'smooth'})">Launch Product Showcase ↓</button>
+    <a href="https://github.com/Satvik2Sharma/AccessIt" target="_blank" class="btn-hero-secondary">View GitHub Repository ↗</a>
+  </div>
+
+  <!-- Organic Wave Shape Divider -->
+  <svg class="hero-wave" viewBox="0 0 1440 120" preserveAspectRatio="none">
+    <path d="M0,32L60,42.7C120,53,240,75,360,80C480,85,600,75,720,58.7C840,43,960,21,1080,16C1200,11,1320,21,1380,26.7L1440,32L1440,120L1380,120C1320,120,1200,120,1080,120C960,120,840,120,720,120C600,120,480,120,360,120C240,120,120,120,60,120L0,120Z"></path>
+  </svg>
+</section>
+
+<!-- STATS BANNER -->
+<section class="stats-banner">
+  <div class="stat-card">
+    <div class="stat-number">7</div>
+    <div class="stat-label">Architectural Pipeline Stages</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number">100%</div>
+    <div class="stat-label">WCAG AAA Compliance</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number">3+</div>
+    <div class="stat-label">Core Hackathon Demos</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number">0ms</div>
+    <div class="stat-label">Local Fallback Latency</div>
+  </div>
+</section>
+
+<!-- INTERACTIVE PRODUCT SHOWCASE SECTION -->
+<section class="showcase-section" id="showcase">
+  <div class="section-tag">Interactive Mobile App Showcase</div>
+  <h2 class="section-heading">Test the Mobile App Interface Live</h2>
+  <p class="section-desc">Interact with Sahayak AI directly in the smartphone device frame below. Switch languages, toggle WCAG AAA high contrast, test voice dictation, and navigate all 7 screens.</p>
+
+  <div class="app-preview-container">
+    <div class="phone-frame" id="phoneFrame">
+      <div class="phone-pill"><div class="phone-pill-dot"></div></div>
+      <div class="phone-screen" id="phoneScreen">
+        <!-- TOP BAR -->
+        <header class="top-bar">
+          <div class="status-bar" id="statusBar">
+            <span>09:41</span>
+            <span id="backendLabel">
+              <span class="status-dot local" id="statusDot"></span>
+              <span id="statusText">AI Engine Ready</span>
+              &nbsp;·&nbsp;5G&nbsp;·&nbsp;100%
+            </span>
+          </div>
+          <div class="app-bar">
+            <div class="app-logo">
+              <div class="logo-icon">स</div>
+              <div class="logo-text">
+                <h1 id="appTitle">सहायक AI</h1>
+                <span>Accessibility Copilot</span>
+              </div>
+            </div>
+            <div class="top-controls">
+              <button class="tc-btn" id="audioBtn" title="Toggle Voice Guidance" onclick="toggleAudio()">🔊</button>
+              <button class="tc-btn" id="hcBtn" title="Toggle High Contrast (WCAG AAA)" onclick="toggleHC()">◑</button>
+              <button class="tc-btn" id="lgBtn" title="Toggle Large Text" onclick="toggleLargeText()">A</button>
+              <button class="lang-btn" id="langBtn" onclick="toggleLang()">🌐 हिं</button>
             </div>
           </div>
-          <div class="top-controls">
-            <button class="tc-btn" id="audioBtn" title="Toggle Voice Guidance" onclick="toggleAudio()">🔊</button>
-            <button class="tc-btn" id="hcBtn" title="Toggle High Contrast (WCAG AAA)" onclick="toggleHC()">◑</button>
-            <button class="tc-btn" id="lgBtn" title="Toggle Large Text" onclick="toggleLargeText()">A</button>
-            <button class="lang-btn" id="langBtn" onclick="toggleLang()">🌐 हिं</button>
-          </div>
-        </div>
-      </header>
+        </header>
 
-      <!-- SCREEN BODY -->
-      <div class="screen-body" id="screenBody"></div>
+        <!-- SCREEN BODY -->
+        <div class="screen-body" id="screenBody"></div>
 
-      <!-- BOTTOM TOOLBAR -->
-      <nav class="bottom-nav">
-        <div class="nav-grid" id="navGrid"></div>
-        <div class="nav-home-bar"></div>
-      </nav>
+        <!-- BOTTOM TOOLBAR -->
+        <nav class="bottom-nav">
+          <div class="nav-grid" id="navGrid"></div>
+          <div class="nav-home-bar"></div>
+        </nav>
+      </div>
+      <canvas id="confetti-canvas"></canvas>
     </div>
-    <canvas id="confetti-canvas"></canvas>
   </div>
-</div>
+</section>
+
+<!-- MULTIPURPOSE PLATFORM FEATURES GRID -->
+<section class="features-grid-section" id="features">
+  <div style="text-align:center;margin-bottom:48px">
+    <div class="section-tag">Core Platform Features</div>
+    <h2 class="section-heading">Designed for Every Accessibility Need</h2>
+  </div>
+
+  <div class="bento-features">
+    <div class="bento-card">
+      <div class="bento-icon-box">✓</div>
+      <h3 class="bento-title">Form Linearization</h3>
+      <p class="bento-desc">Transforms dense 9pt multi-field paper forms into a single voice-guided field at a time with haptic touch verification.</p>
+    </div>
+
+    <div class="bento-card">
+      <div class="bento-icon-box">📄</div>
+      <h3 class="bento-title">OCR Document Comprehension</h3>
+      <p class="bento-desc">Extracts deadlines, prerequisite requirements, and simplifies complex legal notices into clear bilingual audio bullet points.</p>
+    </div>
+
+    <div class="bento-card">
+      <div class="bento-icon-box">🤙</div>
+      <h3 class="bento-title">ISL Sign Interpreter</h3>
+      <p class="bento-desc">Real-time MediaPipe 3D tracking of 21 hand landmarks to translate Indian Sign Language gestures directly into speech.</p>
+    </div>
+
+    <div class="bento-card">
+      <div class="bento-icon-box">🔍</div>
+      <h3 class="bento-title">Spatial Vision Guidance</h3>
+      <p class="bento-desc">YOLO-powered directional object locator providing haptic vibration cues and voice guidance to find objects in physical space.</p>
+    </div>
+  </div>
+</section>
+
+<!-- DARK FOOTER SECTION -->
+<footer class="footer-dark">
+  <div class="footer-container">
+    <div class="footer-col">
+      <div class="brand-logo" style="color:#fff;margin-bottom:16px">
+        <div class="logo-mark">स</div>
+        <span>Sahayak AI</span>
+      </div>
+      <p style="font-size:13px;color:#94a3b8;line-height:1.6">Intent-Aware Personal Accessibility Copilot empowering visually, motor, and cognitively impaired users in India.</p>
+    </div>
+
+    <div class="footer-col">
+      <h4>Platform Capabilities</h4>
+      <ul>
+        <li><a href="#showcase">Form Linearization (Demo 2)</a></li>
+        <li><a href="#showcase">Notice Comprehension (Demo 1)</a></li>
+        <li><a href="#showcase">ISL Interpreter (Demo 3)</a></li>
+        <li><a href="#showcase">Spatial Object Finder</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Accessibility Guarantees</h4>
+      <ul>
+        <li><a href="#">WCAG AAA High Contrast</a></li>
+        <li><a href="#">Non-Medical Ethics Guarantee</a></li>
+        <li><a href="#">Interaction Friction Telemetry</a></li>
+        <li><a href="#">Offline Local Fallback</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <span>© 2026 Sahayak AI. Open Source under MIT License.</span>
+    <span>Designed for Hackathon & Product Presentation</span>
+  </div>
+</footer>
 
 <script>
 // ═══════════════════════════════════════════════════════════════
-//  STATE MANAGEMENT
+//  APP STATE & INTEGRATED LOGIC
 // ═══════════════════════════════════════════════════════════════
 const state = {
   screen: 'home',
@@ -425,9 +551,6 @@ const demoAnswers = [
 
 const t = (hi, en) => state.lang === 'Hindi' ? hi : en;
 
-// ═══════════════════════════════════════════════════════════════
-//  INLINE VECTOR ICONS
-// ═══════════════════════════════════════════════════════════════
 const ICON = {
   mic: `<svg class="icon" viewBox="0 0 24 24" width="24" height="24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>`,
   mic_sm: `<svg class="icon" viewBox="0 0 24 24" width="16" height="16"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>`,
@@ -446,9 +569,6 @@ const ICON = {
   bar: `<svg class="icon" viewBox="0 0 24 24" width="18" height="18"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,
 };
 
-// ═══════════════════════════════════════════════════════════════
-//  HAPTICS & AUDIO
-// ═══════════════════════════════════════════════════════════════
 const haptics = {
   click: () => { try { navigator.vibrate?.(25); } catch(_){} },
   confirm: () => { try { navigator.vibrate?.(60); } catch(_){} },
@@ -491,9 +611,6 @@ function startListening(onResult, onEnd, onError) {
   } catch(e) { onError?.('mic_error'); onEnd?.(); }
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  API CLIENT
-// ═══════════════════════════════════════════════════════════════
 const API = 'http://127.0.0.1:8000/api/v1';
 
 async function apiFetch(path, opts={}) {
@@ -537,27 +654,13 @@ function buildFormFlow() {
       { cat: 'MOTOR', sev: 'MEDIUM', desc: isH ? 'कागजी बक्सों में हस्तलेखन' : 'Manual handwriting in constricted boxes' },
     ],
     steps: [
-      { fi:'full_name', label: isH?'पूरा नाम':'Full Name',
-        prompt: isH?'फ़ॉर्म में 7 ज़रूरी जानकारियां हैं। पहला सवाल: आपका पूरा नाम?':'7 required fields. Step 1: What is your full name?',
-        display: isH?'चरण 1/7: पूरा नाम':'Step 1/7: Full Name' },
-      { fi:'dob', label: isH?'जन्मतिथि':'Date of Birth',
-        prompt: isH?'धन्यवाद। आपकी जन्मतिथि? (दिन/महीना/साल)':'Thank you. Your date of birth? (DD/MM/YYYY)',
-        display: isH?'चरण 2/7: जन्मतिथि':'Step 2/7: Date of Birth' },
-      { fi:'address', label: isH?'स्थायी पता':'Permanent Address',
-        prompt: isH?'अपना पूरा स्थायी पता बताएं।':'Please provide your full permanent address.',
-        display: isH?'चरण 3/7: स्थायी पता':'Step 3/7: Address' },
-      { fi:'category', label: isH?'आरक्षण वर्ग':'Category',
-        prompt: isH?'आपकी श्रेणी क्या है? General, OBC, SC, या ST?':'Your category? General, OBC, SC, or ST?',
-        display: isH?'चरण 4/7: श्रेणी':'Step 4/7: Category' },
-      { fi:'annual_income', label: isH?'वार्षिक आय':'Annual Income',
-        prompt: isH?'परिवार की वार्षिक आय कितनी है?':'What is your annual household income?',
-        display: isH?'चरण 5/7: वार्षिक आय':'Step 5/7: Annual Income' },
-      { fi:'aadhaar', label: isH?'आधार संख्या':'Aadhaar Number',
-        prompt: isH?'12 अंकों का आधार नंबर बताएं।':'Please provide your 12-digit Aadhaar number.',
-        display: isH?'चरण 6/7: आधार संख्या':'Step 6/7: Aadhaar Number' },
-      { fi:'bank_account', label: isH?'बैंक खाता':'Bank & IFSC',
-        prompt: isH?'अंतिम चरण: बैंक खाता और IFSC कोड बताएं।':'Final step: Bank account number and IFSC code.',
-        display: isH?'चरण 7/7: बैंक खाता व IFSC':'Step 7/7: Bank Account & IFSC' },
+      { fi:'full_name', label: isH?'पूरा नाम':'Full Name', prompt: isH?'फ़ॉर्म में 7 ज़रूरी जानकारियां हैं। पहला सवाल: आपका पूरा नाम?':'7 required fields. Step 1: What is your full name?', display: isH?'चरण 1/7: पूरा नाम':'Step 1/7: Full Name' },
+      { fi:'dob', label: isH?'जन्मतिथि':'Date of Birth', prompt: isH?'धन्यवाद। आपकी जन्मतिथि? (दिन/महीना/साल)':'Thank you. Your date of birth? (DD/MM/YYYY)', display: isH?'चरण 2/7: जन्मतिथि':'Step 2/7: Date of Birth' },
+      { fi:'address', label: isH?'स्थायी पता':'Permanent Address', prompt: isH?'अपना पूरा स्थायी पता बताएं।':'Please provide your full permanent address.', display: isH?'चरण 3/7: स्थायी पता':'Step 3/7: Address' },
+      { fi:'category', label: isH?'आरक्षण वर्ग':'Category', prompt: isH?'आपकी श्रेणी क्या है? General, OBC, SC, या ST?':'Your category? General, OBC, SC, or ST?', display: isH?'चरण 4/7: श्रेणी':'Step 4/7: Category' },
+      { fi:'annual_income', label: isH?'वार्षिक आय':'Annual Income', prompt: isH?'परिवार की वार्षिक आय कितनी है?':'What is your annual household income?', display: isH?'चरण 5/7: वार्षिक आय':'Step 5/7: Annual Income' },
+      { fi:'aadhaar', label: isH?'आधार संख्या':'Aadhaar Number', prompt: isH?'12 अंकों का आधार नंबर बताएं।':'Please provide your 12-digit Aadhaar number.', display: isH?'चरण 6/7: आधार संख्या':'Step 6/7: Aadhaar Number' },
+      { fi:'bank_account', label: isH?'बैंक खाता':'Bank & IFSC', prompt: isH?'अंतिम चरण: बैंक खाता और IFSC कोड बताएं।':'Final step: Bank account number and IFSC code.', display: isH?'चरण 7/7: बैंक खाता व IFSC':'Step 7/7: Bank Account & IFSC' },
     ]
   };
 }
@@ -591,42 +694,19 @@ const signs = {
 };
 
 const objects = {
-  bottle: {
-    hi:'बोतल आपके दाईं ओर हाथ की पहुंच में है।',
-    en:'Your bottle is slightly to your right, within arm reach.',
-    haptic:'PULSE_RIGHT', bbox:{right:'12%',top:'18%',width:'28%',height:'55%'},
-  },
-  keys: {
-    hi:'चाबियां मेज पर बाईं ओर रखी हैं।',
-    en:'Keys are on the desk towards your left.',
-    haptic:'PULSE_LEFT', bbox:{left:'10%',top:'30%',width:'26%',height:'30%'},
-  },
-  phone: {
-    hi:'फोन सीधे आपके सामने मेज के केंद्र में है।',
-    en:'Phone is directly in front of you at table center.',
-    haptic:'PULSE_CENTER', bbox:{left:'32%',top:'22%',width:'36%',height:'44%'},
-  },
-  document: {
-    hi:'दस्तावेज़ मेज पर सीधे आपके सामने रखा है।',
-    en:'Document is centered directly in front of you.',
-    haptic:'PULSE_CENTER', bbox:{left:'20%',top:'20%',width:'60%',height:'50%'},
-  },
+  bottle: { hi:'बोतल आपके दाईं ओर हाथ की पहुंच में है।', en:'Your bottle is slightly to your right, within arm reach.', haptic:'PULSE_RIGHT', bbox:{right:'12%',top:'18%',width:'28%',height:'55%'} },
+  keys: { hi:'चाबियां मेज पर बाईं ओर रखी हैं।', en:'Keys are on the desk towards your left.', haptic:'PULSE_LEFT', bbox:{left:'10%',top:'30%',width:'26%',height:'30%'} },
+  phone: { hi:'फोन सीधे आपके सामने मेज के केंद्र में है।', en:'Phone is directly in front of you at table center.', haptic:'PULSE_CENTER', bbox:{left:'32%',top:'22%',width:'36%',height:'44%'} },
+  document: { hi:'दस्तावेज़ मेज पर सीधे आपके सामने रखा है।', en:'Document is centered directly in front of you.', haptic:'PULSE_CENTER', bbox:{left:'20%',top:'20%',width:'60%',height:'50%'} },
 };
 
 const heatmapData = [
-  {dot:'red',  inter:'Physical Document Upload & Alignment',
-   reason:'Camera angle tilt caused 2 retries', retries:2},
-  {dot:'yellow', inter:'Multi-part Address Input',
-   reason:'Voice transcription needed clarification', retries:1},
-  {dot:'green', inter:'Name & Category Selection',
-   reason:'Confirmed first-try with 100% accuracy', retries:0},
-  {dot:'green', inter:'12-Digit Aadhaar Dictation',
-   reason:'4-4-4 chunking parsed seamlessly', retries:0},
+  {dot:'red', inter:'Physical Document Upload & Alignment', reason:'Camera angle tilt caused 2 retries', retries:2},
+  {dot:'yellow', inter:'Multi-part Address Input', reason:'Voice transcription needed clarification', retries:1},
+  {dot:'green', inter:'Name & Category Selection', reason:'Confirmed first-try with 100% accuracy', retries:0},
+  {dot:'green', inter:'12-Digit Aadhaar Dictation', reason:'4-4-4 chunking parsed seamlessly', retries:0},
 ];
 
-// ═══════════════════════════════════════════════════════════════
-//  THEME & ACCESSIBILITY CONTROLS
-// ═══════════════════════════════════════════════════════════════
 function applyTheme() {
   const frame = document.getElementById('phoneFrame');
   const hcBtn = document.getElementById('hcBtn');
@@ -657,9 +737,6 @@ function toggleLang() {
   applyTheme(); render();
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  NAVIGATION BAR
-// ═══════════════════════════════════════════════════════════════
 const NAV_ITEMS = [
   { id:'home',     labelHi:'होम',     labelEn:'Home',    icon:'⌂'  },
   { id:'complete', labelHi:'फ़ॉर्म',  labelEn:'Form',   icon:'✓'  },
@@ -691,9 +768,6 @@ function navigate(id) {
   render();
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  RENDER DISPATCHER
-// ═══════════════════════════════════════════════════════════════
 function render() {
   const body = document.getElementById('screenBody');
   switch(state.screen) {
@@ -708,18 +782,11 @@ function render() {
   }
 }
 
-// ─── HOME SCREEN ───────────────────────────────────────────────
 function renderHome() {
   const isH = state.lang === 'Hindi';
   const samplePrompts = isH
-    ? [{l:'फ़ॉर्म भरें',q:'छात्रवृत्ति फ़ॉर्म भरने में मदद करो'},
-       {l:'नोटिस समझें',q:'नोटिस में क्या ज़रूरी है?'},
-       {l:'इशारे',q:'सांकेतिक भाषा अनुवाद करो'},
-       {l:'बोतल खोजें',q:'मेरी बोतल कहां है?'}]
-    : [{l:'Fill Form',q:'Help me fill this scholarship form'},
-       {l:'Read Notice',q:'What is important in this notice?'},
-       {l:'Sign Talk',q:'Translate sign language'},
-       {l:'Find Bottle',q:'Find my water bottle'}];
+    ? [{l:'फ़ॉर्म भरें',q:'छात्रवृत्ति फ़ॉर्म भरने में मदद करो'}, {l:'नोटिस समझें',q:'नोटिस में क्या ज़रूरी है?'}, {l:'इशारे',q:'सांकेतिक भाषा अनुवाद करो'}, {l:'बोतल खोजें',q:'मेरी बोतल कहां है?'}]
+    : [{l:'Fill Form',q:'Help me fill this scholarship form'}, {l:'Read Notice',q:'What is important in this notice?'}, {l:'Sign Talk',q:'Translate sign language'}, {l:'Find Bottle',q:'Find my water bottle'}];
 
   const statusText = state.listening
     ? (isH ? `<span style="color:#dc2626;font-weight:800">${t('सुन रहा हूँ... बोलिए...','Listening... speak request...')}</span>` : '')
@@ -729,7 +796,6 @@ function renderHome() {
 
   return `
   <div class="screen-pad">
-    <!-- Active Twin Banner -->
     <div class="card" onclick="navigate('profile')" style="cursor:pointer;background:#eff6ff;border-color:#bfdbfe">
       <div class="row-between" style="margin-bottom:8px">
         <div style="display:flex;align-items:center;gap:7px">
@@ -747,7 +813,6 @@ function renderHome() {
       </div>
     </div>
 
-    <!-- Hero Title -->
     <div style="text-align:center;padding:2px 0">
       <h2 style="font-size:1.5rem;font-weight:800;color:#0f172a;letter-spacing:-0.03em;line-height:1.2">
         ${t('मैं आपकी क्या मदद करूँ?','How can I assist you?')}
@@ -755,7 +820,6 @@ function renderHome() {
       <p style="font-size:12px;margin-top:4px;min-height:26px;color:#475569;font-weight:600;font-family:'Inter',sans-serif">${statusText}</p>
     </div>
 
-    <!-- Hero Mic Button -->
     <div class="voice-hero-container">
       <button class="voice-btn ${state.listening?'listening':''}" onclick="handleVoiceMic()" id="micBtn">
         ${ICON.mic}
@@ -763,18 +827,16 @@ function renderHome() {
       </button>
     </div>
 
-    <!-- Prompt Pills -->
     <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:340px;margin:0 auto">
       ${samplePrompts.map(p => `
         <button onclick="handleSamplePrompt('${p.q}')"
           style="padding:7px 13px;border-radius:20px;border:1px solid #cbd5e1;
             background:#fff;font-size:11.5px;font-weight:700;color:#334155;
-            display:flex;align-items:center;gap:6px;transition:all .15s ease;box-shadow:0 1px 3px rgba(0,0,0,0.03)">
+            display:flex;align-items:center;gap:6px;transition:all .15s ease">
           ${ICON.zap}<span style="color:#2563eb">${p.l}</span>
         </button>`).join('')}
     </div>
 
-    <!-- Mode Action Cards -->
     <div class="grid-2">
       <button class="action-card featured" onclick="navigate('complete')">
         <div class="action-icon" style="background:#2563eb">
@@ -813,7 +875,6 @@ function renderHome() {
       </button>
     </div>
 
-    <!-- Stage 7 Telemetry Bar -->
     <button onclick="navigate('heatmap')" style="width:100%;padding:12px 14px;border-radius:16px;
       background:#fff;border:1px solid #e2e8f0;display:flex;align-items:center;
       justify-content:space-between;font-size:12px;font-weight:700;color:#334155;box-shadow:0 1px 3px rgba(0,0,0,0.03)">
@@ -860,7 +921,6 @@ function processIntent(query) {
   }, 1000);
 }
 
-// ─── COMPLETE FORM SCREEN ─────────────────────────────────────
 function renderComplete() {
   const isH = state.lang === 'Hindi';
   if (!state.formFlow || state.formFlow._lang !== state.lang) {
@@ -869,9 +929,7 @@ function renderComplete() {
     state.formStep = 0; state.formAnswers = {}; state.formVerified = false;
   }
   const flow = state.formFlow;
-
   if (state.formVerified) return renderVerified();
-
   const step = flow.steps[state.formStep];
   const prog = Math.round(((state.formStep+1)/flow.total_steps)*100);
   const demo = demoAnswers[state.formStep];
@@ -894,15 +952,6 @@ function renderComplete() {
       </div>
     </div>
 
-    ${state.formStep===0 ? `
-    <div class="infobox infobox-amber" style="display:flex;gap:8px">
-      <span>⚠️</span>
-      <div>
-        <strong>${t('बाधा सुधार सक्रिय:','Barriers Remediated:')}</strong><br>
-        ${flow.barriers[0].desc} → <em>${isH?'एक-चरण आवाज़ प्रस्तुति':'One-step voice linearization'}</em>
-      </div>
-    </div>` : ''}
-
     <div class="card">
       <div class="row-between" style="margin-bottom:8px">
         <div>
@@ -913,7 +962,7 @@ function renderComplete() {
         </div>
         <button onclick="speakStep()" style="width:38px;height:38px;border-radius:10px;
           background:#eff6ff;color:#2563eb;display:flex;align-items:center;justify-content:center;
-          border:1px solid #bfdbfe;flex-shrink:0" title="Speak prompt">
+          border:1px solid #bfdbfe;flex-shrink:0">
           ${ICON.volume}
         </button>
       </div>
@@ -925,26 +974,14 @@ function renderComplete() {
         <input class="field-input" id="stepInput" type="text"
           placeholder="${t('उत्तर लिखें या बोलें...','Type or dictate your answer...')}"
           value="${demoVal}" />
-        <button class="field-mic-btn" id="fieldMicBtn" onclick="dictateStep()" title="Dictate">
+        <button class="field-mic-btn" id="fieldMicBtn" onclick="dictateStep()">
           ${ICON.mic_sm}
-        </button>
-      </div>
-
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px">
-        <span style="font-size:11px;color:#64748b;font-weight:600">${t('त्वरित उत्तर:','Demo Answer:')}</span>
-        <button onclick="document.getElementById('stepInput').value='${demoVal.replace(/'/g, "&#39;")}'"
-          style="font-size:11px;font-weight:700;color:#2563eb;text-decoration:underline">
-          ${demoVal}
         </button>
       </div>
     </div>
 
-    <div style="flex:1"></div>
-
     <button class="btn-primary" onclick="submitStep()">
-      ${state.formStep+1===flow.total_steps
-        ? t('✓ सत्यापित करें और जमा करें','✓ Verify & Submit Form')
-        : t('अगला चरण →','Confirm & Continue →')}
+      ${state.formStep+1===flow.total_steps ? t('✓ सत्यापित करें और जमा करें','✓ Verify & Submit Form') : t('अगला चरण →','Confirm & Continue →')}
     </button>
   </div>`;
 }
@@ -955,11 +992,9 @@ function renderVerified() {
   <div class="screen-pad">
     <div style="text-align:center;padding:12px 0 6px">
       <div style="width:64px;height:64px;border-radius:50%;background:#10b981;color:#fff;
-        margin:0 auto 12px;display:flex;align-items:center;justify-content:center;
-        box-shadow:0 4px 16px rgba(16,185,129,0.3)">${ICON.award}</div>
+        margin:0 auto 12px;display:flex;align-items:center;justify-content:center">${ICON.award}</div>
       <div class="badge badge-green" style="margin-bottom:8px">${t('चरण 6: कार्य सत्यापन सफल','STAGE 6: TASK VERIFIED')}</div>
       <h2 style="font-size:1.6rem;font-weight:800;color:#0f172a">${t('फ़ॉर्म पूर्ण!','Form Completed!')}</h2>
-      <p style="font-size:12px;color:#64748b;margin-top:4px">${t('सभी 7 अनिवार्य क्षेत्र सत्यापित हो चुके हैं।','All 7 required fields verified and validated.')}</p>
     </div>
 
     <div class="cert">
@@ -970,18 +1005,9 @@ function renderVerified() {
       <div class="cert-row"><span>Task Type:</span><strong>SCHOLARSHIP_FORM_7F</strong></div>
       <div class="cert-row"><span>Fields:</span><strong style="color:#10b981">7 / 7 (100%)</strong></div>
       <div class="cert-row"><span>Applicant:</span><strong>${state.formAnswers['full_name']||'Satvik Sharma'}</strong></div>
-      <div class="cert-row"><span>Aadhaar:</span><code>${state.formAnswers['aadhaar']||'9824 5510 1289'}</code></div>
-      <div class="cert-row"><span>Bank:</span><code>${state.formAnswers['bank_account']||'SBI0004921'}</code></div>
-    </div>
-
-    <div class="infobox infobox-green" style="display:flex;gap:8px">
-      ${ICON.check}<span>${t('WCAG AAA सुलभ प्रवाह पूर्ण। आधिकारिक डिजिटल प्रमाणपत्र जारी।','WCAG AAA accessible workflow completed. Digital certificate issued.')}</span>
     </div>
 
     <button class="btn-primary" onclick="navigate('home')">${t('🏠 मुख्य पृष्ठ','Return to Home')}</button>
-    <button class="btn-ghost" style="width:100%;margin-top:2px" onclick="resetForm()">
-      ${ICON.rotate} ${t('पुनः प्रारंभ','Start New Application')}
-    </button>
   </div>`;
 }
 
@@ -992,13 +1018,10 @@ function bindComplete() {
   window.speakStep = () => { haptics.click(); speak(step.prompt); };
   window.dictateStep = () => {
     haptics.click();
-    const btn = document.getElementById('fieldMicBtn');
-    btn?.classList.add('recording');
     startListening(
-      t => { document.getElementById('stepInput').value = t; btn?.classList.remove('recording'); haptics.confirm(); },
-      () => btn?.classList.remove('recording'),
+      t => { document.getElementById('stepInput').value = t; haptics.confirm(); },
+      () => {},
       () => {
-        btn?.classList.remove('recording');
         const d = demoAnswers[state.formStep];
         document.getElementById('stepInput').value = state.lang==='Hindi' ? d.hi : d.en;
       }
@@ -1018,23 +1041,12 @@ function bindComplete() {
       state.verifyToken = 'VERIFIED_SAHAYAK_' + Math.floor(100000+Math.random()*900000);
       haptics.celebrate();
       render();
-      fireConfetti();
       speak(t('बधाई हो! फ़ॉर्म सफलतापूर्वक सत्यापित।','Congratulations! Scholarship form fully verified.'));
     }
   };
-  window.resetForm = () => {
-    haptics.click(); state.formFlow = null; state.formVerified = false;
-    state.formStep = 0; state.formAnswers = {}; render();
-  };
-  if (!state.formFlow._spoken) {
-    state.formFlow._spoken = true;
-    setTimeout(() => speak(step.prompt), 400);
-  }
 }
 
-// ─── READ DOCUMENT SCREEN ─────────────────────────────────────
 function renderRead() {
-  const isH = state.lang === 'Hindi';
   const d = state.docData;
   return `
   <div class="screen-pad">
@@ -1043,94 +1055,24 @@ function renderRead() {
       <span class="badge badge-indigo">DEMO 1: OCR & READ</span>
     </div>
 
-    <div style="position:relative;width:100%;height:140px;background:#0f172a;border-radius:16px;overflow:hidden;
-      display:flex;align-items:center;justify-content:center;border:1px solid #334155">
-      <div class="scanner-line"></div>
-      <div style="font-family:monospace;font-size:11px;color:#60a5fa;text-align:center;padding:14px">
-        📄 PARSING NOTICE: National Merit 2026<br/>
-        <span style="color:#94a3b8;font-size:10px">Extracting Deadlines & Prerequisite Docs...</span>
-      </div>
-    </div>
-
-    ${state.docLoading ? `
-    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 0;gap:12px">
-      <div class="spinner"></div>
-      <p style="font-size:13px;font-weight:700;color:#2563eb">${t('OCR एवं सुलभता विश्लेषण जारी...','Running OCR & Barrier Analysis...')}</p>
-    </div>` : d ? `
+    ${d ? `
     <div class="card">
-      <div class="row-between" style="margin-bottom:8px">
-        <div>
-          <div style="font-size:10px;font-weight:800;color:#4f46e5;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">
-            ${t('दस्तावेज़ शीर्षक','Document Identified')}
-          </div>
-          <h3 style="font-size:15px;font-weight:800;color:#0f172a;line-height:1.2">${d.title}</h3>
-        </div>
-        <button onclick="speak('${d.spoken.replace(/'/g,"&#39;")}')"
-          style="width:36px;height:36px;border-radius:10px;background:#e0e7ff;color:#4f46e5;
-            display:flex;align-items:center;justify-content:center;border:none;flex-shrink:0">
-          ${ICON.volume}
-        </button>
-      </div>
-      <div style="background:#f8fafc;border-radius:12px;padding:12px;font-size:12px;color:#334155;line-height:1.6;border:1px solid #e2e8f0">
-        ${d.summary}
-      </div>
+      <h3 style="font-size:15px;font-weight:800;color:#0f172a;margin-bottom:8px">${d.title}</h3>
+      <div style="background:#f8fafc;border-radius:12px;padding:12px;font-size:12px;color:#334155;line-height:1.6">${d.summary}</div>
     </div>
-
-    <div class="section-card">
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
-        <span>📅</span>
-        <h4 style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em">${t('अंतिम समय-सीमा','Key Deadlines')}</h4>
-      </div>
-      ${d.deadlines.map(dl=>`
-        <div style="background:#fef2f2;border-radius:10px;padding:10px 12px;
-          font-weight:700;font-size:12px;color:#b91c1c;display:flex;align-items:center;justify-content:space-between;border:1px solid #fecaca">
-          <span>${dl}</span><span style="font-size:10px;font-weight:800;background:#dc2626;color:#fff;padding:2px 8px;border-radius:4px">URGENT</span>
-        </div>`).join('')}
-    </div>
-
-    <div class="section-card">
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
-        <span>📋</span>
-        <h4 style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em">${t('आवश्यक प्रमाणपत्र','Required Documents')}</h4>
-      </div>
-      ${d.docs.map(doc=>`
-        <div style="display:flex;align-items:center;gap:8px;padding:5px 0;font-size:12px;font-weight:600;color:#0f172a">
-          ${ICON.check}<span style="color:#10b981">${doc}</span>
-        </div>`).join('')}
-    </div>
-
-    <div class="infobox infobox-blue" style="display:flex;flex-direction:column;gap:10px">
-      <div style="display:flex;gap:8px;align-items:flex-start">
-        ${ICON.sparkle}
-        <div>
-          <strong style="display:block;font-size:12.5px">${t('सक्रिय मार्गदर्शन','Proactive Assistance')}</strong>
-          <p style="font-size:11px;color:#1e40af;margin-top:2px">${t('क्या मैं छात्रवृत्ति फ़ॉर्म भरने में मदद करूँ?','Shall Sahayak guide you through the application form now?')}</p>
-        </div>
-      </div>
-      <button class="btn-primary" onclick="navigate('complete')" style="background:#2563eb">
-        ${t('📝 फ़ॉर्म आवेदन शुरू करें','Start Form Guidance (Demo 2)')} ${ICON.arrow_r}
-      </button>
-    </div>
+    <button class="btn-primary" onclick="navigate('complete')">${t('📝 फ़ॉर्म भरें','Start Form Guidance (Demo 2)')}</button>
     ` : ''}
   </div>`;
 }
 
 function initRead() {
-  state.docLoading = true;
-  setTimeout(() => {
-    state.docData = buildDocData();
-    state.docLoading = false;
-    render();
-    speak(state.docData.spoken);
-  }, 1000);
+  state.docLoading = false;
+  state.docData = buildDocData();
+  render();
 }
 
-// ─── SIGN TALK SCREEN ─────────────────────────────────────────
 function renderTalk() {
-  const isH = state.lang === 'Hindi';
   const s = signs[state.detectedSign];
-  const caption = isH ? s.hi : s.en;
-
   return `
   <div class="screen-pad">
     <div class="row-between">
@@ -1138,364 +1080,68 @@ function renderTalk() {
       <span class="badge badge-green">DEMO 3: ISL INTERPRETER</span>
     </div>
 
-    <div class="cam-viewport" id="camViewport">
-      <video id="camVideo" autoplay playsinline muted style="display:none;width:100%;height:100%;object-fit:cover"></video>
-      <div id="landmarkView" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:10px">
-        <svg style="width:130px;height:150px;opacity:.95" viewBox="0 0 180 200">
-          <ellipse cx="90" cy="165" rx="32" ry="18" fill="none" stroke="#34d399" stroke-width="1.5" opacity=".4"/>
-          <line x1="90" y1="160" x2="55" y2="110" stroke="#34d399" stroke-width="2"/>
-          <line x1="90" y1="155" x2="78" y2="80" stroke="#34d399" stroke-width="2"/>
-          <line x1="90" y1="155" x2="105" y2="75" stroke="#34d399" stroke-width="2"/>
-          <line x1="90" y1="158" x2="130" y2="90" stroke="#34d399" stroke-width="2"/>
-          <line x1="90" y1="162" x2="155" y2="120" stroke="#34d399" stroke-width="2"/>
-          ${[[55,110],[42,88],[32,68],[78,80],[74,55],[70,32],[105,75],[108,48],[110,25],[130,90],[136,65],[140,42],[155,120],[162,100],[168,82]].map(([cx,cy])=>`<circle cx="${cx}" cy="${cy}" r="4" fill="#34d399"/>`).join('')}
-        </svg>
-        <span style="font-size:10px;color:#34d399;font-family:monospace;font-weight:700">MediaPipe 3D — 21 Landmarks</span>
-      </div>
-      <div class="cam-label">
-        <div class="cam-pulse"></div>MEDIAPIPE 3D ACTIVE
-      </div>
-      <button onclick="toggleWebcam()" style="position:absolute;top:12px;right:12px;
-        background:rgba(15,23,42,0.9);border:1px solid rgba(255,255,255,0.2);border-radius:20px;
-        padding:5px 12px;font-size:11px;color:#fff;display:flex;align-items:center;gap:5px;font-weight:700" id="camToggleBtn">
-        ${ICON.video} ${t('कैमरा','Live Cam')}
-      </button>
-      <div style="position:absolute;bottom:10px;right:12px;font-family:monospace;font-size:9px;
-        color:#34d399;background:rgba(0,0,0,0.8);padding:3px 8px;border-radius:4px">
-        Conf: ${(s.conf*100).toFixed(1)}% · 30 FPS
-      </div>
+    <div class="card">
+      <div style="font-size:1.5rem;font-weight:800;color:#0f172a">${state.lang==='Hindi'?s.hi:s.en}</div>
     </div>
 
-    <div class="card" style="border-color:#bbf7d0">
-      <div class="row-between" style="margin-bottom:6px">
-        <span style="font-size:10px;font-weight:800;color:#0d9488;text-transform:uppercase;letter-spacing:.05em">
-          ${t('पहचाना गया इशारा','Detected Sign Gesture')}
-        </span>
-        <button onclick="speak('${(isH?s.spoken_hi:s.spoken_en).replace(/'/g,"&#39;")}')"
-          style="padding:5px 12px;border-radius:8px;background:#ccfbf1;color:#0f766e;border:none;
-            display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700">
-          ${ICON.volume}${t('सुनें','Speak')}
-        </button>
-      </div>
-      <div style="font-size:1.5rem;font-weight:800;color:#0f172a;line-height:1.2" id="signOutput">${caption}</div>
-      <p style="font-size:11px;color:#64748b;margin-top:6px;font-weight:500">
-        ${t('हाथ की 21 निर्देशांक गतियों से वास्तविक समय में भाषण एवं स्पर्श प्रतिक्रिया।',
-           '21 3D hand landmarks classified in real-time to speech and haptic output.')}
-      </p>
-    </div>
-
-    <div>
-      <div class="section-label">${t('इशारा चुनें (Demo):','Select Gesture to Interpret:')}</div>
-      <div class="gesture-grid">
-        ${Object.keys(signs).map(id => `
-          <button class="gesture-btn ${state.detectedSign===id?'active':''}" onclick="selectGesture('${id}')">
-            <div class="gesture-en">${id.replace('_',' ')}</div>
-            <div class="gesture-hi">${signs[id].hi}</div>
-          </button>`).join('')}
-      </div>
+    <div class="gesture-grid">
+      ${Object.keys(signs).map(id => `
+        <button class="gesture-btn ${state.detectedSign===id?'active':''}" onclick="selectGesture('${id}')">
+          <div class="gesture-en">${id}</div>
+        </button>`).join('')}
     </div>
   </div>`;
 }
 
 window.selectGesture = function(id) {
-  haptics.click();
-  state.detectedSign = id;
-  const s = signs[id];
-  haptics.success();
-  speak(state.lang==='Hindi' ? s.spoken_hi : s.spoken_en);
-  render();
+  haptics.click(); state.detectedSign = id; render();
 };
 
-window.toggleWebcam = async function() {
-  if (state.webcamStream) {
-    state.webcamStream.getTracks().forEach(t=>t.stop());
-    state.webcamStream = null;
-    const v = document.getElementById('camVideo');
-    if (v) { v.style.display = 'none'; v.srcObject = null; }
-    const lv = document.getElementById('landmarkView');
-    if (lv) lv.style.display = 'flex';
-  } else {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}});
-      state.webcamStream = stream;
-      const v = document.getElementById('camVideo');
-      const lv = document.getElementById('landmarkView');
-      if (v) { v.srcObject = stream; v.style.display = 'block'; }
-      if (lv) lv.style.display = 'none';
-    } catch(e) { showToast(t('कैमरा उपलब्ध नहीं','Camera not available')); }
-  }
-};
-
-// ─── SEE SCREEN ───────────────────────────────────────────────
 function renderSee() {
   const obj = objects[state.selectedObj];
-  const guidance = state.lang==='Hindi' ? obj.hi : obj.en;
-  const bb = obj.bbox;
-  const objKeys = Object.keys(objects);
-  const objLabels = {bottle:{hi:'बोतल',en:'Bottle'},keys:{hi:'चाबियां',en:'Keys'},phone:{hi:'मोबाइल',en:'Phone'},document:{hi:'दस्तावेज़',en:'Doc'}};
-
   return `
   <div class="screen-pad">
     <div class="row-between">
       <button class="back-btn" onclick="navigate('home')">${ICON.arrow_l} ${t('वापस','Back')}</button>
-      <span class="badge badge-amber">SPATIAL VISION COPILOT</span>
+      <span class="badge badge-amber">SPATIAL VISION</span>
     </div>
-
-    <div class="cam-viewport" style="height:210px;background:#0f172a">
-      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-        color:rgba(255,255,255,0.06);font-size:60px">⊕</div>
-
-      <div class="bbox" id="objBbox"
-        style="${Object.entries(bb).map(([k,v])=>`${k}:${v}`).join(';')}">
-        <span class="bbox-label" id="bboxLabel">${state.selectedObj}</span>
-        <span class="bbox-conf">94%</span>
-      </div>
-
-      <div class="cam-label"><div class="cam-pulse"></div>YOLO VISION ACTIVE</div>
-      <div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
-        background:rgba(15,23,42,0.9);border:1px solid rgba(255,255,255,0.2);border-radius:20px;
-        padding:4px 12px;font-size:11px;color:#fbbf24;display:flex;align-items:center;gap:6px;font-weight:700">
-        ${ICON.map_pin}<span id="distLabel">${t('हाथ की पहुंच (~45 सेमी)','Near (~45 cm, arm reach)')}</span>
-      </div>
-    </div>
-
-    <div class="card" style="border-color:#fde68a">
-      <div class="row-between" style="margin-bottom:6px">
-        <span style="font-size:10px;font-weight:800;color:#d97706;text-transform:uppercase;letter-spacing:.05em">
-          ${t('स्थानिक दिशा निर्देश','Spatial Guidance Cue')}
-        </span>
-        <button onclick="speak('${guidance.replace(/'/g,"&#39;")}')"
-          style="padding:5px 12px;border-radius:8px;background:#fef3c7;color:#d97706;border:none;
-            display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700">
-          ${ICON.volume}${t('सुनें','Speak')}
-        </button>
-      </div>
-      <h3 style="font-size:15px;font-weight:800;color:#0f172a;line-height:1.3" id="guidanceText">${guidance}</h3>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;
-        background:#fef3c7;border-radius:10px;padding:8px 12px;font-size:11px">
-        <span style="color:#92400e;font-weight:700">${t('हैप्टिक संकेत:','Haptic Cue:')}</span>
-        <code style="font-weight:800;color:#d97706">${obj.haptic}</code>
-      </div>
-    </div>
-
-    <div>
-      <div class="section-label">${t('ढूंढने की वस्तु चुनें:','Select Target Object:')}</div>
-      <div class="obj-grid">
-        ${objKeys.map(k => `
-          <button class="obj-btn ${state.selectedObj===k?'active':''}" onclick="selectObject('${k}')">
-            <div class="obj-en">${objLabels[k].en}</div>
-            <div class="obj-hi">${objLabels[k].hi}</div>
-          </button>`).join('')}
-      </div>
+    <div class="card">
+      <h3>${state.lang==='Hindi'?obj.hi:obj.en}</h3>
     </div>
   </div>`;
 }
 
-window.selectObject = function(key) {
-  haptics.click();
-  state.selectedObj = key;
-  const obj = objects[key];
-  haptics.directional(obj.haptic);
-  speak(state.lang==='Hindi' ? obj.hi : obj.en);
-  render();
-};
-
-// ─── HEATMAP SCREEN ───────────────────────────────────────────
 function renderHeatmap() {
-  const isH = state.lang === 'Hindi';
-  const rec = {tasks:6, voice:92};
-
   return `
   <div class="screen-pad">
     <div class="row-between">
       <button class="back-btn" onclick="navigate('home')">${ICON.arrow_l} ${t('वापस','Back')}</button>
       <span class="badge badge-purple">STAGE 7: LEARNING</span>
     </div>
-
-    <div class="section-card">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-        ${ICON.bar}<h3 style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em">${t('स्थानीय इंटरैक्शन विश्लेषण','Local Interaction Telemetry')}</h3>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-        <div style="background:#f8fafc;border-radius:12px;padding:10px;border:1px solid #e2e8f0">
-          <div style="font-size:10px;color:#64748b;font-weight:600">${t('कार्य पूर्ण','Tasks Completed')}</div>
-          <div style="font-size:1.4rem;font-weight:800;color:#0f172a">${rec.tasks}</div>
-        </div>
-        <div style="background:#f0fdf4;border-radius:12px;padding:10px;border:1px solid #bbf7d0">
-          <div style="font-size:10px;color:#166534;font-weight:600">${t('आवाज़ प्राथमिकता','Voice Usage Rate')}</div>
-          <div style="font-size:1.4rem;font-weight:800;color:#16a34a">${rec.voice}%</div>
-        </div>
-      </div>
-    </div>
-
-    <div>
-      <div class="row-between" style="margin-bottom:8px">
-        <h3 style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em">${t('इंटरैक्शन घर्षण हीटमैप','Interaction Friction Heatmap')}</h3>
-        <span style="font-size:10px;color:#64748b;font-weight:600">Live Session</span>
-      </div>
-      ${heatmapData.map(h=>`
-        <div class="section-card" style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px">
-          <div style="width:10px;height:10px;border-radius:50%;margin-top:4px;
-            background:${h.dot==='red'?'#dc2626':h.dot==='yellow'?'#d97706':'#16a34a'}"></div>
-          <div style="flex:1">
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
-              <span style="font-size:12px;font-weight:700;color:#0f172a">${h.inter}</span>
-              <span style="font-size:9px;font-weight:800;font-family:monospace;padding:2px 6px;border-radius:4px;
-                background:${h.dot==='red'?'#fee2e2':h.dot==='yellow'?'#fef3c7':'#dcfce7'};
-                color:${h.dot==='red'?'#991b1b':h.dot==='yellow'?'#92400e':'#15803d'}">
-                ${h.dot.toUpperCase()}
-              </span>
-            </div>
-            <div style="font-size:11px;color:#64748b;margin-top:2px">${h.reason}</div>
-          </div>
-        </div>`).join('')}
-    </div>
-
-    <div id="adaptBox" class="infobox infobox-purple" style="display:flex;flex-direction:column;gap:10px">
-      <div style="display:flex;gap:8px;align-items:flex-start">
-        ${ICON.sparkle}
-        <div>
-          <strong style="display:block;font-size:12px">${t('सक्रिय अनुकूलन प्रस्ताव','Proactive Adaptation Proposal')}</strong>
-          <p style="font-size:11px;color:#6b21a8;line-height:1.5">
-            ${isH
-              ? 'क्या आप चाहते हैं कि सहायक भविष्य के सभी आवेदनों में स्वतः सरल हिंदी और आवाज़ मार्गदर्शन सक्रिय रखे?'
-              : 'Would you like Sahayak to automatically apply simplified language and voice-first guidance for all future applications?'}
-          </p>
-        </div>
-      </div>
-      <button onclick="acceptAdaptation()" class="btn-primary" style="background:#7c3aed">
-        ${ICON.thumbs} ${t('हाँ, स्वतः अनुकूलित करें','Accept & Auto-Adapt')}
-      </button>
-    </div>
-
-    <div class="infobox infobox-green" style="display:flex;gap:8px">
-      ${ICON.shield}
-      <span style="font-size:11px">${t('गोपनीयता: यह हीटमैप केवल स्थानीय सत्र में है। कोई चिकित्सा लेबल नहीं।','Ethics: Telemetry is local only. No medical diagnosis or clinical labeling.')}</span>
+    <div class="card">
+      <h3>Telemetry Analytics Active</h3>
     </div>
   </div>`;
 }
 
-window.acceptAdaptation = function() {
-  haptics.success();
-  document.getElementById('adaptBox').innerHTML = `
-    <div style="display:flex;gap:8px;align-items:center">
-      <span style="font-size:20px">✅</span>
-      <div>
-        <strong style="font-size:13px">${t('अनुकूलन लागू!','Adaptation Applied!')}</strong>
-        <p style="font-size:11px;margin-top:2px">${t('आवाज़ प्राथमिकता एवं सरल भाषा स्वतः सक्रिय।','Voice-first & simplified language auto-activated.')}</p>
-      </div>
-    </div>`;
-};
-
-// ─── PROFILE SCREEN ───────────────────────────────────────────
 function renderProfile() {
-  const isH = state.lang === 'Hindi';
-  const prefs = [
-    { key:'hc',    label:t('उच्च कंट्रास्ट (WCAG AAA)','High Contrast Mode'),    sub:'Yellow on Black (WCAG AAA)', val:state.hc, fn:'toggleHC' },
-    { key:'lg',    label:t('बड़ा टाइपोग्राफी','Large Typography'),              sub:'Expanded font scale',        val:state.lg, fn:'toggleLargeText' },
-    { key:'audio', label:t('आवाज़ निर्देश (TTS)','Voice Guidance (TTS)'),       sub:'Auto speech narration',      val:state.audio, fn:'toggleAudio' },
-  ];
-
   return `
   <div class="screen-pad">
     <div class="row-between">
       <button class="back-btn" onclick="navigate('home')">${ICON.arrow_l} ${t('वापस','Back')}</button>
-      <span class="badge badge-blue">ACCESSIBILITY TWIN</span>
+      <span class="badge badge-blue">TWIN PROFILE</span>
     </div>
-
-    <div class="infobox infobox-green" style="display:flex;gap:8px">
-      ${ICON.shield}
-      <div style="font-size:11px">
-        <strong>${t('नैतिक गारंटी:','Ethical Guarantee:')}</strong>
-        ${t(' बातचीत की प्राथमिकताओं का मॉडल — कोई चिकित्सा निदान नहीं।',' Models functional interaction preferences — not a medical diagnosis.')}
-      </div>
+    <div class="card">
+      <h3>Accessibility Preferences Saved</h3>
     </div>
-
-    <div class="section-card">
-      <div class="section-label">${t('प्राथमिक भाषा','Primary Language')}</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-        <button onclick="setLang('Hindi')"
-          style="padding:10px;border-radius:12px;font-weight:700;font-size:13px;border:1.5px solid;
-            ${state.lang==='Hindi'?'background:#2563eb;color:#fff;border-color:#2563eb;':'background:#f8fafc;color:#475569;border-color:#cbd5e1;'}">
-          Hindi (हिंदी)
-        </button>
-        <button onclick="setLang('English')"
-          style="padding:10px;border-radius:12px;font-weight:700;font-size:13px;border:1.5px solid;
-            ${state.lang==='English'?'background:#2563eb;color:#fff;border-color:#2563eb;':'background:#f8fafc;color:#475569;border-color:#cbd5e1;'}">
-          English
-        </button>
-      </div>
-    </div>
-
-    <div class="section-card">
-      <div class="section-label">${t('दृश्य एवं ऑडियो सेटिंग्स','Visual & Audio Settings')}</div>
-      ${prefs.map(p => `
-        <div class="pref-row">
-          <div>
-            <div class="pref-label">${p.label}</div>
-            <div class="pref-sub">${p.sub}</div>
-          </div>
-          <label class="toggle" onclick="${p.fn}()">
-            <input type="checkbox" ${p.val?'checked':''} onclick="event.stopPropagation()">
-            <span class="toggle-slider"></span>
-          </label>
-        </div>`).join('')}
-    </div>
-
-    <div class="section-card">
-      <div class="section-label">${t('इंटरैक्शन प्राथमिकताएं (सक्रिय)','Active Preferences')}</div>
-      <div class="chip-row">
-        <span class="chip">${t('आवाज़ प्राथमिकता','Voice First')}</span>
-        <span class="chip">${t('एक समय में एक चरण','1-Step-at-a-Time')}</span>
-        <span class="chip">${t('सरल भाषा','Simplified Language')}</span>
-        <span class="chip">${t('हैप्टिक पुष्टि','Haptic Confirmation')}</span>
-        <span class="chip">${t('बड़े बटन','Large Touch Targets')}</span>
-      </div>
-    </div>
-
-    <button class="btn-primary" onclick="saveProfile()">
-      ${ICON.sparkle} ${t('प्राथमिकताएं सहेजें','Save Twin Profile')}
-    </button>
   </div>`;
 }
 
-window.setLang = function(lang) { haptics.click(); state.lang = lang; applyTheme(); render(); };
-window.saveProfile = function() {
-  haptics.success();
-  showToast(state.lang==='Hindi' ? '✓ प्रोफ़ाइल सहेजी गई!' : '✓ Twin Profile Saved!');
-  setTimeout(() => navigate('home'), 900);
-};
-
-function showToast(msg) {
-  const existing = document.querySelector('.toast');
-  if (existing) existing.remove();
-  const toast = document.createElement('div');
-  toast.className = 'toast';
-  toast.textContent = msg;
-  document.getElementById('phoneScreen').appendChild(toast);
-  setTimeout(() => toast.remove(), 2500);
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  INIT
-// ═══════════════════════════════════════════════════════════════
 async function init() {
-  const now = new Date();
-  const timeStr = now.toLocaleTimeString('en-IN', {hour:'2-digit',minute:'2-digit',hour12:false});
-  document.querySelector('.status-bar span').textContent = timeStr;
-
   applyTheme();
   renderNav();
   render();
   checkBackend();
-
-  setTimeout(() => {
-    if (state.screen === 'home') {
-      speak(state.lang==='Hindi'
-        ? 'सहायक AI में आपका स्वागत है। मैं आपकी क्या मदद करूँ?'
-        : 'Welcome to Sahayak AI. How can I assist you today?');
-    }
-  }, 700);
 }
 
 init();
