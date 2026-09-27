@@ -20,8 +20,8 @@ class ISLInterpreterService:
         self.static_labels = [str(d) for d in range(1, 10)] + [chr(c) for c in range(ord("A"), ord("Z") + 1)]
         self.emergency_vocabulary = {
             "HELP": {
-                "en": "Help needed immediately",
-                "hi": "तुरंत सहायता / मदद चाहिए",
+                "en": "Help",
+                "hi": "सहायता / मदद चाहिए",
                 "haptic": "EMERGENCY_TRIPLE_PULSE",
                 "type": "DYNAMIC_EMERGENCY",
             },
