@@ -3,16 +3,23 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<meta name="theme-color" content="#0b0f19" />
+<meta name="theme-color" content="#090d16" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="description" content="Sahayak AI — Intent-Aware Personal Accessibility Copilot" />
 <title>Sahayak AI (सहायक AI) — Accessibility Copilot</title>
+
+<!-- Google Fonts: Plus Jakarta Sans + Inter -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
 <style>
   /* ─── Reset & Base ────────────────────────────────────────── */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
-    background: #050811; -webkit-tap-highlight-color: transparent; user-select: none; color: #f8fafc; }
+  html, body { height: 100%; font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #040711; -webkit-tap-highlight-color: transparent; user-select: none; color: #f8fafc;
+    -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
   button { cursor: pointer; border: none; background: none; font-family: inherit; color: inherit; }
   input, textarea { font-family: inherit; }
   ::-webkit-scrollbar { display: none; }
@@ -20,31 +27,31 @@
   /* ─── Phone Frame (Obsidian Pro Device) ───────────────────── */
   #root { display: flex; align-items: center; justify-content: center;
     min-height: 100vh; padding: 16px;
-    background: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(37, 99, 235, 0.15) 0px, transparent 50%), #050811; }
+    background: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.18) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(37, 99, 235, 0.18) 0px, transparent 50%), #040711; }
   
   .phone-frame { position: relative; width: 100%; max-width: 414px;
-    height: min(890px, 97vh); background: #0c101d; border-radius: 54px;
+    height: min(890px, 97vh); background: #0b0f19; border-radius: 54px;
     padding: 10px; box-shadow: 0 40px 100px -20px rgba(0,0,0,0.95),
-      0 0 0 10px #171f33, inset 0 0 0 2px rgba(255,255,255,0.12); }
+      0 0 0 10px #151c2e, inset 0 0 0 2px rgba(255,255,255,0.12); }
   
   .phone-screen { width: 100%; height: 100%; border-radius: 46px; overflow: hidden;
-    display: flex; flex-direction: column; background: #0b0f19;
+    display: flex; flex-direction: column; background: #090d16;
     transition: background 0.3s ease, color 0.3s ease; position: relative; }
 
-  /* Ambient Mesh Background inside screen */
+  /* Ambient Mesh Lighting */
   .screen-bg { position: absolute; inset: 0; pointer-events: none; z-index: 0;
-    background: radial-gradient(circle at 50% -10%, rgba(59, 130, 246, 0.18) 0%, transparent 60%),
-                radial-gradient(circle at 100% 60%, rgba(99, 102, 241, 0.12) 0%, transparent 50%); }
+    background: radial-gradient(circle at 50% -10%, rgba(59, 130, 246, 0.22) 0%, transparent 60%),
+                radial-gradient(circle at 100% 60%, rgba(99, 102, 241, 0.15) 0%, transparent 50%); }
 
-  /* ─── Dynamic Island Notch ────────────────────────────────── */
+  /* ─── Dynamic Island ──────────────────────────────────────── */
   .phone-pill { position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
     width: 124px; height: 30px; background: #000; border-radius: 20px; z-index: 40;
     display: flex; align-items: center; justify-content: space-between; padding: 0 14px;
     box-shadow: 0 4px 14px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(255,255,255,0.08); }
   .phone-pill-cam { width: 11px; height: 11px; border-radius: 50%; background: #0d1322;
     box-shadow: inset 0 0 0 2px #1e293b; }
-  .phone-pill-wave { display: flex; items-center; gap: 2px; }
+  .phone-pill-wave { display: flex; align-items: center; gap: 2.5px; }
   .phone-pill-bar { width: 3px; height: 10px; background: #3b82f6; border-radius: 2px; animation: wave 1.2s infinite ease-in-out; }
   .phone-pill-bar:nth-child(2) { animation-delay: 0.2s; height: 14px; background: #60a5fa; }
   .phone-pill-bar:nth-child(3) { animation-delay: 0.4s; height: 8px; background: #818cf8; }
@@ -70,15 +77,15 @@
 
   /* ─── Large Text Mode ─────────────────────────────────────── */
   .lg .screen-body, .lg button, .lg input { font-size: 1.15rem !important; }
-  .lg h1 { font-size: 2.1rem !important; }
-  .lg h2 { font-size: 1.6rem !important; }
-  .lg h3 { font-size: 1.35rem !important; }
+  .lg h1 { font-size: 2.2rem !important; }
+  .lg h2 { font-size: 1.65rem !important; }
+  .lg h3 { font-size: 1.4rem !important; }
 
-  /* ─── Top Bar ─────────────────────────────────────────────── */
-  .top-bar { flex-shrink: 0; background: rgba(11, 15, 25, 0.8);
+  /* ─── Top Navigation Header ───────────────────────────────── */
+  .top-bar { flex-shrink: 0; background: rgba(9, 13, 22, 0.85);
     border-bottom: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(20px); position: relative; z-index: 30; }
   .status-bar { display: flex; justify-content: space-between; align-items: center;
-    padding: 16px 22px 2px; font-size: 11px; font-weight: 700; color: #94a3b8; }
+    padding: 16px 22px 2px; font-size: 11.5px; font-weight: 700; color: #94a3b8; font-family: 'Inter', sans-serif; }
   .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%;
     margin-right: 6px; vertical-align: middle; }
   .status-dot.online { background: #10b981; box-shadow: 0 0 10px #10b981; }
@@ -90,9 +97,9 @@
     background: linear-gradient(135deg, #3b82f6, #6366f1); color: #fff;
     display: flex; align-items: center; justify-content: center;
     font-weight: 900; font-size: 18px; box-shadow: 0 4px 16px rgba(59,130,246,0.4);
-    border: 1px solid rgba(255,255,255,0.2); }
-  .logo-text h1 { font-size: 16.5px; font-weight: 900; color: #fff; line-height: 1; letter-spacing: -.4px; }
-  .logo-text span { font-size: 10px; color: #94a3b8; font-weight: 600; letter-spacing: 0.02em; }
+    border: 1px solid rgba(255,255,255,0.25); }
+  .logo-text h1 { font-size: 17px; font-weight: 900; color: #fff; line-height: 1; letter-spacing: -0.03em; }
+  .logo-text span { font-size: 10.5px; color: #94a3b8; font-weight: 600; letter-spacing: 0.02em; }
   
   .top-controls { display: flex; align-items: center; gap: 6px; }
   .tc-btn { width: 34px; height: 34px; border-radius: 11px; display: flex; align-items: center;
@@ -102,21 +109,21 @@
   .tc-btn.active { background: rgba(59,130,246,0.25); color: #60a5fa; border-color: #3b82f6; }
   .tc-btn.hc-active { background: #FFD700; color: #000; border-color: #FFD700; font-weight: 900; }
   .lang-btn { height: 32px; padding: 0 12px; border-radius: 11px; border: 1px solid rgba(255,255,255,0.15);
-    font-size: 11px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 5px;
+    font-size: 11.5px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 5px;
     background: rgba(255,255,255,0.08); backdrop-filter: blur(8px); }
 
   /* ─── Screen Body ─────────────────────────────────────────── */
   .screen-body { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch;
     position: relative; z-index: 10; }
 
-  /* ─── Bottom Nav (Glass Toolbar) ──────────────────────────── */
-  .bottom-nav { flex-shrink: 0; background: rgba(11, 15, 25, 0.85);
+  /* ─── Bottom Navigation Toolbar ───────────────────────────── */
+  .bottom-nav { flex-shrink: 0; background: rgba(9, 13, 22, 0.88);
     border-top: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(20px); padding: 8px 4px 6px; z-index: 30; }
   .nav-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; padding: 0 4px; }
   .nav-btn { display: flex; flex-direction: column; align-items: center; justify-content: center;
     padding: 6px 2px 5px; border-radius: 14px; color: #64748b; transition: all .2s cubic-bezier(0.4, 0, 0.2, 1); gap: 3px; }
   .nav-btn.active { background: rgba(59,130,246,0.18); color: #60a5fa; font-weight: 800; transform: translateY(-1px); border: 1px solid rgba(59,130,246,0.3); }
-  .nav-label { font-size: 9px; font-weight: 700; text-align: center; line-height: 1; }
+  .nav-label { font-size: 9.5px; font-weight: 700; text-align: center; line-height: 1; }
   .nav-home-bar { width: 100px; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.3);
     margin: 8px auto 0; opacity: .8; }
 
@@ -128,23 +135,23 @@
   .row-between { display: flex; align-items: center; justify-content: space-between; }
   
   .badge { display: inline-flex; align-items: center; padding: 4px 12px;
-    border-radius: 99px; font-size: 10px; font-weight: 900; letter-spacing: .06em;
+    border-radius: 99px; font-size: 10.5px; font-weight: 900; letter-spacing: .06em;
     text-transform: uppercase; border: 1px solid transparent; }
-  .badge-blue { background: rgba(37,99,235,0.2); color: #60a5fa; border-color: rgba(37,99,235,0.4); }
-  .badge-green { background: rgba(16,185,129,0.2); color: #34d399; border-color: rgba(16,185,129,0.4); }
-  .badge-amber { background: rgba(245,158,11,0.2); color: #fbbf24; border-color: rgba(245,158,11,0.4); }
-  .badge-purple { background: rgba(139,92,246,0.2); color: #c084fc; border-color: rgba(139,92,246,0.4); }
-  .badge-indigo { background: rgba(99,102,241,0.2); color: #a5b4fc; border-color: rgba(99,102,241,0.4); }
+  .badge-blue { background: rgba(37,99,235,0.22); color: #60a5fa; border-color: rgba(37,99,235,0.4); }
+  .badge-green { background: rgba(16,185,129,0.22); color: #34d399; border-color: rgba(16,185,129,0.4); }
+  .badge-amber { background: rgba(245,158,11,0.22); color: #fbbf24; border-color: rgba(245,158,11,0.4); }
+  .badge-purple { background: rgba(139,92,246,0.22); color: #c084fc; border-color: rgba(139,92,246,0.4); }
+  .badge-indigo { background: rgba(99,102,241,0.22); color: #a5b4fc; border-color: rgba(99,102,241,0.4); }
   
-  .card { background: rgba(18, 24, 38, 0.7); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px;
+  .card { background: rgba(18, 24, 38, 0.75); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 24px;
     padding: 18px; backdrop-filter: blur(20px); box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5); }
-  .section-card { background: rgba(18, 24, 38, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 16px; backdrop-filter: blur(16px); }
+  .section-card { background: rgba(18, 24, 38, 0.65); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 16px; backdrop-filter: blur(16px); }
   
   .btn-primary { display: flex; align-items: center; justify-content: center; gap: 8px;
     padding: 16px 20px; border-radius: 18px; font-weight: 800; font-size: 14.5px;
     background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%); color: #fff;
     box-shadow: 0 10px 25px -5px rgba(37,99,235,0.5); border: 1px solid rgba(255,255,255,0.2);
-    transition: all .25s cubic-bezier(0.4, 0, 0.2, 1); width: 100%; letter-spacing: -0.2px; }
+    transition: all .25s cubic-bezier(0.4, 0, 0.2, 1); width: 100%; letter-spacing: -0.01em; }
   .btn-primary:active { transform: scale(.97); box-shadow: 0 5px 12px -2px rgba(37,99,235,0.5); }
   
   .btn-ghost { display: flex; align-items: center; justify-content: center; gap: 6px;
@@ -157,10 +164,10 @@
     border-radius: 99px; padding: 5px 14px; font-size: 11px; font-weight: 800; color: #60a5fa; }
   
   .infobox { border-radius: 16px; padding: 14px 16px; border: 1px solid; font-size: 12px; line-height: 1.55; }
-  .infobox-blue { background: rgba(30, 58, 138, 0.3); border-color: rgba(59, 130, 246, 0.4); color: #93c5fd; }
-  .infobox-green { background: rgba(6, 78, 59, 0.3); border-color: rgba(16, 185, 129, 0.4); color: #6ee7b7; }
-  .infobox-amber { background: rgba(120, 53, 15, 0.3); border-color: rgba(245, 158, 11, 0.4); color: #fde047; }
-  .infobox-purple { background: rgba(88, 28, 135, 0.3); border-color: rgba(168, 85, 247, 0.4); color: #e9d5ff; }
+  .infobox-blue { background: rgba(30, 58, 138, 0.35); border-color: rgba(59, 130, 246, 0.4); color: #93c5fd; }
+  .infobox-green { background: rgba(6, 78, 59, 0.35); border-color: rgba(16, 185, 129, 0.4); color: #6ee7b7; }
+  .infobox-amber { background: rgba(120, 53, 15, 0.35); border-color: rgba(245, 158, 11, 0.4); color: #fde047; }
+  .infobox-purple { background: rgba(88, 28, 135, 0.35); border-color: rgba(168, 85, 247, 0.4); color: #e9d5ff; }
   
   .progress-track { background: rgba(255,255,255,0.1); border-radius: 99px; height: 10px; overflow: hidden; padding: 2px; }
   .progress-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #3b82f6, #818cf8);
@@ -169,7 +176,7 @@
   .section-label { font-size: 11px; font-weight: 900; letter-spacing: .08em;
     text-transform: uppercase; color: #64748b; margin-bottom: 8px; }
 
-  /* ─── Hero Pulsing Mic Button ─────────────────────────────── */
+  /* ─── Hero Pulsing Voice Mic Button ───────────────────────── */
   .voice-hero-container { position: relative; display: flex; align-items: center; justify-content: center; padding: 14px 0; }
   .voice-btn { width: 120px; height: 120px; border-radius: 50%; display: flex;
     flex-direction: column; align-items: center; justify-content: center; gap: 4px;
@@ -207,19 +214,19 @@
   .toggle input:checked + .toggle-slider { background: #3b82f6; border-color: #60a5fa; }
   .toggle input:checked + .toggle-slider::before { transform: translateX(20px); }
 
-  /* ─── Camera Viewport (HUD Frame) ─────────────────────────── */
+  /* ─── Camera Viewport HUD Frame ────────────────────────────── */
   .cam-viewport { width: 100%; height: 240px; background: #000; border-radius: 26px;
     overflow: hidden; position: relative; display: flex; align-items: center;
     justify-content: center; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 15px 35px rgba(0,0,0,0.6); }
   .cam-viewport video { width: 100%; height: 100%; object-fit: cover; }
   .cam-label { position: absolute; top: 14px; left: 14px;
-    background: rgba(11,15,25,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(16,185,129,0.4);
+    background: rgba(9,13,22,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(16,185,129,0.4);
     border-radius: 20px; padding: 5px 14px; font-size: 10px; font-weight: 900; color: #34d399;
     display: flex; align-items: center; gap: 7px; letter-spacing: 0.05em; }
   .cam-pulse { width: 8px; height: 8px; border-radius: 50%; background: #34d399;
     box-shadow: 0 0 10px #34d399; animation: pulse 1s infinite; }
 
-  /* Laser Line Scanner */
+  /* Laser Scanner */
   .scanner-line { position: absolute; left: 0; right: 0; height: 3px;
     background: linear-gradient(90deg, transparent, #3b82f6, #60a5fa, #3b82f6, transparent);
     box-shadow: 0 0 20px #3b82f6; animation: scan 2.2s ease-in-out infinite; z-index: 10; }
@@ -227,7 +234,7 @@
 
   /* ─── Bento Grid Action Cards ─────────────────────────────── */
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .action-card { background: rgba(18, 24, 38, 0.7); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 22px;
+  .action-card { background: rgba(18, 24, 38, 0.75); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 22px;
     padding: 16px; text-align: left; transition: all .25s cubic-bezier(0.4, 0, 0.2, 1); display: flex;
     flex-direction: column; gap: 8px; backdrop-filter: blur(16px); position: relative; overflow: hidden; }
   .action-card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.25); }
@@ -236,12 +243,12 @@
   .action-icon { width: 44px; height: 44px; border-radius: 16px; display: flex;
     align-items: center; justify-content: center; box-shadow: 0 6px 16px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); }
   .action-icon svg { width: 22px; height: 22px; color: #fff; }
-  .action-title { font-size: 15px; font-weight: 900; color: #fff; line-height: 1.1; letter-spacing: -0.3px; }
+  .action-title { font-size: 15.5px; font-weight: 900; color: #fff; line-height: 1.1; letter-spacing: -0.02em; }
   .action-sub { font-size: 11px; color: #94a3b8; line-height: 1.35; font-weight: 500; }
   .action-link { font-size: 11px; font-weight: 800; text-transform: uppercase;
     letter-spacing: .06em; margin-top: 4px; display: flex; align-items: center; gap: 4px; }
 
-  /* ─── Modern Input Fields ─────────────────────────────────── */
+  /* ─── Input Fields ────────────────────────────────────────── */
   .field-wrap { position: relative; }
   .field-input { width: 100%; padding: 15px 50px 15px 18px; border-radius: 16px;
     border: 1px solid rgba(255, 255, 255, 0.15); font-size: 15px; font-weight: 600; color: #fff;
@@ -315,7 +322,7 @@
 
   /* Mobile Fullscreen Rules */
   @media (max-width: 450px) {
-    #root { padding: 0; background: #0b0f19; }
+    #root { padding: 0; background: #090d16; }
     .phone-frame { max-width: 100%; height: 100vh; border-radius: 0; padding: 0;
       background: transparent; box-shadow: none; }
     .phone-screen { border-radius: 0; }
@@ -425,7 +432,7 @@ const demoAnswers = [
 const t = (hi, en) => state.lang === 'Hindi' ? hi : en;
 
 // ═══════════════════════════════════════════════════════════════
-//  INLINE SVG ICONS SYSTEM
+//  INLINE VECTOR ICONS
 // ═══════════════════════════════════════════════════════════════
 const ICON = {
   mic: `<svg class="icon" viewBox="0 0 24 24" width="26" height="26"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>`,
@@ -491,7 +498,7 @@ function startListening(onResult, onEnd, onError) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-//  API CLIENT (FastAPI + Local Fallback)
+//  API CLIENT
 // ═══════════════════════════════════════════════════════════════
 const API = 'http://127.0.0.1:8000/api/v1';
 
@@ -624,42 +631,7 @@ const heatmapData = [
 ];
 
 // ═══════════════════════════════════════════════════════════════
-//  CONFEEETI ANIMATION
-// ═══════════════════════════════════════════════════════════════
-function fireConfetti() {
-  const canvas = document.getElementById('confetti-canvas');
-  const ctx = canvas.getContext('2d');
-  canvas.width = canvas.parentElement.clientWidth;
-  canvas.height = canvas.parentElement.clientHeight;
-  const particles = Array.from({length:110}, () => ({
-    x: canvas.width/2 + (Math.random()-0.5)*240,
-    y: canvas.height*0.5,
-    vx: (Math.random()-0.5)*12,
-    vy: -(Math.random()*10+5),
-    r: Math.random()*7+3,
-    color: ['#3b82f6','#10b981','#f59e0b','#6366f1','#ec4899','#06b6d4','#8b5cf6'][Math.floor(Math.random()*7)],
-    life: 1,
-  }));
-  let frame;
-  function draw() {
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    particles.forEach(p => {
-      p.x += p.vx; p.vy += 0.3; p.y += p.vy; p.life -= 0.014;
-      if (p.life <= 0) return;
-      ctx.globalAlpha = p.life;
-      ctx.fillStyle = p.color;
-      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
-    });
-    ctx.globalAlpha = 1;
-    if (particles.some(p=>p.life>0)) frame = requestAnimationFrame(draw);
-    else { ctx.clearRect(0,0,canvas.width,canvas.height); }
-  }
-  cancelAnimationFrame(frame);
-  draw();
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  THEME & ACCESSIBILITY TOGGLES
+//  THEME & ACCESSIBILITY CONTROLS
 // ═══════════════════════════════════════════════════════════════
 function applyTheme() {
   const frame = document.getElementById('phoneFrame');
@@ -781,12 +753,12 @@ function renderHome() {
       </div>
     </div>
 
-    <!-- Voice Title -->
+    <!-- Hero Title -->
     <div style="text-align:center;padding:2px 0">
-      <h2 style="font-size:1.5rem;font-weight:900;color:#fff;letter-spacing:-.4px">
+      <h2 style="font-size:1.55rem;font-weight:900;color:#fff;letter-spacing:-0.03em;line-height:1.2">
         ${t('मैं आपकी क्या मदद करूँ?','How can I assist you?')}
       </h2>
-      <p style="font-size:12px;margin-top:4px;min-height:26px;color:#94a3b8;font-weight:600">${statusText}</p>
+      <p style="font-size:12px;margin-top:4px;min-height:26px;color:#94a3b8;font-weight:600;font-family:'Inter',sans-serif">${statusText}</p>
     </div>
 
     <!-- Obsidian Hero Mic Button -->
@@ -803,7 +775,7 @@ function renderHome() {
       ${samplePrompts.map(p => `
         <button onclick="handleSamplePrompt('${p.q}')"
           style="padding:8px 14px;border-radius:20px;border:1px solid rgba(255,255,255,0.12);
-            background:rgba(255,255,255,0.05);backdrop-filter:blur(10px);font-size:11px;font-weight:800;color:#cbd5e1;
+            background:rgba(255,255,255,0.05);backdrop-filter:blur(10px);font-size:11.5px;font-weight:800;color:#cbd5e1;
             display:flex;align-items:center;gap:6px;transition:all .2s ease"
           onmouseover="this.style.background='rgba(59,130,246,0.2)'"
           onmouseout="this.style.background='rgba(255,255,255,0.05)'">
