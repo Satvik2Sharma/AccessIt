@@ -41,12 +41,17 @@ class AccessibilityAssistanceEngine:
 
         return {
             "title": doc_data["document_title"],
-            "authority": doc_data["issuing_authority"],
+            "authority": doc_data.get("issuing_authority", "Ministry of Education"),
             "deadlines": doc_data["key_deadlines"],
             "required_documents": doc_data["required_documents"],
+            "application_fee": doc_data.get("application_fee", "NIL (Free)"),
+            "action_required": doc_data.get("action_required", "Complete and verify application"),
             "spoken_summary": voice_prompt,
             "display_summary": summary,
+            "summary_en": doc_data["simplified_summary_en"],
+            "summary_hi": doc_data["simplified_summary_hi"],
             "language": twin.language.value,
+            "raw_ocr_elements_count": doc_data.get("raw_ocr_elements_count", 0),
             "haptic_cue": "SUCCESS_DOUBLE_PULSE" if twin.haptics.enabled else None,
         }
 

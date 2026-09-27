@@ -15,7 +15,19 @@ Judges will not see isolated buttons for OCR, YOLO, or TTS. They will observe an
 
 ---
 
-## 🎯 DEMO 1 — Understand a Document (Notice Comprehension)
+---
+
+## 🚦 Feature Capability Classification
+
+In accordance with transparent engineering principles:
+* **Demo 1 (Notice Comprehension)**: `IMPLEMENTED` (RapidOCR CPU ONNX engine, entity parsing, Hindi/English summaries).
+* **Demo 2 (Form Completion)**: `IMPLEMENTED` (Real OCR field discovery, barrier engine, 7-step linearized voice flow, field-level semantic validation, TaskVerificationService token).
+* **Demo 3 (ISL Gesture Recognition)**: `PARTIALLY IMPLEMENTED` (MediaPipe 21-point 3D tracking loaded lazily; verified support for `HELP`, `A`, `ONE`, `TWO`, `YES`, `NO`).
+* **Optional Wow Demo (Spatial Guidance)**: `DEMO/MOCK` (Directional math & haptics functional; live YOLO weights disabled by default to stay within 2.5 GB RAM).
+
+---
+
+## 🎯 DEMO 1 — Understand a Document (Notice Comprehension) `[IMPLEMENTED]`
 
 ### Scenario
 A student holds up a complex official university scholarship notification with fine print, dense government jargon, and multi-paragraph eligibility clauses.
@@ -27,19 +39,22 @@ A student holds up a complex official university scholarship notification with f
 3. **Sahayak 7-Stage Pipeline**:
    * **Intent**: `UNDERSTAND_DOCUMENT`
    * **Accessibility Twin**: `language = Hindi`, `comprehension = simplified`, `output = voice_and_text`
-   * **AI Processing**: OCR text extraction + Document layout analyzer + Key information extraction.
+   * **AI Processing**: Real RapidOCR text extraction + layout entity parsing.
+   * **Extracted Entities**:
+     * Title: `NATIONAL MERIT SCHOLARSHIP SCHEME 2026`
+     * Deadline: `September 30, 2026`
+     * Required Documents: Income Certificate (< 2.5 Lakhs), Aadhaar Card, Class 10 Marksheet, Bank Account
+     * Application Fee: `NIL (Free of Cost)`
+     * Action Required: Candidates must complete and verify application form
    * **Barrier Detected**: 9pt bureaucratic text, complex English legal criteria, confusing date formats.
-   * **Accessible Compilation**: Plain-language conversational Hindi summary with actionable bullet points.
+   * **Accessible Compilation**: Plain-language conversational Hindi/English summary with actionable bullet points.
 4. **Sahayak Voice & UI Output**:
-   > *"यह राष्ट्रीय छात्रवृत्ति 2026 की सूचना है।*  
-   > *• आवेदन की अंतिम तिथि 30 सितंबर है।*  
-   > *• आपको आय प्रमाण पत्र और आधार कार्ड की आवश्यकता होगी।*  
-   > *क्या आप चाहते हैं कि मैं आवेदन भरने में आपकी मदद करूँ?"*
+   > *"यह NATIONAL MERIT SCHOLARSHIP SCHEME 2026 है। आवेदन जमा करने की अंतिम तिथि September 30, 2026 है। ज़रूरी दस्तावेज़: Valid Income Certificate, Aadhaar Card, Class 10 Marksheet। आवेदन शुल्क: निःशुल्क (NIL) है।"*
 5. **Verification**: Task verification logs `NOTICE_DIGEST_DELIVERED`, user comprehension confirmed.
 
 ---
 
-## 🏆 DEMO 2 — Complete a Form (The Flagship Demo)
+## 🏆 DEMO 2 — Complete a Form (The Flagship Demo) `[IMPLEMENTED]`
 
 ### Scenario
 The judge provides a physical or printed scholarship application form with 7 required fields, fine lines, and small input boxes.
@@ -76,7 +91,12 @@ The judge provides a physical or printed scholarship application form with 7 req
 
 ---
 
-## ✋ DEMO 3 — Sign Communication (ISL Interpreter)
+---
+
+## ✋ DEMO 3 — Sign Communication (ISL Interpreter) `[PARTIALLY IMPLEMENTED]`
+
+### Status
+`PARTIALLY IMPLEMENTED` — Supported verified gestures: `HELP` (Open Palm), `A` (Fist), `ONE`, `TWO`, `YES` (Thumbs Up), `NO` (Thumbs Down). Continuous arbitrary sentence translation is `PLANNED`.
 
 ### Scenario
 A team member or judge communicates using an Indian Sign Language (ISL) gesture.
@@ -85,8 +105,8 @@ A team member or judge communicates using an Indian Sign Language (ISL) gesture.
 1. **User Action**: The presenter selects the "Talk / Communicate" mode and points the front or back camera at the signer.
 2. **Signer Action**: Performs the ISL sign for **"HELP"** or an alphabet sign (**"A"**).
 3. **Sahayak 7-Stage Pipeline**:
-   * **MediaPipe**: Real-time 21-point 3D hand tracking on key landmarks.
-   * **ISL Engine**: Classifies dynamic gesture trajectory into verified vocabulary token.
+   * **MediaPipe**: Real-time 21-point 3D hand tracking on key landmarks via lazy-loaded ONNX/Task recognizer.
+   * **ISL Engine**: Classifies gesture into verified vocabulary token.
    * **Twin**: Output preferred as clear audio voice for the non-signing listener.
 4. **Sahayak Output**:
    * Spoken audio: *"Help"*
@@ -95,15 +115,34 @@ A team member or judge communicates using an Indian Sign Language (ISL) gesture.
 
 ---
 
-## 🌟 OPTIONAL WOW DEMO — Object Finding & Directional Guidance
+## 🌟 OPTIONAL WOW DEMO — Object Finding & Directional Guidance `[DEMO/MOCK]`
+
+### Status
+`DEMO/MOCK` — Spatial direction trigonometry and right/left haptic feedback implemented; live YOLOv8 detector weights disabled by default to prevent exceeding the 2.5 GB RAM system limit.
 
 ### Scenario
 User asks to find an everyday object in the room: *"Find my water bottle."*
 
 ### Execution Steps
 1. User: *"Find my bottle."*
-2. Camera scans room. YOLO / Heuristic Vision Engine detects the bottle bounding box.
-3. Directional Finder calculates horizontal offset:
+2. Camera scans room. Directional Finder calculates horizontal offset:
    > *"आपकी बोतल आपके दाईं ओर थोड़ी दूरी पर है।"*  
-   > *(Your bottle is slightly to your right.)*
-4. Haptic vibration pulses on the right side of the device, directing user's hand toward the item.
+   > *(Your bottle is slightly to your right, within arm's reach.)*
+3. Haptic vibration pulses on the right side of the device, directing user's hand toward the item.
+
+---
+
+## 🧪 Reproducible Automated Demo Test Procedure
+
+Reviewers and hackathon judges can verify all three priority demos end-to-end with a single automated command:
+
+```bash
+# Activate environment and run reproducible test suite
+backend/venv/bin/python scripts/test_demos.py
+```
+
+This automated runner verifies:
+1. System Health and lazy model architecture.
+2. Demo 2 (Form Completion): Real OCR field extraction -> 7-step sequence -> 4-digit Aadhaar rejection test -> valid answers -> official verification token (`VERIFIED_SAHAYAK_...`).
+3. Demo 1 (Document Reading): RapidOCR execution on physical scholarship notice -> Title, deadline, 4 requirements, fee, action required, and localized summaries.
+4. Demo 3 (ISL Recognition): MediaPipe 3D gesture recognizer -> `HELP` classification -> Spoken output -> Haptic pulse pattern.

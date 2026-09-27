@@ -150,6 +150,50 @@ class _ReadDocumentScreenState extends State<ReadDocumentScreen> {
                           ),
                         ),
                       ),
+
+                      // Application Fee & Action Required
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: Colors.green.withOpacity(0.12),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: Colors.green.withOpacity(0.3)),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(isHindi ? 'आवेदन शुल्क' : 'Application Fee', style: TextStyle(fontSize: 11, color: Colors.green.shade300, fontWeight: FontWeight.bold)),
+                                  const SizedBox(height: 2),
+                                  Text(_docData!['application_fee']?.toString() ?? 'NIL (Free)', style: const TextStyle(fontWeight: FontWeight.bold)),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: Colors.blue.withOpacity(0.12),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: Colors.blue.withOpacity(0.3)),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(isHindi ? 'कार्रवाई (Action)' : 'Action Required', style: TextStyle(fontSize: 11, color: Colors.blue.shade300, fontWeight: FontWeight.bold)),
+                                  const SizedBox(height: 2),
+                                  Text(isHindi ? 'ऑनलाइन आवेदन' : 'Apply Online', style: const TextStyle(fontWeight: FontWeight.bold)),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),

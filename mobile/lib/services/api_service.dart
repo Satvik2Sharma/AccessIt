@@ -40,12 +40,16 @@ class ApiService {
     return {'intent': 'FORM_COMPLETION', 'confidence': 0.9};
   }
 
-  static Future<AccessibleTaskFlow?> analyzeForm(AccessibilityTwin twin) async {
+  static Future<AccessibleTaskFlow?> analyzeForm(AccessibilityTwin twin, {List<int>? imageBytes}) async {
     try {
-      final res = await http.post(
-        Uri.parse('$baseUrl/complete/analyze'),
-        body: {'twin_id': twin.id},
-      );
+      final uri = Uri.parse('$baseUrl/complete/analyze');
+      final request = http.MultipartRequest('POST', uri);
+      request.fields['twin_id'] = twin.id;
+      if (imageBytes != null && imageBytes.isNotEmpty) {
+        request.files.add(http.MultipartFile.fromBytes('image', imageBytes, filename: 'form.png'));
+      }
+      final streamedResponse = await request.send().timeout(const Duration(seconds: 15));
+      final res = await http.Response.fromStream(streamedResponse);
       if (res.statusCode == 200) {
         return AccessibleTaskFlow.fromJson(jsonDecode(res.body));
       }
@@ -80,12 +84,17 @@ class ApiService {
     return null;
   }
 
-  static Future<Map<String, dynamic>> readDocument(String query, AccessibilityTwin twin) async {
+  static Future<Map<String, dynamic>> readDocument(String query, AccessibilityTwin twin, {List<int>? imageBytes}) async {
     try {
-      final res = await http.post(
-        Uri.parse('$baseUrl/read'),
-        body: {'query': query, 'twin_id': twin.id},
-      );
+      final uri = Uri.parse('$baseUrl/read');
+      final request = http.MultipartRequest('POST', uri);
+      request.fields['query'] = query;
+      request.fields['twin_id'] = twin.id;
+      if (imageBytes != null && imageBytes.isNotEmpty) {
+        request.files.add(http.MultipartFile.fromBytes('image', imageBytes, filename: 'notice.png'));
+      }
+      final streamedResponse = await request.send().timeout(const Duration(seconds: 15));
+      final res = await http.Response.fromStream(streamedResponse);
       if (res.statusCode == 200) {
         return jsonDecode(res.body);
       }
@@ -93,19 +102,26 @@ class ApiService {
     return {
       'title': 'National Merit Scholarship Notice 2026',
       'deadlines': ['September 30, 2026'],
-      'required_documents': ['Income Certificate', 'Aadhaar Card', 'Class 10 Marksheet'],
+      'required_documents': ['Income Certificate', 'Aadhaar Card', 'Class 10 Marksheet', 'Active Bank Account'],
+      'application_fee': 'NIL (Exempted)',
+      'action_required': 'Complete and verify all required sections before the deadline.',
       'display_summary': twin.language == 'Hindi'
           ? 'यह छात्रवृत्ति सूचना है। अंतिम तिथि 30 सितंबर है। आपको आय प्रमाण पत्र और आधार कार्ड की आवश्यकता होगी।'
-          : 'National Merit Scholarship Notice: Deadline is September 30. Required: Income Certificate and Aadhaar Card.',
+          : 'National Merit Scholarship Notice: Deadline is September 30. Required: Income Certificate and Aadhaar Card. Fee is NIL.',
+      'spoken_summary': 'This is a National Merit Scholarship notice. The deadline is September 30.',
     };
   }
 
-  static Future<Map<String, dynamic>> predictSign(AccessibilityTwin twin) async {
+  static Future<Map<String, dynamic>> predictSign(AccessibilityTwin twin, {List<int>? imageBytes}) async {
     try {
-      final res = await http.post(
-        Uri.parse('$baseUrl/isl/predict'),
-        body: {'twin_id': twin.id},
-      );
+      final uri = Uri.parse('$baseUrl/isl/predict');
+      final request = http.MultipartRequest('POST', uri);
+      request.fields['twin_id'] = twin.id;
+      if (imageBytes != null && imageBytes.isNotEmpty) {
+        request.files.add(http.MultipartFile.fromBytes('image', imageBytes, filename: 'gesture.png'));
+      }
+      final streamedResponse = await request.send().timeout(const Duration(seconds: 10));
+      final res = await http.Response.fromStream(streamedResponse);
       if (res.statusCode == 200) {
         return jsonDecode(res.body);
       }
@@ -113,8 +129,12 @@ class ApiService {
     return {
       'sign': 'HELP',
       'confidence': 0.95,
+      'sign_type': 'DYNAMIC_EMERGENCY',
       'spoken_output': 'Help',
+      'hindi_translation': 'सहायता / मदद',
       'caption': 'HELP [सहायता चाहिए]',
+      'landmarks_count': 21,
+      'method': 'FALLBACK',
     };
   }
 

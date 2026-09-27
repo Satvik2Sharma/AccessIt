@@ -148,16 +148,20 @@ async def analyze_form_for_completion(
     twin_id: str = Form("default_user"),
 ):
     """
-    Analyzes form document, detects barriers against user's Accessibility Twin,
+    Analyzes form document with REAL OCR, detects barriers against user's Accessibility Twin,
     and compiles a personalized AccessibleTaskFlow.
     """
     twin = twin_service.get_twin(twin_id)
     task_id = task_engine.create_form_task(total_fields=7)
 
+    # Process Real OCR on uploaded image (or demo form fallback on disk)
+    image_bytes = await image.read() if image else None
+    discovered_fields = assistance_engine.ocr_engine.extract_form_fields(image_bytes)
+
     # Detect Barriers
     barriers = barrier_engine.detect_barriers(
         task_type=TaskType.FORM_COMPLETION,
-        task_context={"total_fields": 7, "document_type": "physical_form"},
+        task_context={"total_fields": len(discovered_fields) or 7, "document_type": "physical_form"},
         twin=twin,
     )
 
@@ -171,7 +175,7 @@ async def analyze_form_for_completion(
     # Initialize verification state
     verification_service.verify_form_task(
         task_id=task_id,
-        total_fields=7,
+        total_fields=flow.total_steps,
         completed_fields={},
         required_field_ids=[s.field_id for s in flow.steps],
     )
@@ -182,9 +186,28 @@ async def analyze_form_for_completion(
 @app.post(f"{settings.api_prefix}/complete/respond")
 async def submit_form_field_response(req: FormRespondRequest):
     """
-    Submits user answer (e.g. voice transcription), updates state, and advances to next step.
+    Submits user answer (voice/text), validates input constraints, updates state, and advances.
     """
     twin = twin_service.get_twin(req.twin_id)
+
+    # 1. Semantic Field Validation
+    is_valid, validation_msg = verification_service.validate_field(req.field_id, req.value)
+    if not is_valid:
+        current_task = task_engine.get_task(req.task_id) or {"completed_fields": 0, "total_fields": 7, "fields": {}}
+        ver = verification_service.get_verification(req.task_id)
+        return {
+            "task_id": req.task_id,
+            "field_completed": req.field_id,
+            "is_valid": False,
+            "validation_error": validation_msg,
+            "completed_fields_count": current_task["completed_fields"],
+            "total_fields": current_task["total_fields"],
+            "verification": ver,
+            "next_step": None,
+            "is_complete": False,
+        }
+
+    # 2. Update Task State
     task = task_engine.update_field(
         task_id=req.task_id,
         field_id=req.field_id,
@@ -192,16 +215,16 @@ async def submit_form_field_response(req: FormRespondRequest):
         confirmed=req.confirmation_received,
     )
 
-    # Record learning telemetry
+    # 3. Record Learning Telemetry
     learning_service.record_interaction(
         step_id=req.field_id,
         modality_used="voice" if twin.motor.voice_input else "touch",
-        duration_seconds=3.5,
+        duration_seconds=3.2,
         retries=0,
         success=True,
     )
 
-    # Run Verification
+    # 4. Run First-Class Verification
     required_ids = ["full_name", "dob", "address", "category", "annual_income", "aadhaar", "bank_account"]
     ver_result = verification_service.verify_form_task(
         task_id=req.task_id,
@@ -210,7 +233,7 @@ async def submit_form_field_response(req: FormRespondRequest):
         required_field_ids=required_ids,
     )
 
-    # Find next step
+    # 5. Find Next Step
     completed_keys = set(task["fields"].keys())
     next_step = None
     flow = flow_compiler.compile_form_flow(req.task_id, twin, [])
@@ -222,6 +245,8 @@ async def submit_form_field_response(req: FormRespondRequest):
     return {
         "task_id": req.task_id,
         "completed_field": req.field_id,
+        "is_valid": True,
+        "validation_message": validation_msg,
         "completed_fields_count": task["completed_fields"],
         "total_fields": task["total_fields"],
         "verification": ver_result,

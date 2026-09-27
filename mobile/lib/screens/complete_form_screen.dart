@@ -55,15 +55,17 @@ class _CompleteFormScreenState extends State<CompleteFormScreen> {
 
   void _submitStep() async {
     if (_flow == null) return;
-    HapticsService.confirmationPulse();
 
     final step = _flow!.steps[_currentStep];
     final value = _inputController.text.trim();
-    if (value.isEmpty) return;
+    if (value.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter or speak an answer')),
+      );
+      return;
+    }
 
-    _answers[step.fieldId] = value;
-
-    // Send answer to FastAPI backend
+    // Send answer to FastAPI backend for validation and state update
     final res = await ApiService.respondFormField(
       taskId: _flow!.taskId,
       fieldId: step.fieldId,
@@ -71,13 +73,37 @@ class _CompleteFormScreenState extends State<CompleteFormScreen> {
       twin: widget.twin,
     );
 
+    // If validation fails (e.g. invalid Aadhaar length, invalid DOB format), do not advance!
+    if (res != null && res['is_valid'] == false) {
+      HapticsService.errorPulse();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.error_outline, color: Colors.white),
+                const SizedBox(width: 8),
+                Expanded(child: Text(res['validation_error'] ?? 'Validation failed')),
+              ],
+            ),
+            backgroundColor: Colors.red.shade800,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+      return;
+    }
+
+    _answers[step.fieldId] = value;
+
     if (_currentStep + 1 < _flow!.steps.length) {
+      HapticsService.confirmationPulse();
       setState(() {
         _currentStep++;
-        _inputController.text = _demoAnswers[_currentStep];
+        _inputController.text = _demoAnswers.length > _currentStep ? _demoAnswers[_currentStep] : '';
       });
     } else {
-      // Completed all steps!
+      // Completed all 7 steps!
       HapticsService.successDoublePulse();
       if (res != null && res['verification'] != null) {
         setState(() {

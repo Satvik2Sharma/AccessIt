@@ -19,6 +19,13 @@ class HapticsService {
     });
   }
 
+  static void errorPulse() {
+    HapticFeedback.heavyImpact();
+    Future.delayed(const Duration(milliseconds: 100), () {
+      HapticFeedback.mediumImpact();
+    });
+  }
+
   static void directionalBuzz(String direction) {
     if (direction.contains('RIGHT')) {
       HapticFeedback.mediumImpact();
