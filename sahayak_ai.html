@@ -3,326 +3,327 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<meta name="theme-color" content="#090d16" />
+<meta name="theme-color" content="#0a0e1a" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="description" content="Sahayak AI — Intent-Aware Personal Accessibility Copilot" />
 <title>Sahayak AI (सहायक AI) — Accessibility Copilot</title>
 
-<!-- Google Fonts: Plus Jakarta Sans + Inter -->
+<!-- Typography: Plus Jakarta Sans & Inter -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-  /* ─── Reset & Base ────────────────────────────────────────── */
+  /* ─── Restrained Premium Design System Tokens ─────────────── */
+  :root {
+    --bg-dark: #0a0e1a;
+    --bg-screen: #f8fafc;
+    --surface-card: #ffffff;
+    --surface-subtle: #f1f5f9;
+    --border-light: #e2e8f0;
+    --border-subtle: #cbd5e1;
+    
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    
+    --brand-blue: #2563eb;
+    --brand-blue-dark: #1d4ed8;
+    --brand-blue-light: #eff6ff;
+    
+    --accent-teal: #0d9488;
+    --accent-teal-light: #ccfbf1;
+    --accent-cyan: #0891b2;
+
+    --hc-yellow: #FFD700;
+    
+    --radius-sm: 10px;
+    --radius-md: 16px;
+    --radius-lg: 22px;
+    --radius-pill: 9999px;
+    
+    --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.04);
+    --shadow-md: 0 4px 16px -2px rgba(15, 23, 42, 0.06);
+    --shadow-lg: 0 12px 32px -4px rgba(15, 23, 42, 0.08);
+  }
+
+  /* ─── Reset & Core ────────────────────────────────────────── */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: #040711; -webkit-tap-highlight-color: transparent; user-select: none; color: #f8fafc;
-    -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+  html, body { height: 100%; font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
+    background: var(--bg-dark); -webkit-tap-highlight-color: transparent; user-select: none; color: var(--text-primary);
+    -webkit-font-smoothing: antialiased; }
   button { cursor: pointer; border: none; background: none; font-family: inherit; color: inherit; }
   input, textarea { font-family: inherit; }
   ::-webkit-scrollbar { display: none; }
 
-  /* ─── Phone Frame (Obsidian Pro Device) ───────────────────── */
+  /* ─── Mobile Smartphone Device Mockup ─────────────────────── */
   #root { display: flex; align-items: center; justify-content: center;
-    min-height: 100vh; padding: 16px;
-    background: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.18) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(37, 99, 235, 0.18) 0px, transparent 50%), #040711; }
+    min-height: 100vh; padding: 20px; background: radial-gradient(circle at 50% 0%, #1e293b 0%, #0a0e1a 100%); }
   
-  .phone-frame { position: relative; width: 100%; max-width: 414px;
-    height: min(890px, 97vh); background: #0b0f19; border-radius: 54px;
-    padding: 10px; box-shadow: 0 40px 100px -20px rgba(0,0,0,0.95),
-      0 0 0 10px #151c2e, inset 0 0 0 2px rgba(255,255,255,0.12); }
+  .phone-frame { position: relative; width: 100%; max-width: 400px;
+    height: min(870px, 96vh); background: #0f172a; border-radius: 48px;
+    padding: 10px; box-shadow: 0 30px 80px -15px rgba(0,0,0,0.85),
+      0 0 0 6px #1e293b, inset 0 0 0 1.5px rgba(255,255,255,0.1); }
   
-  .phone-screen { width: 100%; height: 100%; border-radius: 46px; overflow: hidden;
-    display: flex; flex-direction: column; background: #090d16;
-    transition: background 0.3s ease, color 0.3s ease; position: relative; }
+  .phone-screen { width: 100%; height: 100%; border-radius: 40px; overflow: hidden;
+    display: flex; flex-direction: column; background: var(--bg-screen);
+    transition: background 0.25s ease, color 0.25s ease; position: relative; }
 
-  /* Ambient Mesh Lighting */
-  .screen-bg { position: absolute; inset: 0; pointer-events: none; z-index: 0;
-    background: radial-gradient(circle at 50% -10%, rgba(59, 130, 246, 0.22) 0%, transparent 60%),
-                radial-gradient(circle at 100% 60%, rgba(99, 102, 241, 0.15) 0%, transparent 50%); }
-
-  /* ─── Dynamic Island ──────────────────────────────────────── */
+  /* ─── Device Camera Notch ─────────────────────────────────── */
   .phone-pill { position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
-    width: 124px; height: 30px; background: #000; border-radius: 20px; z-index: 40;
-    display: flex; align-items: center; justify-content: space-between; padding: 0 14px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(255,255,255,0.08); }
-  .phone-pill-cam { width: 11px; height: 11px; border-radius: 50%; background: #0d1322;
+    width: 116px; height: 26px; background: #000; border-radius: 16px; z-index: 40;
+    display: flex; align-items: center; justify-content: flex-end; padding-right: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5); }
+  .phone-pill-dot { width: 8px; height: 8px; border-radius: 50%; background: #0f172a;
     box-shadow: inset 0 0 0 2px #1e293b; }
-  .phone-pill-wave { display: flex; align-items: center; gap: 2.5px; }
-  .phone-pill-bar { width: 3px; height: 10px; background: #3b82f6; border-radius: 2px; animation: wave 1.2s infinite ease-in-out; }
-  .phone-pill-bar:nth-child(2) { animation-delay: 0.2s; height: 14px; background: #60a5fa; }
-  .phone-pill-bar:nth-child(3) { animation-delay: 0.4s; height: 8px; background: #818cf8; }
-  @keyframes wave { 0%,100%{transform:scaleY(0.5)} 50%{transform:scaleY(1.2)} }
 
   /* ─── High Contrast Mode (WCAG AAA) ───────────────────────── */
-  .hc .phone-screen { background: #000 !important; color: #FFD700 !important; }
-  .hc .top-bar { background: #000 !important; border-bottom: 2px solid #FFD700 !important; }
-  .hc .status-bar { color: #FFD700 !important; }
-  .hc .bottom-nav { background: #000 !important; border-top: 2px solid #FFD700 !important; }
-  .hc .nav-btn { color: #FFD700 !important; opacity: 0.7; }
-  .hc .nav-btn.active { background: #FFD700 !important; color: #000 !important; opacity: 1; font-weight: 900; }
-  .hc .card, .hc .section-card, .hc .action-card { background: #111 !important; border: 2px solid #FFD700 !important; box-shadow: none !important; color: #FFD700 !important; }
-  .hc .screen-body { color: #FFD700 !important; }
-  .hc .chip { background: #FFD700 !important; color: #000 !important; border-color: #000 !important; font-weight: 900; }
-  .hc .btn-primary { background: #FFD700 !important; color: #000 !important; font-weight: 900; box-shadow: 0 0 20px rgba(255,215,0,0.5) !important; }
-  .hc .btn-ghost { border: 2px solid #FFD700 !important; color: #FFD700 !important; }
-  .hc input, .hc textarea { background: #000 !important; border: 2px solid #FFD700 !important; color: #FFD700 !important; }
-  .hc .badge { background: #FFD700 !important; color: #000 !important; font-weight: 900; }
-  .hc .infobox { background: #111 !important; border: 2px solid #FFD700 !important; color: #FFD700 !important; }
-  .hc .voice-btn { background: #FFD700 !important; color: #000 !important; box-shadow: 0 0 0 16px rgba(255,215,0,.3) !important; }
-  .hc .action-title, .hc .action-sub, .hc h1, .hc h2, .hc h3, .hc h4 { color: #FFD700 !important; }
+  .hc .phone-screen { background: #000 !important; color: var(--hc-yellow) !important; }
+  .hc .top-bar { background: #000 !important; border-bottom: 2px solid var(--hc-yellow) !important; }
+  .hc .status-bar { color: var(--hc-yellow) !important; }
+  .hc .bottom-nav { background: #000 !important; border-top: 2px solid var(--hc-yellow) !important; }
+  .hc .nav-btn { color: var(--hc-yellow) !important; opacity: 0.65; }
+  .hc .nav-btn.active { background: var(--hc-yellow) !important; color: #000 !important; opacity: 1; font-weight: 900; }
+  .hc .card, .hc .section-card, .hc .action-card { background: #111 !important; border: 2px solid var(--hc-yellow) !important; box-shadow: none !important; color: var(--hc-yellow) !important; }
+  .hc .screen-body { color: var(--hc-yellow) !important; }
+  .hc .chip { background: var(--hc-yellow) !important; color: #000 !important; border-color: #000 !important; font-weight: 900; }
+  .hc .btn-primary { background: var(--hc-yellow) !important; color: #000 !important; font-weight: 900; box-shadow: none !important; }
+  .hc .btn-ghost { border: 2px solid var(--hc-yellow) !important; color: var(--hc-yellow) !important; }
+  .hc input, .hc textarea { background: #000 !important; border: 2px solid var(--hc-yellow) !important; color: var(--hc-yellow) !important; }
+  .hc .badge { background: var(--hc-yellow) !important; color: #000 !important; font-weight: 900; }
+  .hc .infobox { background: #111 !important; border: 2px solid var(--hc-yellow) !important; color: var(--hc-yellow) !important; }
+  .hc .voice-btn { background: var(--hc-yellow) !important; color: #000 !important; box-shadow: 0 0 0 12px rgba(255,215,0,0.2) !important; }
+  .hc .action-title, .hc .action-sub, .hc h1, .hc h2, .hc h3, .hc h4 { color: var(--hc-yellow) !important; }
 
   /* ─── Large Text Mode ─────────────────────────────────────── */
-  .lg .screen-body, .lg button, .lg input { font-size: 1.15rem !important; }
-  .lg h1 { font-size: 2.2rem !important; }
-  .lg h2 { font-size: 1.65rem !important; }
-  .lg h3 { font-size: 1.4rem !important; }
+  .lg .screen-body, .lg button, .lg input { font-size: 1.12rem !important; }
+  .lg h1 { font-size: 1.95rem !important; }
+  .lg h2 { font-size: 1.5rem !important; }
+  .lg h3 { font-size: 1.3rem !important; }
 
-  /* ─── Top Navigation Header ───────────────────────────────── */
-  .top-bar { flex-shrink: 0; background: rgba(9, 13, 22, 0.85);
-    border-bottom: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(20px); position: relative; z-index: 30; }
+  /* ─── Top Bar ─────────────────────────────────────────────── */
+  .top-bar { flex-shrink: 0; background: rgba(255, 255, 255, 0.94);
+    border-bottom: 1px solid var(--border-light); backdrop-filter: blur(12px); position: relative; z-index: 30; }
   .status-bar { display: flex; justify-content: space-between; align-items: center;
-    padding: 16px 22px 2px; font-size: 11.5px; font-weight: 700; color: #94a3b8; font-family: 'Inter', sans-serif; }
-  .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%;
-    margin-right: 6px; vertical-align: middle; }
-  .status-dot.online { background: #10b981; box-shadow: 0 0 10px #10b981; }
-  .status-dot.local { background: #3b82f6; animation: pulse 1.5s infinite; }
+    padding: 14px 18px 2px; font-size: 11px; font-weight: 700; color: var(--text-muted); font-family: 'Inter', sans-serif; }
+  .status-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+  .status-dot.online { background: #10b981; }
+  .status-dot.local { background: var(--brand-blue); animation: pulse 1.5s infinite; }
   
-  .app-bar { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px 12px; }
-  .app-logo { display: flex; align-items: center; gap: 12px; }
-  .logo-icon { width: 38px; height: 38px; border-radius: 14px;
-    background: linear-gradient(135deg, #3b82f6, #6366f1); color: #fff;
+  .app-bar { display: flex; align-items: center; justify-content: space-between; padding: 8px 14px 10px; }
+  .app-logo { display: flex; align-items: center; gap: 10px; }
+  .logo-icon { width: 34px; height: 34px; border-radius: var(--radius-sm);
+    background: var(--brand-blue); color: #fff;
     display: flex; align-items: center; justify-content: center;
-    font-weight: 900; font-size: 18px; box-shadow: 0 4px 16px rgba(59,130,246,0.4);
-    border: 1px solid rgba(255,255,255,0.25); }
-  .logo-text h1 { font-size: 17px; font-weight: 900; color: #fff; line-height: 1; letter-spacing: -0.03em; }
-  .logo-text span { font-size: 10.5px; color: #94a3b8; font-weight: 600; letter-spacing: 0.02em; }
+    font-weight: 900; font-size: 16px; box-shadow: 0 2px 8px rgba(37,99,235,0.25); }
+  .logo-text h1 { font-size: 15.5px; font-weight: 800; color: var(--text-primary); line-height: 1; letter-spacing: -0.02em; }
+  .logo-text span { font-size: 10px; color: var(--text-muted); font-weight: 600; }
   
-  .top-controls { display: flex; align-items: center; gap: 6px; }
-  .tc-btn { width: 34px; height: 34px; border-radius: 11px; display: flex; align-items: center;
-    justify-content: center; font-size: 15px; color: #cbd5e1; transition: all .2s ease;
-    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); }
+  .top-controls { display: flex; align-items: center; gap: 4px; }
+  .tc-btn { width: 34px; height: 34px; border-radius: var(--radius-sm); display: flex; align-items: center;
+    justify-content: center; font-size: 15px; color: var(--text-secondary); transition: all .15s ease;
+    background: var(--surface-subtle); border: 1px solid var(--border-light); }
   .tc-btn:active { transform: scale(.92); }
-  .tc-btn.active { background: rgba(59,130,246,0.25); color: #60a5fa; border-color: #3b82f6; }
-  .tc-btn.hc-active { background: #FFD700; color: #000; border-color: #FFD700; font-weight: 900; }
-  .lang-btn { height: 32px; padding: 0 12px; border-radius: 11px; border: 1px solid rgba(255,255,255,0.15);
-    font-size: 11.5px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 5px;
-    background: rgba(255,255,255,0.08); backdrop-filter: blur(8px); }
+  .tc-btn.active { background: var(--brand-blue-light); color: var(--brand-blue); border-color: #93c5fd; }
+  .tc-btn.hc-active { background: var(--hc-yellow); color: #000; border-color: var(--hc-yellow); font-weight: 900; }
+  .lang-btn { height: 30px; padding: 0 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);
+    font-size: 11px; font-weight: 700; color: var(--text-secondary); display: flex; align-items: center; gap: 4px;
+    background: #fff; box-shadow: var(--shadow-sm); }
 
   /* ─── Screen Body ─────────────────────────────────────────── */
-  .screen-body { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch;
-    position: relative; z-index: 10; }
+  .screen-body { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; position: relative; z-index: 10; }
 
-  /* ─── Bottom Navigation Toolbar ───────────────────────────── */
-  .bottom-nav { flex-shrink: 0; background: rgba(9, 13, 22, 0.88);
-    border-top: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(20px); padding: 8px 4px 6px; z-index: 30; }
+  /* ─── Bottom Navigation ───────────────────────────────────── */
+  .bottom-nav { flex-shrink: 0; background: rgba(255, 255, 255, 0.96);
+    border-top: 1px solid var(--border-light); backdrop-filter: blur(12px); padding: 6px 0 4px; z-index: 30; }
   .nav-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; padding: 0 4px; }
   .nav-btn { display: flex; flex-direction: column; align-items: center; justify-content: center;
-    padding: 6px 2px 5px; border-radius: 14px; color: #64748b; transition: all .2s cubic-bezier(0.4, 0, 0.2, 1); gap: 3px; }
-  .nav-btn.active { background: rgba(59,130,246,0.18); color: #60a5fa; font-weight: 800; transform: translateY(-1px); border: 1px solid rgba(59,130,246,0.3); }
-  .nav-label { font-size: 9.5px; font-weight: 700; text-align: center; line-height: 1; }
-  .nav-home-bar { width: 100px; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.3);
-    margin: 8px auto 0; opacity: .8; }
+    padding: 5px 2px 4px; border-radius: var(--radius-sm); color: var(--text-muted); transition: all .15s ease; gap: 2px; }
+  .nav-btn.active { background: var(--brand-blue-light); color: var(--brand-blue); font-weight: 800; }
+  .nav-label { font-size: 9px; font-weight: 700; text-align: center; line-height: 1; }
+  .nav-home-bar { width: 96px; height: 4px; border-radius: 2px; background: var(--border-subtle);
+    margin: 6px auto 0; opacity: .7; }
 
-  /* ─── Glass Cards & Primitives ────────────────────────────── */
-  .screen-pad { padding: 18px 16px 14px; display: flex; flex-direction: column; gap: 16px; min-height: 100%; }
+  /* ─── Clean Card & Component Primitives ───────────────────── */
+  .screen-pad { padding: 16px; display: flex; flex-direction: column; gap: 14px; min-height: 100%; }
   .back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 12px;
-    font-weight: 800; color: #cbd5e1; padding: 7px 14px; border-radius: 12px; background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(8px); }
+    font-weight: 700; color: var(--text-secondary); padding: 6px 12px; border-radius: var(--radius-sm); background: #fff;
+    border: 1px solid var(--border-light); box-shadow: var(--shadow-sm); }
   .row-between { display: flex; align-items: center; justify-content: space-between; }
   
-  .badge { display: inline-flex; align-items: center; padding: 4px 12px;
-    border-radius: 99px; font-size: 10.5px; font-weight: 900; letter-spacing: .06em;
+  .badge { display: inline-flex; align-items: center; padding: 3px 10px;
+    border-radius: var(--radius-pill); font-size: 10px; font-weight: 800; letter-spacing: .04em;
     text-transform: uppercase; border: 1px solid transparent; }
-  .badge-blue { background: rgba(37,99,235,0.22); color: #60a5fa; border-color: rgba(37,99,235,0.4); }
-  .badge-green { background: rgba(16,185,129,0.22); color: #34d399; border-color: rgba(16,185,129,0.4); }
-  .badge-amber { background: rgba(245,158,11,0.22); color: #fbbf24; border-color: rgba(245,158,11,0.4); }
-  .badge-purple { background: rgba(139,92,246,0.22); color: #c084fc; border-color: rgba(139,92,246,0.4); }
-  .badge-indigo { background: rgba(99,102,241,0.22); color: #a5b4fc; border-color: rgba(99,102,241,0.4); }
+  .badge-blue { background: #dbeafe; color: #1e40af; border-color: #bfdbfe; }
+  .badge-green { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
+  .badge-amber { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+  .badge-purple { background: #f3e8ff; color: #6b21a8; border-color: #e9d5ff; }
+  .badge-indigo { background: #e0e7ff; color: #3730a3; border-color: #c7d2fe; }
   
-  .card { background: rgba(18, 24, 38, 0.75); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 24px;
-    padding: 18px; backdrop-filter: blur(20px); box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5); }
-  .section-card { background: rgba(18, 24, 38, 0.65); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 16px; backdrop-filter: blur(16px); }
+  .card { background: var(--surface-card); border: 1px solid var(--border-light); border-radius: var(--radius-lg);
+    padding: 16px; box-shadow: var(--shadow-md); }
+  .section-card { background: #fff; border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 14px; box-shadow: var(--shadow-sm); }
   
   .btn-primary { display: flex; align-items: center; justify-content: center; gap: 8px;
-    padding: 16px 20px; border-radius: 18px; font-weight: 800; font-size: 14.5px;
-    background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%); color: #fff;
-    box-shadow: 0 10px 25px -5px rgba(37,99,235,0.5); border: 1px solid rgba(255,255,255,0.2);
-    transition: all .25s cubic-bezier(0.4, 0, 0.2, 1); width: 100%; letter-spacing: -0.01em; }
-  .btn-primary:active { transform: scale(.97); box-shadow: 0 5px 12px -2px rgba(37,99,235,0.5); }
+    padding: 14px 18px; border-radius: var(--radius-md); font-weight: 700; font-size: 14px;
+    background: var(--brand-blue); color: #fff; box-shadow: 0 4px 14px rgba(37,99,235,0.3);
+    transition: all .15s ease; width: 100%; }
+  .btn-primary:active { transform: scale(.98); background: var(--brand-blue-dark); }
   
   .btn-ghost { display: flex; align-items: center; justify-content: center; gap: 6px;
-    padding: 12px 18px; border-radius: 16px; font-weight: 700; font-size: 13px;
-    border: 1px solid rgba(255,255,255,0.15); color: #cbd5e1; transition: all .2s; background: rgba(255,255,255,0.04); }
-  .btn-ghost:active { transform: scale(.97); background: rgba(255,255,255,0.08); }
+    padding: 10px 16px; border-radius: var(--radius-md); font-weight: 600; font-size: 12.5px;
+    border: 1px solid var(--border-light); color: var(--text-secondary); transition: all .15s; background: #fff; }
+  .btn-ghost:active { transform: scale(.98); background: var(--surface-subtle); }
   
-  .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
-  .chip { background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.3);
-    border-radius: 99px; padding: 5px 14px; font-size: 11px; font-weight: 800; color: #60a5fa; }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { background: var(--brand-blue-light); border: 1px solid #bfdbfe;
+    border-radius: var(--radius-pill); padding: 4px 12px; font-size: 11px; font-weight: 700; color: var(--brand-blue); }
   
-  .infobox { border-radius: 16px; padding: 14px 16px; border: 1px solid; font-size: 12px; line-height: 1.55; }
-  .infobox-blue { background: rgba(30, 58, 138, 0.35); border-color: rgba(59, 130, 246, 0.4); color: #93c5fd; }
-  .infobox-green { background: rgba(6, 78, 59, 0.35); border-color: rgba(16, 185, 129, 0.4); color: #6ee7b7; }
-  .infobox-amber { background: rgba(120, 53, 15, 0.35); border-color: rgba(245, 158, 11, 0.4); color: #fde047; }
-  .infobox-purple { background: rgba(88, 28, 135, 0.35); border-color: rgba(168, 85, 247, 0.4); color: #e9d5ff; }
+  .infobox { border-radius: var(--radius-md); padding: 12px 14px; border: 1px solid; font-size: 12px; line-height: 1.5; }
+  .infobox-blue { background: #eff6ff; border-color: #bfdbfe; color: #1e40af; }
+  .infobox-green { background: #f0fdf4; border-color: #bbf7d0; color: #166534; }
+  .infobox-amber { background: #fffbeb; border-color: #fde68a; color: #92400e; }
+  .infobox-purple { background: #faf5ff; border-color: #e9d5ff; color: #6b21a8; }
   
-  .progress-track { background: rgba(255,255,255,0.1); border-radius: 99px; height: 10px; overflow: hidden; padding: 2px; }
-  .progress-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #3b82f6, #818cf8);
-    transition: width .4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 12px rgba(59,130,246,0.6); }
+  .progress-track { background: var(--border-light); border-radius: var(--radius-pill); height: 8px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: var(--radius-pill); background: var(--brand-blue);
+    transition: width .35s ease; }
   
-  .section-label { font-size: 11px; font-weight: 900; letter-spacing: .08em;
-    text-transform: uppercase; color: #64748b; margin-bottom: 8px; }
+  .section-label { font-size: 11px; font-weight: 800; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
 
-  /* ─── Hero Pulsing Voice Mic Button ───────────────────────── */
-  .voice-hero-container { position: relative; display: flex; align-items: center; justify-content: center; padding: 14px 0; }
-  .voice-btn { width: 120px; height: 120px; border-radius: 50%; display: flex;
+  /* ─── Hero Mic Copilot Button ─────────────────────────────── */
+  .voice-hero-container { position: relative; display: flex; align-items: center; justify-content: center; padding: 12px 0; }
+  .voice-btn { width: 110px; height: 110px; border-radius: 50%; display: flex;
     flex-direction: column; align-items: center; justify-content: center; gap: 4px;
-    background: linear-gradient(135deg, #3b82f6 0%, #4f46e5 100%); color: #fff;
-    box-shadow: 0 15px 40px rgba(59,130,246,0.5), inset 0 0 0 2px rgba(255,255,255,0.3);
-    transition: all .3s cubic-bezier(0.4, 0, 0.2, 1); font-size: 11px; font-weight: 900; text-transform: uppercase;
-    letter-spacing: .08em; z-index: 10; border: none; }
-  .voice-btn:active { transform: scale(.92); }
-  .voice-btn.listening { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-    box-shadow: 0 15px 40px rgba(239,68,68,0.6), inset 0 0 0 2px rgba(255,255,255,0.4); }
-  .voice-btn svg { width: 46px; height: 46px; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.3)); }
+    background: var(--brand-blue); color: #fff; box-shadow: 0 8px 24px rgba(37,99,235,0.35);
+    transition: all .2s ease; font-size: 11px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: .05em; z-index: 10; border: none; }
+  .voice-btn:active { transform: scale(.94); }
+  .voice-btn.listening { background: #dc2626; box-shadow: 0 8px 24px rgba(220,38,38,0.4); }
+  .voice-btn svg { width: 42px; height: 42px; }
 
-  @keyframes pulse-ring-pro {
-    0% { transform: scale(0.95); opacity: 0.8; box-shadow: 0 0 0 0 rgba(59,130,246,0.5); }
-    70% { transform: scale(1.25); opacity: 0; box-shadow: 0 0 0 35px rgba(59,130,246,0); }
-    100% { transform: scale(0.95); opacity: 0; box-shadow: 0 0 0 0 rgba(59,130,246,0); }
+  @keyframes pulse-aura {
+    0% { box-shadow: 0 0 0 0 rgba(37,99,235,0.4), 0 8px 24px rgba(37,99,235,0.35); }
+    70% { box-shadow: 0 0 0 20px rgba(37,99,235,0), 0 8px 24px rgba(37,99,235,0.35); }
+    100% { box-shadow: 0 0 0 0 rgba(37,99,235,0), 0 8px 24px rgba(37,99,235,0.35); }
   }
-  @keyframes pulse-ring-red-pro {
-    0% { transform: scale(0.95); opacity: 0.9; box-shadow: 0 0 0 0 rgba(239,68,68,0.6); }
-    70% { transform: scale(1.35); opacity: 0; box-shadow: 0 0 0 40px rgba(239,68,68,0); }
-    100% { transform: scale(0.95); opacity: 0; box-shadow: 0 0 0 0 rgba(239,68,68,0); }
-  }
-  .voice-ring { position: absolute; inset: -10px; border-radius: 50%; border: 2px solid rgba(59,130,246,0.4); pointer-events: none; }
-  .voice-btn:not(.listening) + .voice-ring { animation: pulse-ring-pro 2.4s infinite ease-out; }
-  .voice-btn.listening + .voice-ring { animation: pulse-ring-red-pro 1.2s infinite ease-out; border-color: rgba(239,68,68,0.5); }
+  .voice-btn:not(.listening) { animation: pulse-aura 2.2s infinite ease-out; }
 
-  /* ─── Toggle Switch (iOS Pro Style) ───────────────────────── */
-  .toggle { position: relative; width: 48px; height: 28px; flex-shrink: 0; }
+  /* ─── Toggle Switch ───────────────────────────────────────── */
+  .toggle { position: relative; width: 44px; height: 25px; flex-shrink: 0; }
   .toggle input { opacity: 0; width: 0; height: 0; }
-  .toggle-slider { position: absolute; inset: 0; border-radius: 99px;
-    background: rgba(255,255,255,0.15); transition: .3s ease; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); }
-  .toggle-slider::before { content: ''; position: absolute; width: 22px; height: 22px;
-    left: 3px; bottom: 2px; border-radius: 50%; background: #fff;
-    box-shadow: 0 3px 8px rgba(0,0,0,.4); transition: .3s ease; }
-  .toggle input:checked + .toggle-slider { background: #3b82f6; border-color: #60a5fa; }
-  .toggle input:checked + .toggle-slider::before { transform: translateX(20px); }
+  .toggle-slider { position: absolute; inset: 0; border-radius: var(--radius-pill);
+    background: var(--border-subtle); transition: .2s ease; cursor: pointer; }
+  .toggle-slider::before { content: ''; position: absolute; width: 19px; height: 19px;
+    left: 3px; bottom: 3px; border-radius: 50%; background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: .2s ease; }
+  .toggle input:checked + .toggle-slider { background: var(--brand-blue); }
+  .toggle input:checked + .toggle-slider::before { transform: translateX(19px); }
 
-  /* ─── Camera Viewport HUD Frame ────────────────────────────── */
-  .cam-viewport { width: 100%; height: 240px; background: #000; border-radius: 26px;
+  /* ─── Camera Viewport HUD ─────────────────────────────────── */
+  .cam-viewport { width: 100%; height: 220px; background: #0f172a; border-radius: var(--radius-lg);
     overflow: hidden; position: relative; display: flex; align-items: center;
-    justify-content: center; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 15px 35px rgba(0,0,0,0.6); }
+    justify-content: center; border: 1.5px solid var(--border-light); }
   .cam-viewport video { width: 100%; height: 100%; object-fit: cover; }
-  .cam-label { position: absolute; top: 14px; left: 14px;
-    background: rgba(9,13,22,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(16,185,129,0.4);
-    border-radius: 20px; padding: 5px 14px; font-size: 10px; font-weight: 900; color: #34d399;
-    display: flex; align-items: center; gap: 7px; letter-spacing: 0.05em; }
-  .cam-pulse { width: 8px; height: 8px; border-radius: 50%; background: #34d399;
-    box-shadow: 0 0 10px #34d399; animation: pulse 1s infinite; }
+  .cam-label { position: absolute; top: 12px; left: 12px;
+    background: rgba(15,23,42,0.9); border: 1px solid #10b981;
+    border-radius: 20px; padding: 4px 10px; font-size: 10px; font-weight: 800; color: #34d399;
+    display: flex; align-items: center; gap: 6px; }
+  .cam-pulse { width: 7px; height: 7px; border-radius: 50%; background: #34d399; animation: pulse 1s infinite; }
 
-  /* Laser Scanner */
-  .scanner-line { position: absolute; left: 0; right: 0; height: 3px;
-    background: linear-gradient(90deg, transparent, #3b82f6, #60a5fa, #3b82f6, transparent);
-    box-shadow: 0 0 20px #3b82f6; animation: scan 2.2s ease-in-out infinite; z-index: 10; }
+  .scanner-line { position: absolute; left: 0; right: 0; height: 2px;
+    background: var(--brand-blue); box-shadow: 0 0 12px var(--brand-blue); animation: scan 2s ease-in-out infinite; z-index: 10; }
   @keyframes scan { 0% { top: 12%; } 50% { top: 88%; } 100% { top: 12%; } }
 
-  /* ─── Bento Grid Action Cards ─────────────────────────────── */
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .action-card { background: rgba(18, 24, 38, 0.75); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 22px;
-    padding: 16px; text-align: left; transition: all .25s cubic-bezier(0.4, 0, 0.2, 1); display: flex;
-    flex-direction: column; gap: 8px; backdrop-filter: blur(16px); position: relative; overflow: hidden; }
-  .action-card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.25); }
-  .action-card:active { transform: scale(.96); }
-  .action-card.featured { border-color: rgba(59,130,246,0.5); background: linear-gradient(180deg, rgba(37,99,235,0.2) 0%, rgba(18,24,38,0.8) 100%); box-shadow: 0 12px 30px -5px rgba(37,99,235,0.3); }
-  .action-icon { width: 44px; height: 44px; border-radius: 16px; display: flex;
-    align-items: center; justify-content: center; box-shadow: 0 6px 16px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); }
-  .action-icon svg { width: 22px; height: 22px; color: #fff; }
-  .action-title { font-size: 15.5px; font-weight: 900; color: #fff; line-height: 1.1; letter-spacing: -0.02em; }
-  .action-sub { font-size: 11px; color: #94a3b8; line-height: 1.35; font-weight: 500; }
+  /* ─── Bento Action Cards ──────────────────────────────────── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .action-card { background: #fff; border: 1px solid var(--border-light); border-radius: var(--radius-md);
+    padding: 14px; text-align: left; transition: all .15s ease; display: flex;
+    flex-direction: column; gap: 6px; box-shadow: var(--shadow-sm); }
+  .action-card:active { transform: scale(.97); }
+  .action-card.featured { border-color: #93c5fd; background: linear-gradient(180deg, #ffffff 0%, #eff6ff 100%); }
+  .action-icon { width: 38px; height: 38px; border-radius: var(--radius-sm); display: flex;
+    align-items: center; justify-content: center; }
+  .action-icon svg { width: 20px; height: 20px; color: #fff; }
+  .action-title { font-size: 14.5px; font-weight: 800; color: var(--text-primary); line-height: 1.1; letter-spacing: -0.01em; }
+  .action-sub { font-size: 11px; color: var(--text-muted); line-height: 1.35; font-weight: 500; }
   .action-link { font-size: 11px; font-weight: 800; text-transform: uppercase;
-    letter-spacing: .06em; margin-top: 4px; display: flex; align-items: center; gap: 4px; }
+    letter-spacing: .04em; margin-top: 2px; display: flex; align-items: center; gap: 4px; }
 
-  /* ─── Input Fields ────────────────────────────────────────── */
+  /* ─── Form Inputs ─────────────────────────────────────────── */
   .field-wrap { position: relative; }
-  .field-input { width: 100%; padding: 15px 50px 15px 18px; border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.15); font-size: 15px; font-weight: 600; color: #fff;
-    background: rgba(255, 255, 255, 0.06); outline: none; transition: all .2s ease; backdrop-filter: blur(8px); }
-  .field-input:focus { border-color: #3b82f6; background: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 0 0 4px rgba(59,130,246,.25); }
-  .field-mic-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-    width: 36px; height: 36px; border-radius: 12px; background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 12px rgba(37,99,235,0.4); border: none; }
-  .field-mic-btn.recording { background: #ef4444; animation: pulse 0.7s infinite; }
+  .field-input { width: 100%; padding: 13px 46px 13px 16px; border-radius: var(--radius-md);
+    border: 1px solid var(--border-subtle); font-size: 14px; font-weight: 600; color: var(--text-primary);
+    background: #fff; outline: none; transition: all .15s ease; }
+  .field-input:focus { border-color: var(--brand-blue); box-shadow: 0 0 0 3px rgba(37,99,235,0.12); }
+  .field-mic-btn { position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+    width: 32px; height: 32px; border-radius: var(--radius-sm); background: var(--brand-blue); color: #fff;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: none; }
+  .field-mic-btn.recording { background: #dc2626; animation: pulse 0.7s infinite; }
 
   /* ─── Spinner & Confetti ──────────────────────────────────── */
-  .spinner { width: 44px; height: 44px; border: 4px solid rgba(255,255,255,.1);
-    border-top-color: #3b82f6; border-radius: 50%; animation: spin .7s linear infinite; }
+  .spinner { width: 40px; height: 40px; border: 3px solid var(--border-light);
+    border-top-color: var(--brand-blue); border-radius: 50%; animation: spin .7s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
   #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    pointer-events: none; z-index: 100; border-radius: 46px; }
+    pointer-events: none; z-index: 100; border-radius: 40px; }
 
-  /* ─── Gesture Buttons ─────────────────────────────────────── */
+  /* ─── Gesture & Object Grids ──────────────────────────────── */
   .gesture-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
-  .gesture-btn { padding: 12px 4px; border-radius: 14px; text-align: center;
-    border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); transition: all .2s; }
-  .gesture-btn.active { background: #10b981; color: #fff; border-color: #34d399; box-shadow: 0 6px 18px rgba(16,185,129,0.4); }
-  .gesture-btn:active { transform: scale(.92); }
-  .gesture-en { font-size: 11px; font-weight: 900; }
-  .gesture-hi { font-size: 9px; opacity: .8; font-weight: 600; }
+  .gesture-btn { padding: 10px 4px; border-radius: var(--radius-sm); text-align: center;
+    border: 1px solid var(--border-light); background: #fff; transition: all .15s; }
+  .gesture-btn.active { background: #10b981; color: #fff; border-color: #10b981; }
+  .gesture-btn:active { transform: scale(.94); }
+  .gesture-en { font-size: 11px; font-weight: 800; }
+  .gesture-hi { font-size: 9px; opacity: .8; font-weight: 500; }
 
-  /* ─── Target Object Buttons ───────────────────────────────── */
   .obj-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-  .obj-btn { padding: 13px 6px; border-radius: 16px; text-align: center;
-    border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); transition: all .2s; }
-  .obj-btn.active { background: #f59e0b; color: #000; border-color: #fbbf24; font-weight: 900; box-shadow: 0 6px 18px rgba(245,158,11,0.4); }
-  .obj-btn:active { transform: scale(.92); }
-  .obj-en { font-size: 12px; font-weight: 900; }
-  .obj-hi { font-size: 10px; opacity: .85; font-weight: 600; }
+  .obj-btn { padding: 12px 6px; border-radius: var(--radius-md); text-align: center;
+    border: 1px solid var(--border-light); background: #fff; transition: all .15s; }
+  .obj-btn.active { background: #d97706; color: #fff; border-color: #d97706; font-weight: 800; }
+  .obj-btn:active { transform: scale(.94); }
+  .obj-en { font-size: 12px; font-weight: 800; }
+  .obj-hi { font-size: 10px; opacity: .85; font-weight: 500; }
 
-  /* ─── Profile Rows ────────────────────────────────────────── */
+  /* ─── Profile List ────────────────────────────────────────── */
   .pref-row { display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    padding: 10px 0; border-bottom: 1px solid var(--border-light); }
   .pref-row:last-child { border-bottom: none; }
-  .pref-label { font-size: 14px; font-weight: 800; color: #fff; }
-  .pref-sub { font-size: 11px; color: #94a3b8; font-weight: 500; }
+  .pref-label { font-size: 13.5px; font-weight: 700; color: var(--text-primary); }
+  .pref-sub { font-size: 11px; color: var(--text-muted); font-weight: 500; }
 
   /* ─── Toast Notifications ─────────────────────────────────── */
-  .toast { position: absolute; bottom: 90px; left: 50%; transform: translateX(-50%);
-    background: rgba(15, 23, 42, 0.95); color: #fff; font-size: 13px; font-weight: 800;
-    padding: 12px 24px; border-radius: 99px; white-space: nowrap; z-index: 200;
-    box-shadow: 0 15px 35px rgba(0,0,0,.6); animation: toast-in .3s ease; border: 1px solid rgba(255,255,255,0.15); backdrop-filter: blur(12px); }
-  @keyframes toast-in { from{opacity:0;transform:translate(-50%,14px)} to{opacity:1;transform:translateX(-50%)} }
+  .toast { position: absolute; bottom: 84px; left: 50%; transform: translateX(-50%);
+    background: #0f172a; color: #fff; font-size: 12.5px; font-weight: 700;
+    padding: 10px 20px; border-radius: var(--radius-pill); white-space: nowrap; z-index: 200;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25); animation: toast-in .25s ease; }
+  @keyframes toast-in { from{opacity:0;transform:translate(-50%,10px)} to{opacity:1;transform:translateX(-50%)} }
 
   /* ─── Bounding Box Reticle ────────────────────────────────── */
-  .bbox { position: absolute; border: 2.5px solid #34d399; border-radius: 14px;
-    background: rgba(52,211,153,0.12); display: flex; flex-direction: column;
-    justify-content: space-between; padding: 6px; transition: all .4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 0 25px rgba(52,211,153,0.4); }
-  .bbox-label { font-size: 9px; font-weight: 900; font-family: monospace;
-    background: #34d399; color: #000; padding: 2px 7px; border-radius: 6px;
-    text-transform: uppercase; letter-spacing: 0.05em; width: fit-content; }
-  .bbox-conf { font-size: 9px; font-family: monospace; color: #34d399; font-weight: 800;
-    background: rgba(0,0,0,.9); padding: 2px 7px; border-radius: 6px; align-self: flex-end; }
+  .bbox { position: absolute; border: 2px solid #34d399; border-radius: var(--radius-sm);
+    background: rgba(52,211,153,0.1); display: flex; flex-direction: column;
+    justify-content: space-between; padding: 5px; transition: all .35s ease; }
+  .bbox-label { font-size: 9px; font-weight: 800; font-family: monospace;
+    background: #34d399; color: #000; padding: 2px 6px; border-radius: 4px;
+    text-transform: uppercase; width: fit-content; }
+  .bbox-conf { font-size: 9px; font-family: monospace; color: #34d399; font-weight: 700;
+    background: rgba(0,0,0,.8); padding: 2px 6px; border-radius: 4px; align-self: flex-end; }
 
   /* ─── Digital Certificate ─────────────────────────────────── */
-  .cert { background: linear-gradient(135deg, rgba(6,78,59,0.3) 0%, rgba(30,58,138,0.3) 100%);
-    border: 2px solid #34d399; border-radius: 24px; padding: 20px; box-shadow: 0 10px 30px rgba(52,211,153,0.15); backdrop-filter: blur(16px); }
-  .cert-token { font-family: monospace; font-size: 11px; font-weight: 900;
-    background: rgba(52,211,153,0.2); color: #34d399; padding: 4px 12px; border-radius: 8px; border: 1px solid rgba(52,211,153,0.4); }
-  .cert-row { display: flex; justify-content: space-between; font-size: 12.5px;
-    padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.08); color: #cbd5e1; }
+  .cert { background: linear-gradient(135deg, #f0fdf4 0%, #eff6ff 100%);
+    border: 1.5px solid #10b981; border-radius: var(--radius-lg); padding: 18px; box-shadow: var(--shadow-sm); }
+  .cert-token { font-family: monospace; font-size: 11px; font-weight: 800;
+    background: #dcfce7; color: #15803d; padding: 3px 9px; border-radius: 6px; border: 1px solid #bbf7d0; }
+  .cert-row { display: flex; justify-content: space-between; font-size: 12px;
+    padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,.06); color: var(--text-secondary); }
   .cert-row:last-child { border-bottom: none; }
 
-  /* Mobile Fullscreen Rules */
-  @media (max-width: 450px) {
-    #root { padding: 0; background: #090d16; }
+  /* Mobile Fullscreen rules */
+  @media (max-width: 440px) {
+    #root { padding: 0; background: var(--bg-dark); }
     .phone-frame { max-width: 100%; height: 100vh; border-radius: 0; padding: 0;
       background: transparent; box-shadow: none; }
     .phone-screen { border-radius: 0; }
@@ -333,23 +334,16 @@
 <body>
 <div id="root">
   <div class="phone-frame" id="phoneFrame">
-    <!-- Dynamic Island -->
+    <!-- Camera Notch -->
     <div class="phone-pill">
-      <div class="phone-pill-cam"></div>
-      <div class="phone-pill-wave">
-        <div class="phone-pill-bar"></div>
-        <div class="phone-pill-bar"></div>
-        <div class="phone-pill-bar"></div>
-      </div>
+      <div class="phone-pill-dot"></div>
     </div>
     
     <div class="phone-screen" id="phoneScreen">
-      <div class="screen-bg"></div>
-
       <!-- TOP BAR -->
       <header class="top-bar">
         <div class="status-bar" id="statusBar">
-          <span style="font-weight:900">09:41</span>
+          <span style="font-weight:800">09:41</span>
           <span id="backendLabel">
             <span class="status-dot local" id="statusDot"></span>
             <span id="statusText">AI Engine Ready</span>
@@ -435,13 +429,13 @@ const t = (hi, en) => state.lang === 'Hindi' ? hi : en;
 //  INLINE VECTOR ICONS
 // ═══════════════════════════════════════════════════════════════
 const ICON = {
-  mic: `<svg class="icon" viewBox="0 0 24 24" width="26" height="26"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>`,
+  mic: `<svg class="icon" viewBox="0 0 24 24" width="24" height="24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>`,
   mic_sm: `<svg class="icon" viewBox="0 0 24 24" width="16" height="16"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>`,
   volume: `<svg class="icon" viewBox="0 0 24 24" width="16" height="16"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>`,
   arrow_r: `<svg class="icon" viewBox="0 0 24 24" width="14" height="14"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`,
   arrow_l: `<svg class="icon" viewBox="0 0 24 24" width="16" height="16"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>`,
   check: `<svg class="icon" viewBox="0 0 24 24" width="16" height="16"><polyline points="20 6 9 17 4 12"/></svg>`,
-  award: `<svg class="icon" viewBox="0 0 24 24" width="34" height="34"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>`,
+  award: `<svg class="icon" viewBox="0 0 24 24" width="32" height="32"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>`,
   shield: `<svg class="icon" viewBox="0 0 24 24" width="16" height="16"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
   zap: `<svg class="icon" viewBox="0 0 24 24" width="12" height="12"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
   sparkle: `<svg class="icon" viewBox="0 0 24 24" width="16" height="16"><path d="M12 2L9.09 9.09 2 12l7.09 2.91L12 22l2.91-7.09L22 12l-7.09-2.91L12 2z"/></svg>`,
@@ -728,22 +722,22 @@ function renderHome() {
        {l:'Find Bottle',q:'Find my water bottle'}];
 
   const statusText = state.listening
-    ? (isH ? `<span style="color:#ef4444;font-weight:900;animation:pulse 0.6s infinite">${t('सुन रहा हूँ... बोलिए...','Listening... speak request...')}</span>` : '')
+    ? (isH ? `<span style="color:#dc2626;font-weight:800">${t('सुन रहा हूँ... बोलिए...','Listening... speak request...')}</span>` : '')
     : state.intentResult
-      ? `<span style="color:#34d399;font-weight:800">${t('समझा गया: ','Understood: ')}${state.intentResult}</span>`
+      ? `<span style="color:#0d9488;font-weight:800">${t('समझा गया: ','Understood: ')}${state.intentResult}</span>`
       : state.voiceStatus || t('माइक दबाएं या नीचे से मोड चुनें','Tap mic or select mode below');
 
   return `
   <div class="screen-pad">
     <!-- Active Twin Banner -->
-    <div class="card" onclick="navigate('profile')" style="cursor:pointer;background:linear-gradient(135deg, rgba(37,99,235,0.25) 0%, rgba(99,102,241,0.2) 100%);border-color:rgba(59,130,246,0.4)">
+    <div class="card" onclick="navigate('profile')" style="cursor:pointer;background:#eff6ff;border-color:#bfdbfe">
       <div class="row-between" style="margin-bottom:8px">
         <div style="display:flex;align-items:center;gap:7px">
-          ${ICON.sparkle}<span style="font-size:11px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;color:#93c5fd">
+          ${ICON.sparkle}<span style="font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#1e40af">
             ${t('सुलभता प्रोफ़ाइल सक्रिय','ACCESSIBILITY TWIN ACTIVE')}
           </span>
         </div>
-        <span style="font-size:11px;font-weight:800;color:#60a5fa">${t('बदलें','Edit')} ${ICON.arrow_r}</span>
+        <span style="font-size:11px;font-weight:800;color:#2563eb">${t('बदलें','Edit')} ${ICON.arrow_r}</span>
       </div>
       <div class="chip-row">
         <span class="chip">${t('हिंदी','English')}</span>
@@ -755,79 +749,76 @@ function renderHome() {
 
     <!-- Hero Title -->
     <div style="text-align:center;padding:2px 0">
-      <h2 style="font-size:1.55rem;font-weight:900;color:#fff;letter-spacing:-0.03em;line-height:1.2">
+      <h2 style="font-size:1.5rem;font-weight:800;color:#0f172a;letter-spacing:-0.03em;line-height:1.2">
         ${t('मैं आपकी क्या मदद करूँ?','How can I assist you?')}
       </h2>
-      <p style="font-size:12px;margin-top:4px;min-height:26px;color:#94a3b8;font-weight:600;font-family:'Inter',sans-serif">${statusText}</p>
+      <p style="font-size:12px;margin-top:4px;min-height:26px;color:#475569;font-weight:600;font-family:'Inter',sans-serif">${statusText}</p>
     </div>
 
-    <!-- Obsidian Hero Mic Button -->
+    <!-- Hero Mic Button -->
     <div class="voice-hero-container">
       <button class="voice-btn ${state.listening?'listening':''}" onclick="handleVoiceMic()" id="micBtn">
         ${ICON.mic}
         <span style="margin-top:3px">${state.listening ? t('सुन रहा हूँ','Listening') : t('बोलें','Speak')}</span>
       </button>
-      <div class="voice-ring"></div>
     </div>
 
     <!-- Prompt Pills -->
     <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:340px;margin:0 auto">
       ${samplePrompts.map(p => `
         <button onclick="handleSamplePrompt('${p.q}')"
-          style="padding:8px 14px;border-radius:20px;border:1px solid rgba(255,255,255,0.12);
-            background:rgba(255,255,255,0.05);backdrop-filter:blur(10px);font-size:11.5px;font-weight:800;color:#cbd5e1;
-            display:flex;align-items:center;gap:6px;transition:all .2s ease"
-          onmouseover="this.style.background='rgba(59,130,246,0.2)'"
-          onmouseout="this.style.background='rgba(255,255,255,0.05)'">
-          ${ICON.zap}<span style="color:#60a5fa">${p.l}</span>
+          style="padding:7px 13px;border-radius:20px;border:1px solid #cbd5e1;
+            background:#fff;font-size:11.5px;font-weight:700;color:#334155;
+            display:flex;align-items:center;gap:6px;transition:all .15s ease;box-shadow:0 1px 3px rgba(0,0,0,0.03)">
+          ${ICON.zap}<span style="color:#2563eb">${p.l}</span>
         </button>`).join('')}
     </div>
 
-    <!-- Bento Grid Mode Cards -->
+    <!-- Mode Action Cards -->
     <div class="grid-2">
       <button class="action-card featured" onclick="navigate('complete')">
-        <div class="action-icon" style="background:linear-gradient(135deg, #2563eb, #3b82f6)">
-          <svg class="icon" viewBox="0 0 24 24" width="22" height="22"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        <div class="action-icon" style="background:#2563eb">
+          <svg class="icon" viewBox="0 0 24 24" width="20" height="20"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
         </div>
         <div class="action-title">${t('फ़ॉर्म भरें','COMPLETE')}</div>
         <div class="action-sub">${t('7-चरण छात्रवृत्ति आवेदन','7-step scholarship form')}</div>
-        <div class="action-link" style="color:#60a5fa">${t('शुरू करें →','Launch →')}</div>
+        <div class="action-link" style="color:#2563eb">${t('शुरू करें →','Launch →')}</div>
       </button>
 
       <button class="action-card" onclick="navigate('read')">
-        <div class="action-icon" style="background:linear-gradient(135deg, #6366f1, #818cf8)">
-          <svg class="icon" viewBox="0 0 24 24" width="22" height="22"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <div class="action-icon" style="background:#4f46e5">
+          <svg class="icon" viewBox="0 0 24 24" width="20" height="20"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
         </div>
         <div class="action-title">${t('पढ़ें','READ')}</div>
         <div class="action-sub">${t('नोटिस व समय-सीमा समझें','OCR & deadline extraction')}</div>
-        <div class="action-link" style="color:#a5b4fc">${t('विश्लेषण →','Analyze →')}</div>
+        <div class="action-link" style="color:#4f46e5">${t('विश्लेषण →','Analyze →')}</div>
       </button>
 
       <button class="action-card" onclick="navigate('talk')">
-        <div class="action-icon" style="background:linear-gradient(135deg, #10b981, #34d399)">
-          <svg class="icon" viewBox="0 0 24 24" width="22" height="22"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+        <div class="action-icon" style="background:#0d9488">
+          <svg class="icon" viewBox="0 0 24 24" width="20" height="20"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
         </div>
         <div class="action-title">${t('सांकेतिक (ISL)','SIGN TALK')}</div>
         <div class="action-sub">${t('भारतीय सांकेतिक भाषा','Sign Language to Speech')}</div>
-        <div class="action-link" style="color:#34d399">${t('अनुवाद →','Translate →')}</div>
+        <div class="action-link" style="color:#0d9488">${t('अनुवाद →','Translate →')}</div>
       </button>
 
       <button class="action-card" onclick="navigate('see')">
-        <div class="action-icon" style="background:linear-gradient(135deg, #f59e0b, #fbbf24)">
-          <svg class="icon" viewBox="0 0 24 24" width="22" height="22"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+        <div class="action-icon" style="background:#d97706">
+          <svg class="icon" viewBox="0 0 24 24" width="20" height="20"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
         </div>
         <div class="action-title">${t('देखें (See)','SPATIAL SEE')}</div>
         <div class="action-sub">${t('वस्तु खोजें व दिशा','Object finder & haptics')}</div>
-        <div class="action-link" style="color:#fbbf24">${t('खोजें →','Find →')}</div>
+        <div class="action-link" style="color:#d97706">${t('खोजें →','Find →')}</div>
       </button>
     </div>
 
-    <!-- Stage 7 Live Telemetry Bar -->
-    <button onclick="navigate('heatmap')" style="width:100%;padding:14px 16px;border-radius:18px;
-      background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;
-      justify-content:space-between;font-size:12px;font-weight:800;color:#cbd5e1;backdrop-filter:blur(10px)">
-      <span style="display:flex;align-items:center;gap:10px">
-        <span style="width:10px;height:10px;border-radius:50%;background:#34d399;box-shadow:0 0 10px #34d399;display:inline-block"></span>
+    <!-- Stage 7 Telemetry Bar -->
+    <button onclick="navigate('heatmap')" style="width:100%;padding:12px 14px;border-radius:16px;
+      background:#fff;border:1px solid #e2e8f0;display:flex;align-items:center;
+      justify-content:space-between;font-size:12px;font-weight:700;color:#334155;box-shadow:0 1px 3px rgba(0,0,0,0.03)">
+      <span style="display:flex;align-items:center;gap:8px">
+        <span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block"></span>
         ${t('चरण 7: सुलभता हीटमैप','Stage 7: Live Accessibility Heatmap')}
       </span>
       ${ICON.arrow_r}
@@ -893,11 +884,10 @@ function renderComplete() {
       <span class="badge badge-blue">${state.formStep+1} / ${flow.total_steps}</span>
     </div>
 
-    <!-- Progress Bar -->
     <div>
-      <div class="row-between" style="font-size:11px;font-weight:800;margin-bottom:6px">
-        <span style="color:#94a3b8">${t('प्रगति (Linearized Task Flow)','Task Progress')}</span>
-        <span style="font-family:monospace;font-weight:900;color:#60a5fa">${prog}%</span>
+      <div class="row-between" style="font-size:11px;font-weight:700;margin-bottom:6px">
+        <span style="color:#475569">${t('प्रगति (Linearized Task Flow)','Task Progress')}</span>
+        <span style="font-family:monospace;font-weight:800;color:#2563eb">${prog}%</span>
       </div>
       <div class="progress-track">
         <div class="progress-fill" style="width:${prog}%"></div>
@@ -905,34 +895,32 @@ function renderComplete() {
     </div>
 
     ${state.formStep===0 ? `
-    <div class="infobox infobox-amber" style="display:flex;gap:10px">
-      <span style="font-size:18px">⚠️</span>
+    <div class="infobox infobox-amber" style="display:flex;gap:8px">
+      <span>⚠️</span>
       <div>
         <strong>${t('बाधा सुधार सक्रिय:','Barriers Remediated:')}</strong><br>
         ${flow.barriers[0].desc} → <em>${isH?'एक-चरण आवाज़ प्रस्तुति':'One-step voice linearization'}</em>
       </div>
     </div>` : ''}
 
-    <!-- Step Card -->
     <div class="card">
-      <div class="row-between" style="margin-bottom:10px">
+      <div class="row-between" style="margin-bottom:8px">
         <div>
-          <div style="font-size:10px;font-weight:900;color:#60a5fa;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">
+          <div style="font-size:10px;font-weight:800;color:#2563eb;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">
             ${step.label}
           </div>
-          <h2 style="font-size:1.35rem;font-weight:900;color:#fff;line-height:1.2">${step.display}</h2>
+          <h2 style="font-size:1.3rem;font-weight:800;color:#0f172a;line-height:1.2">${step.display}</h2>
         </div>
-        <button onclick="speakStep()" style="width:42px;height:42px;border-radius:14px;
-          background:rgba(59,130,246,0.2);color:#60a5fa;display:flex;align-items:center;justify-content:center;
-          border:1px solid rgba(59,130,246,0.4);flex-shrink:0" title="Speak prompt">
+        <button onclick="speakStep()" style="width:38px;height:38px;border-radius:10px;
+          background:#eff6ff;color:#2563eb;display:flex;align-items:center;justify-content:center;
+          border:1px solid #bfdbfe;flex-shrink:0" title="Speak prompt">
           ${ICON.volume}
         </button>
       </div>
-      <p style="font-size:12.5px;color:#cbd5e1;line-height:1.55;margin-bottom:16px;font-weight:500">
+      <p style="font-size:12px;color:#475569;line-height:1.55;margin-bottom:14px;font-weight:500">
         "${step.prompt}"
       </p>
 
-      <!-- Input Field -->
       <div class="field-wrap">
         <input class="field-input" id="stepInput" type="text"
           placeholder="${t('उत्तर लिखें या बोलें...','Type or dictate your answer...')}"
@@ -942,11 +930,10 @@ function renderComplete() {
         </button>
       </div>
 
-      <!-- Demo Answer Helper -->
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px">
         <span style="font-size:11px;color:#64748b;font-weight:600">${t('त्वरित उत्तर:','Demo Answer:')}</span>
         <button onclick="document.getElementById('stepInput').value='${demoVal.replace(/'/g, "&#39;")}'"
-          style="font-size:11px;font-weight:800;color:#60a5fa;text-decoration:underline">
+          style="font-size:11px;font-weight:700;color:#2563eb;text-decoration:underline">
           ${demoVal}
         </button>
       </div>
@@ -966,28 +953,28 @@ function renderVerified() {
   const isH = state.lang === 'Hindi';
   return `
   <div class="screen-pad">
-    <div style="text-align:center;padding:14px 0 8px">
-      <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg, #10b981, #059669);color:#fff;
-        margin:0 auto 14px;display:flex;align-items:center;justify-content:center;
-        box-shadow:0 10px 30px rgba(16,185,129,0.5)">${ICON.award}</div>
+    <div style="text-align:center;padding:12px 0 6px">
+      <div style="width:64px;height:64px;border-radius:50%;background:#10b981;color:#fff;
+        margin:0 auto 12px;display:flex;align-items:center;justify-content:center;
+        box-shadow:0 4px 16px rgba(16,185,129,0.3)">${ICON.award}</div>
       <div class="badge badge-green" style="margin-bottom:8px">${t('चरण 6: कार्य सत्यापन सफल','STAGE 6: TASK VERIFIED')}</div>
-      <h2 style="font-size:1.8rem;font-weight:900;color:#fff">${t('फ़ॉर्म पूर्ण!','Form Completed!')}</h2>
-      <p style="font-size:12px;color:#94a3b8;margin-top:4px">${t('सभी 7 अनिवार्य क्षेत्र सत्यापित हो चुके हैं।','All 7 required fields verified and validated.')}</p>
+      <h2 style="font-size:1.6rem;font-weight:800;color:#0f172a">${t('फ़ॉर्म पूर्ण!','Form Completed!')}</h2>
+      <p style="font-size:12px;color:#64748b;margin-top:4px">${t('सभी 7 अनिवार्य क्षेत्र सत्यापित हो चुके हैं।','All 7 required fields verified and validated.')}</p>
     </div>
 
     <div class="cert">
-      <div class="row-between" style="border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:10px;margin-bottom:10px">
-        <span style="font-size:11px;font-weight:900;color:#34d399">${t('सत्यापन टोकन','Verification Token')}</span>
+      <div class="row-between" style="border-bottom:1px solid #bbf7d0;padding-bottom:10px;margin-bottom:10px">
+        <span style="font-size:11px;font-weight:800;color:#15803d">${t('सत्यापन टोकन','Verification Token')}</span>
         <span class="cert-token">${state.verifyToken}</span>
       </div>
       <div class="cert-row"><span>Task Type:</span><strong>SCHOLARSHIP_FORM_7F</strong></div>
-      <div class="cert-row"><span>Fields:</span><strong style="color:#34d399">7 / 7 (100%)</strong></div>
+      <div class="cert-row"><span>Fields:</span><strong style="color:#10b981">7 / 7 (100%)</strong></div>
       <div class="cert-row"><span>Applicant:</span><strong>${state.formAnswers['full_name']||'Satvik Sharma'}</strong></div>
       <div class="cert-row"><span>Aadhaar:</span><code>${state.formAnswers['aadhaar']||'9824 5510 1289'}</code></div>
       <div class="cert-row"><span>Bank:</span><code>${state.formAnswers['bank_account']||'SBI0004921'}</code></div>
     </div>
 
-    <div class="infobox infobox-green" style="display:flex;gap:10px">
+    <div class="infobox infobox-green" style="display:flex;gap:8px">
       ${ICON.check}<span>${t('WCAG AAA सुलभ प्रवाह पूर्ण। आधिकारिक डिजिटल प्रमाणपत्र जारी।','WCAG AAA accessible workflow completed. Digital certificate issued.')}</span>
     </div>
 
@@ -1056,72 +1043,71 @@ function renderRead() {
       <span class="badge badge-indigo">DEMO 1: OCR & READ</span>
     </div>
 
-    <!-- HUD Camera Scanner Simulator -->
-    <div style="position:relative;width:100%;height:150px;background:#090d16;border-radius:22px;overflow:hidden;
-      display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.15);box-shadow:0 10px 25px rgba(0,0,0,0.5)">
+    <div style="position:relative;width:100%;height:140px;background:#0f172a;border-radius:16px;overflow:hidden;
+      display:flex;align-items:center;justify-content:center;border:1px solid #334155">
       <div class="scanner-line"></div>
-      <div style="font-family:monospace;font-size:11.5px;color:#60a5fa;text-align:center;padding:14px">
+      <div style="font-family:monospace;font-size:11px;color:#60a5fa;text-align:center;padding:14px">
         📄 PARSING NOTICE: National Merit 2026<br/>
         <span style="color:#94a3b8;font-size:10px">Extracting Deadlines & Prerequisite Docs...</span>
       </div>
     </div>
 
     ${state.docLoading ? `
-    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px 0;gap:14px">
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 0;gap:12px">
       <div class="spinner"></div>
-      <p style="font-size:13px;font-weight:800;color:#60a5fa">${t('OCR एवं सुलभता विश्लेषण जारी...','Running OCR & Barrier Analysis...')}</p>
+      <p style="font-size:13px;font-weight:700;color:#2563eb">${t('OCR एवं सुलभता विश्लेषण जारी...','Running OCR & Barrier Analysis...')}</p>
     </div>` : d ? `
     <div class="card">
-      <div class="row-between" style="margin-bottom:10px">
+      <div class="row-between" style="margin-bottom:8px">
         <div>
-          <div style="font-size:10px;font-weight:900;color:#818cf8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">
+          <div style="font-size:10px;font-weight:800;color:#4f46e5;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">
             ${t('दस्तावेज़ शीर्षक','Document Identified')}
           </div>
-          <h3 style="font-size:15px;font-weight:900;color:#fff;line-height:1.2">${d.title}</h3>
+          <h3 style="font-size:15px;font-weight:800;color:#0f172a;line-height:1.2">${d.title}</h3>
         </div>
         <button onclick="speak('${d.spoken.replace(/'/g,"&#39;")}')"
-          style="width:40px;height:40px;border-radius:14px;background:rgba(99,102,241,0.25);color:#818cf8;
-            display:flex;align-items:center;justify-content:center;border:1px solid rgba(99,102,241,0.4);flex-shrink:0">
+          style="width:36px;height:36px;border-radius:10px;background:#e0e7ff;color:#4f46e5;
+            display:flex;align-items:center;justify-content:center;border:none;flex-shrink:0">
           ${ICON.volume}
         </button>
       </div>
-      <div style="background:rgba(255,255,255,0.05);border-radius:14px;padding:14px;font-size:12px;color:#cbd5e1;line-height:1.6;border:1px solid rgba(255,255,255,0.08)">
+      <div style="background:#f8fafc;border-radius:12px;padding:12px;font-size:12px;color:#334155;line-height:1.6;border:1px solid #e2e8f0">
         ${d.summary}
       </div>
     </div>
 
     <div class="section-card">
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
         <span>📅</span>
-        <h4 style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.06em">${t('अंतिम समय-सीमा','Key Deadlines')}</h4>
+        <h4 style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em">${t('अंतिम समय-सीमा','Key Deadlines')}</h4>
       </div>
       ${d.deadlines.map(dl=>`
-        <div style="background:rgba(239,68,68,0.15);border-radius:12px;padding:12px 14px;
-          font-weight:800;font-size:12.5px;color:#fca5a5;display:flex;align-items:center;justify-content:space-between;border:1px solid rgba(239,68,68,0.3)">
-          <span>${dl}</span><span style="font-size:10px;font-weight:900;background:#ef4444;color:#fff;padding:2px 8px;border-radius:6px">URGENT</span>
+        <div style="background:#fef2f2;border-radius:10px;padding:10px 12px;
+          font-weight:700;font-size:12px;color:#b91c1c;display:flex;align-items:center;justify-content:space-between;border:1px solid #fecaca">
+          <span>${dl}</span><span style="font-size:10px;font-weight:800;background:#dc2626;color:#fff;padding:2px 8px;border-radius:4px">URGENT</span>
         </div>`).join('')}
     </div>
 
     <div class="section-card">
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
         <span>📋</span>
-        <h4 style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.06em">${t('आवश्यक प्रमाणपत्र','Required Documents')}</h4>
+        <h4 style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em">${t('आवश्यक प्रमाणपत्र','Required Documents')}</h4>
       </div>
       ${d.docs.map(doc=>`
-        <div style="display:flex;align-items:center;gap:10px;padding:6px 0;font-size:12.5px;font-weight:700;color:#f8fafc">
-          ${ICON.check}<span style="color:#34d399">${doc}</span>
+        <div style="display:flex;align-items:center;gap:8px;padding:5px 0;font-size:12px;font-weight:600;color:#0f172a">
+          ${ICON.check}<span style="color:#10b981">${doc}</span>
         </div>`).join('')}
     </div>
 
-    <div class="infobox infobox-blue" style="display:flex;flex-direction:column;gap:12px">
-      <div style="display:flex;gap:10px;align-items:flex-start">
+    <div class="infobox infobox-blue" style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;gap:8px;align-items:flex-start">
         ${ICON.sparkle}
         <div>
-          <strong style="display:block;font-size:13px">${t('सक्रिय मार्गदर्शन','Proactive Assistance')}</strong>
-          <p style="font-size:11.5px;color:#93c5fd;margin-top:2px">${t('क्या मैं छात्रवृत्ति फ़ॉर्म भरने में मदद करूँ?','Shall Sahayak guide you through the application form now?')}</p>
+          <strong style="display:block;font-size:12.5px">${t('सक्रिय मार्गदर्शन','Proactive Assistance')}</strong>
+          <p style="font-size:11px;color:#1e40af;margin-top:2px">${t('क्या मैं छात्रवृत्ति फ़ॉर्म भरने में मदद करूँ?','Shall Sahayak guide you through the application form now?')}</p>
         </div>
       </div>
-      <button class="btn-primary" onclick="navigate('complete')" style="background:linear-gradient(135deg, #4f46e5, #6366f1)">
+      <button class="btn-primary" onclick="navigate('complete')" style="background:#2563eb">
         ${t('📝 फ़ॉर्म आवेदन शुरू करें','Start Form Guidance (Demo 2)')} ${ICON.arrow_r}
       </button>
     </div>
@@ -1152,55 +1138,52 @@ function renderTalk() {
       <span class="badge badge-green">DEMO 3: ISL INTERPRETER</span>
     </div>
 
-    <!-- HUD Camera & Hand Joints -->
     <div class="cam-viewport" id="camViewport">
       <video id="camVideo" autoplay playsinline muted style="display:none;width:100%;height:100%;object-fit:cover"></video>
       <div id="landmarkView" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:10px">
-        <svg style="width:140px;height:160px;opacity:.95" viewBox="0 0 180 200">
-          <ellipse cx="90" cy="165" rx="34" ry="20" fill="none" stroke="#34d399" stroke-width="1.5" opacity=".4"/>
+        <svg style="width:130px;height:150px;opacity:.95" viewBox="0 0 180 200">
+          <ellipse cx="90" cy="165" rx="32" ry="18" fill="none" stroke="#34d399" stroke-width="1.5" opacity=".4"/>
           <line x1="90" y1="160" x2="55" y2="110" stroke="#34d399" stroke-width="2"/>
           <line x1="90" y1="155" x2="78" y2="80" stroke="#34d399" stroke-width="2"/>
           <line x1="90" y1="155" x2="105" y2="75" stroke="#34d399" stroke-width="2"/>
           <line x1="90" y1="158" x2="130" y2="90" stroke="#34d399" stroke-width="2"/>
           <line x1="90" y1="162" x2="155" y2="120" stroke="#34d399" stroke-width="2"/>
-          ${[[55,110],[42,88],[32,68],[78,80],[74,55],[70,32],[105,75],[108,48],[110,25],[130,90],[136,65],[140,42],[155,120],[162,100],[168,82]].map(([cx,cy])=>`<circle cx="${cx}" cy="${cy}" r="4.5" fill="#34d399" filter="drop-shadow(0 0 8px #34d399)"/>`).join('')}
+          ${[[55,110],[42,88],[32,68],[78,80],[74,55],[70,32],[105,75],[108,48],[110,25],[130,90],[136,65],[140,42],[155,120],[162,100],[168,82]].map(([cx,cy])=>`<circle cx="${cx}" cy="${cy}" r="4" fill="#34d399"/>`).join('')}
         </svg>
-        <span style="font-size:10px;color:#34d399;font-family:monospace;font-weight:800">MediaPipe 3D — 21 Landmarks</span>
+        <span style="font-size:10px;color:#34d399;font-family:monospace;font-weight:700">MediaPipe 3D — 21 Landmarks</span>
       </div>
       <div class="cam-label">
         <div class="cam-pulse"></div>MEDIAPIPE 3D ACTIVE
       </div>
-      <button onclick="toggleWebcam()" style="position:absolute;top:14px;right:14px;
-        background:rgba(11,15,25,0.85);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.2);border-radius:99px;
-        padding:7px 14px;font-size:11px;color:#fff;display:flex;align-items:center;gap:6px;font-weight:800" id="camToggleBtn">
+      <button onclick="toggleWebcam()" style="position:absolute;top:12px;right:12px;
+        background:rgba(15,23,42,0.9);border:1px solid rgba(255,255,255,0.2);border-radius:20px;
+        padding:5px 12px;font-size:11px;color:#fff;display:flex;align-items:center;gap:5px;font-weight:700" id="camToggleBtn">
         ${ICON.video} ${t('कैमरा','Live Cam')}
       </button>
-      <div style="position:absolute;bottom:12px;right:14px;font-family:monospace;font-size:9.5px;
-        color:#34d399;background:rgba(0,0,0,0.85);padding:4px 10px;border-radius:8px;border:1px solid rgba(52,211,153,0.3)">
+      <div style="position:absolute;bottom:10px;right:12px;font-family:monospace;font-size:9px;
+        color:#34d399;background:rgba(0,0,0,0.8);padding:3px 8px;border-radius:4px">
         Conf: ${(s.conf*100).toFixed(1)}% · 30 FPS
       </div>
     </div>
 
-    <!-- Output Card -->
-    <div class="card" style="border-color:rgba(16,185,129,0.4);background:linear-gradient(180deg, rgba(6,78,59,0.2) 0%, rgba(18,24,38,0.8) 100%)">
-      <div class="row-between" style="margin-bottom:8px">
-        <span style="font-size:10px;font-weight:900;color:#34d399;text-transform:uppercase;letter-spacing:.06em">
+    <div class="card" style="border-color:#bbf7d0">
+      <div class="row-between" style="margin-bottom:6px">
+        <span style="font-size:10px;font-weight:800;color:#0d9488;text-transform:uppercase;letter-spacing:.05em">
           ${t('पहचाना गया इशारा','Detected Sign Gesture')}
         </span>
         <button onclick="speak('${(isH?s.spoken_hi:s.spoken_en).replace(/'/g,"&#39;")}')"
-          style="padding:6px 14px;border-radius:12px;background:rgba(52,211,153,0.2);color:#34d399;border:1px solid rgba(52,211,153,0.4);
-            display:flex;align-items:center;gap:6px;font-size:11px;font-weight:800">
+          style="padding:5px 12px;border-radius:8px;background:#ccfbf1;color:#0f766e;border:none;
+            display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700">
           ${ICON.volume}${t('सुनें','Speak')}
         </button>
       </div>
-      <div style="font-size:1.6rem;font-weight:900;color:#fff;line-height:1.2" id="signOutput">${caption}</div>
-      <p style="font-size:11.5px;color:#94a3b8;margin-top:6px;font-weight:500">
+      <div style="font-size:1.5rem;font-weight:800;color:#0f172a;line-height:1.2" id="signOutput">${caption}</div>
+      <p style="font-size:11px;color:#64748b;margin-top:6px;font-weight:500">
         ${t('हाथ की 21 निर्देशांक गतियों से वास्तविक समय में भाषण एवं स्पर्श प्रतिक्रिया।',
            '21 3D hand landmarks classified in real-time to speech and haptic output.')}
       </p>
     </div>
 
-    <!-- Gesture Selector -->
     <div>
       <div class="section-label">${t('इशारा चुनें (Demo):','Select Gesture to Interpret:')}</div>
       <div class="gesture-grid">
@@ -1258,10 +1241,9 @@ function renderSee() {
       <span class="badge badge-amber">SPATIAL VISION COPILOT</span>
     </div>
 
-    <!-- Reticle Camera Viewport -->
-    <div class="cam-viewport" style="height:220px;background:linear-gradient(180deg,#090d16,#000)">
+    <div class="cam-viewport" style="height:210px;background:#0f172a">
       <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-        color:rgba(255,255,255,0.08);font-size:70px;font-weight:200">⊕</div>
+        color:rgba(255,255,255,0.06);font-size:60px">⊕</div>
 
       <div class="bbox" id="objBbox"
         style="${Object.entries(bb).map(([k,v])=>`${k}:${v}`).join(';')}">
@@ -1270,34 +1252,32 @@ function renderSee() {
       </div>
 
       <div class="cam-label"><div class="cam-pulse"></div>YOLO VISION ACTIVE</div>
-      <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);
-        background:rgba(11,15,25,0.85);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.2);border-radius:99px;
-        padding:6px 16px;font-size:11px;color:#fbbf24;display:flex;align-items:center;gap:7px;font-weight:800">
+      <div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
+        background:rgba(15,23,42,0.9);border:1px solid rgba(255,255,255,0.2);border-radius:20px;
+        padding:4px 12px;font-size:11px;color:#fbbf24;display:flex;align-items:center;gap:6px;font-weight:700">
         ${ICON.map_pin}<span id="distLabel">${t('हाथ की पहुंच (~45 सेमी)','Near (~45 cm, arm reach)')}</span>
       </div>
     </div>
 
-    <!-- Guidance Card -->
-    <div class="card" style="border-color:rgba(245,158,11,0.4);background:linear-gradient(180deg, rgba(120,53,15,0.2) 0%, rgba(18,24,38,0.8) 100%)">
-      <div class="row-between" style="margin-bottom:8px">
-        <span style="font-size:10px;font-weight:900;color:#fbbf24;text-transform:uppercase;letter-spacing:.06em">
+    <div class="card" style="border-color:#fde68a">
+      <div class="row-between" style="margin-bottom:6px">
+        <span style="font-size:10px;font-weight:800;color:#d97706;text-transform:uppercase;letter-spacing:.05em">
           ${t('स्थानिक दिशा निर्देश','Spatial Guidance Cue')}
         </span>
         <button onclick="speak('${guidance.replace(/'/g,"&#39;")}')"
-          style="padding:6px 14px;border-radius:12px;background:rgba(245,158,11,0.2);color:#fbbf24;border:1px solid rgba(245,158,11,0.4);
-            display:flex;align-items:center;gap:6px;font-size:11px;font-weight:800">
+          style="padding:5px 12px;border-radius:8px;background:#fef3c7;color:#d97706;border:none;
+            display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700">
           ${ICON.volume}${t('सुनें','Speak')}
         </button>
       </div>
-      <h3 style="font-size:15.5px;font-weight:900;color:#fff;line-height:1.3" id="guidanceText">${guidance}</h3>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;
-        background:rgba(245,158,11,0.15);border-radius:12px;padding:10px 14px;font-size:11.5px;border:1px solid rgba(245,158,11,0.3)">
-        <span style="color:#fde047;font-weight:700">${t('हैप्टिक संकेत:','Haptic Cue:')}</span>
-        <code style="font-weight:900;color:#fbbf24">${obj.haptic}</code>
+      <h3 style="font-size:15px;font-weight:800;color:#0f172a;line-height:1.3" id="guidanceText">${guidance}</h3>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;
+        background:#fef3c7;border-radius:10px;padding:8px 12px;font-size:11px">
+        <span style="color:#92400e;font-weight:700">${t('हैप्टिक संकेत:','Haptic Cue:')}</span>
+        <code style="font-weight:800;color:#d97706">${obj.haptic}</code>
       </div>
     </div>
 
-    <!-- Target Selector -->
     <div>
       <div class="section-label">${t('ढूंढने की वस्तु चुनें:','Select Target Object:')}</div>
       <div class="obj-grid">
@@ -1332,69 +1312,65 @@ function renderHeatmap() {
       <span class="badge badge-purple">STAGE 7: LEARNING</span>
     </div>
 
-    <!-- Telemetry Dashboard Card -->
     <div class="section-card">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
-        ${ICON.bar}<h3 style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:#fff">${t('स्थानीय इंटरैक्शन विश्लेषण','Local Interaction Telemetry')}</h3>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        ${ICON.bar}<h3 style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em">${t('स्थानीय इंटरैक्शन विश्लेषण','Local Interaction Telemetry')}</h3>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <div style="background:rgba(255,255,255,0.04);border-radius:16px;padding:14px;border:1px solid rgba(255,255,255,0.08)">
-          <div style="font-size:10px;color:#94a3b8;font-weight:700">${t('कार्य पूर्ण','Tasks Completed')}</div>
-          <div style="font-size:1.6rem;font-weight:900;color:#fff;margin-top:2px">${rec.tasks}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="background:#f8fafc;border-radius:12px;padding:10px;border:1px solid #e2e8f0">
+          <div style="font-size:10px;color:#64748b;font-weight:600">${t('कार्य पूर्ण','Tasks Completed')}</div>
+          <div style="font-size:1.4rem;font-weight:800;color:#0f172a">${rec.tasks}</div>
         </div>
-        <div style="background:rgba(16,185,129,0.15);border-radius:16px;padding:14px;border:1px solid rgba(16,185,129,0.3)">
-          <div style="font-size:10px;color:#6ee7b7;font-weight:700">${t('आवाज़ प्राथमिकता','Voice Usage Rate')}</div>
-          <div style="font-size:1.6rem;font-weight:900;color:#34d399;margin-top:2px">${rec.voice}%</div>
+        <div style="background:#f0fdf4;border-radius:12px;padding:10px;border:1px solid #bbf7d0">
+          <div style="font-size:10px;color:#166534;font-weight:600">${t('आवाज़ प्राथमिकता','Voice Usage Rate')}</div>
+          <div style="font-size:1.4rem;font-weight:800;color:#16a34a">${rec.voice}%</div>
         </div>
       </div>
     </div>
 
-    <!-- Friction Heatmap List -->
     <div>
-      <div class="row-between" style="margin-bottom:10px">
-        <h3 style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:#cbd5e1">${t('इंटरैक्शन घर्षण हीटमैप','Interaction Friction Heatmap')}</h3>
-        <span style="font-size:10px;color:#94a3b8;font-weight:800">Live Session</span>
+      <div class="row-between" style="margin-bottom:8px">
+        <h3 style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em">${t('इंटरैक्शन घर्षण हीटमैप','Interaction Friction Heatmap')}</h3>
+        <span style="font-size:10px;color:#64748b;font-weight:600">Live Session</span>
       </div>
       ${heatmapData.map(h=>`
-        <div class="section-card" style="display:flex;gap:14px;align-items:flex-start;margin-bottom:10px">
-          <div class="heatmap-dot heatmap-dot-${h.dot}" style="margin-top:4px"></div>
+        <div class="section-card" style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px">
+          <div style="width:10px;height:10px;border-radius:50%;margin-top:4px;
+            background:${h.dot==='red'?'#dc2626':h.dot==='yellow'?'#d97706':'#16a34a'}"></div>
           <div style="flex:1">
             <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
-              <span style="font-size:13px;font-weight:800;color:#fff">${h.inter}</span>
-              <span style="font-size:9px;font-weight:900;font-family:monospace;padding:3px 9px;border-radius:6px;white-space:nowrap;
-                background:${h.dot==='red'?'rgba(239,68,68,0.2)':h.dot==='yellow'?'rgba(245,158,11,0.2)':'rgba(16,185,129,0.2)'};
-                color:${h.dot==='red'?'#fca5a5':h.dot==='yellow'?'#fde047':'#6ee7b7'};
-                border:1px solid ${h.dot==='red'?'rgba(239,68,68,0.4)':h.dot==='yellow'?'rgba(245,158,11,0.4)':'rgba(16,185,129,0.4)'}">
+              <span style="font-size:12px;font-weight:700;color:#0f172a">${h.inter}</span>
+              <span style="font-size:9px;font-weight:800;font-family:monospace;padding:2px 6px;border-radius:4px;
+                background:${h.dot==='red'?'#fee2e2':h.dot==='yellow'?'#fef3c7':'#dcfce7'};
+                color:${h.dot==='red'?'#991b1b':h.dot==='yellow'?'#92400e':'#15803d'}">
                 ${h.dot.toUpperCase()}
               </span>
             </div>
-            <div style="font-size:11.5px;color:#94a3b8;margin-top:4px;font-weight:500">${h.reason}</div>
+            <div style="font-size:11px;color:#64748b;margin-top:2px">${h.reason}</div>
           </div>
         </div>`).join('')}
     </div>
 
-    <!-- Adaptation Proposal -->
-    <div id="adaptBox" class="infobox infobox-purple" style="display:flex;flex-direction:column;gap:14px">
-      <div style="display:flex;gap:10px;align-items:flex-start">
+    <div id="adaptBox" class="infobox infobox-purple" style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;gap:8px;align-items:flex-start">
         ${ICON.sparkle}
         <div>
-          <strong style="display:block;margin-bottom:3px;font-size:13px">${t('सक्रिय अनुकूलन प्रस्ताव','Proactive Adaptation Proposal')}</strong>
-          <p style="font-size:11.5px;color:#e9d5ff;line-height:1.55">
+          <strong style="display:block;font-size:12px">${t('सक्रिय अनुकूलन प्रस्ताव','Proactive Adaptation Proposal')}</strong>
+          <p style="font-size:11px;color:#6b21a8;line-height:1.5">
             ${isH
               ? 'क्या आप चाहते हैं कि सहायक भविष्य के सभी आवेदनों में स्वतः सरल हिंदी और आवाज़ मार्गदर्शन सक्रिय रखे?'
               : 'Would you like Sahayak to automatically apply simplified language and voice-first guidance for all future applications?'}
           </p>
         </div>
       </div>
-      <button onclick="acceptAdaptation()" class="btn-primary" style="background:linear-gradient(135deg, #7c3aed, #9333ea)">
+      <button onclick="acceptAdaptation()" class="btn-primary" style="background:#7c3aed">
         ${ICON.thumbs} ${t('हाँ, स्वतः अनुकूलित करें','Accept & Auto-Adapt')}
       </button>
     </div>
 
-    <!-- Ethics Guarantee -->
-    <div class="infobox infobox-green" style="display:flex;gap:10px">
+    <div class="infobox infobox-green" style="display:flex;gap:8px">
       ${ICON.shield}
-      <span style="font-size:11.5px">${t('गोपनीयता: यह हीटमैप केवल स्थानीय सत्र में है। कोई चिकित्सा लेबल नहीं।','Ethics: Telemetry is local only. No medical diagnosis or clinical labeling.')}</span>
+      <span style="font-size:11px">${t('गोपनीयता: यह हीटमैप केवल स्थानीय सत्र में है। कोई चिकित्सा लेबल नहीं।','Ethics: Telemetry is local only. No medical diagnosis or clinical labeling.')}</span>
     </div>
   </div>`;
 }
@@ -1402,11 +1378,11 @@ function renderHeatmap() {
 window.acceptAdaptation = function() {
   haptics.success();
   document.getElementById('adaptBox').innerHTML = `
-    <div style="display:flex;gap:12px;align-items:center">
-      <span style="font-size:24px">✅</span>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span style="font-size:20px">✅</span>
       <div>
-        <strong style="font-size:13.5px;color:#fff">${t('अनुकूलन लागू!','Adaptation Applied!')}</strong>
-        <p style="font-size:11.5px;margin-top:2px;color:#6ee7b7">${t('आवाज़ प्राथमिकता एवं सरल भाषा स्वतः सक्रिय।','Voice-first & simplified language auto-activated.')}</p>
+        <strong style="font-size:13px">${t('अनुकूलन लागू!','Adaptation Applied!')}</strong>
+        <p style="font-size:11px;margin-top:2px">${t('आवाज़ प्राथमिकता एवं सरल भाषा स्वतः सक्रिय।','Voice-first & simplified language auto-activated.')}</p>
       </div>
     </div>`;
 };
@@ -1427,32 +1403,30 @@ function renderProfile() {
       <span class="badge badge-blue">ACCESSIBILITY TWIN</span>
     </div>
 
-    <div class="infobox infobox-green" style="display:flex;gap:10px">
+    <div class="infobox infobox-green" style="display:flex;gap:8px">
       ${ICON.shield}
-      <div style="font-size:11.5px">
+      <div style="font-size:11px">
         <strong>${t('नैतिक गारंटी:','Ethical Guarantee:')}</strong>
         ${t(' बातचीत की प्राथमिकताओं का मॉडल — कोई चिकित्सा निदान नहीं।',' Models functional interaction preferences — not a medical diagnosis.')}
       </div>
     </div>
 
-    <!-- Language Selector -->
     <div class="section-card">
       <div class="section-label">${t('प्राथमिक भाषा','Primary Language')}</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
         <button onclick="setLang('Hindi')"
-          style="padding:14px;border-radius:16px;font-weight:800;font-size:13.5px;border:1px solid;transition:all .25s;
-            ${state.lang==='Hindi'?'background:linear-gradient(135deg,#2563eb,#3b82f6);color:#fff;border-color:#60a5fa;box-shadow:0 6px 18px rgba(37,99,235,0.4)':'background:rgba(255,255,255,0.05);color:#cbd5e1;border-color:rgba(255,255,255,0.1)'}">
+          style="padding:10px;border-radius:12px;font-weight:700;font-size:13px;border:1.5px solid;
+            ${state.lang==='Hindi'?'background:#2563eb;color:#fff;border-color:#2563eb;':'background:#f8fafc;color:#475569;border-color:#cbd5e1;'}">
           Hindi (हिंदी)
         </button>
         <button onclick="setLang('English')"
-          style="padding:14px;border-radius:16px;font-weight:800;font-size:13.5px;border:1px solid;transition:all .25s;
-            ${state.lang==='English'?'background:linear-gradient(135deg,#2563eb,#3b82f6);color:#fff;border-color:#60a5fa;box-shadow:0 6px 18px rgba(37,99,235,0.4)':'background:rgba(255,255,255,0.05);color:#cbd5e1;border-color:rgba(255,255,255,0.1)'}">
+          style="padding:10px;border-radius:12px;font-weight:700;font-size:13px;border:1.5px solid;
+            ${state.lang==='English'?'background:#2563eb;color:#fff;border-color:#2563eb;':'background:#f8fafc;color:#475569;border-color:#cbd5e1;'}">
           English
         </button>
       </div>
     </div>
 
-    <!-- Preference Toggles -->
     <div class="section-card">
       <div class="section-label">${t('दृश्य एवं ऑडियो सेटिंग्स','Visual & Audio Settings')}</div>
       ${prefs.map(p => `
@@ -1468,7 +1442,6 @@ function renderProfile() {
         </div>`).join('')}
     </div>
 
-    <!-- Active Preference Chips -->
     <div class="section-card">
       <div class="section-label">${t('इंटरैक्शन प्राथमिकताएं (सक्रिय)','Active Preferences')}</div>
       <div class="chip-row">
