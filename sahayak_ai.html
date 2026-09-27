@@ -2,10 +2,12 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 <meta name="theme-color" content="#2563eb" />
-<meta name="description" content="Sahayak AI — Intent-Aware Personal Accessibility Copilot" />
-<title>Sahayak AI (सहायक AI) — Multipurpose Accessibility Copilot Platform</title>
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="description" content="Sahayak AI — Intent-Aware Personal Accessibility Copilot Mobile Application" />
+<title>Sahayak AI (सहायक AI) — Mobile Accessibility Copilot</title>
 
 <!-- Fonts: Plus Jakarta Sans & Inter -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,7 +15,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-  /* ─── Modern SaaS Landing Page Theme Tokens ───────────────── */
+  /* ─── Premium Mobile Web Application Tokens ───────────────── */
   :root {
     --primary-blue: #2563eb;
     --primary-indigo: #4f46e5;
@@ -31,89 +33,27 @@
     --shadow-hover: 0 20px 40px -10px rgba(37,99,235,0.18);
   }
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; }
-  body { background: var(--bg-light); color: var(--text-body); line-height: 1.6; -webkit-font-smoothing: antialiased; }
-  a { color: inherit; text-decoration: none; }
-  button { cursor: pointer; border: none; font-family: inherit; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { width: 100%; height: 100%; height: 100dvh; overflow: hidden; background: #0b1329; font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; color: var(--text-body); -webkit-font-smoothing: antialiased; }
 
-  /* ─── Global Top Navigation Bar ────────────────────────────── */
-  .header-nav { position: fixed; top: 0; left: 0; right: 0; height: 72px; background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-color); z-index: 1000;
-    display: flex; align-items: center; justify-content: space-between; padding: 0 5%; }
-  
-  .brand-logo { display: flex; align-items: center; gap: 12px; font-weight: 900; font-size: 20px; color: var(--text-heading); }
-  .logo-mark { width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg, var(--primary-blue), var(--primary-indigo));
-    display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px; font-weight: 900;
-    box-shadow: 0 4px 14px rgba(37,99,235,0.35); }
+  /* ─── App Container & Responsive Mobile Viewport ──────────── */
+  .mobile-app-wrapper { width: 100%; height: 100%; height: 100dvh; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #0b1329 0%, #1e1b4b 100%); }
 
-  .nav-links { display: flex; items-center; gap: 32px; list-style: none; font-weight: 700; font-size: 14px; color: var(--text-body); }
-  .nav-links a:hover { color: var(--primary-blue); }
+  .phone-frame {
+    position: relative; width: 100%; max-width: 440px; height: 100%; height: 100dvh;
+    background: #f8fafc; display: flex; flex-direction: column; overflow: hidden;
+    box-shadow: 0 25px 60px -10px rgba(0,0,0,0.5);
+  }
 
-  .nav-actions { display: flex; align-items: center; gap: 12px; }
-  .btn-nav-primary { padding: 10px 22px; border-radius: 99px; background: var(--primary-blue); color: #fff;
-    font-weight: 800; font-size: 13px; box-shadow: 0 4px 14px rgba(37,99,235,0.3); transition: all 0.2s ease; }
-  .btn-nav-primary:hover { background: #1d4ed8; transform: translateY(-1px); }
+  @media (min-width: 480px) {
+    .phone-frame {
+      height: 94vh; max-height: 900px; border-radius: 40px; border: 1px solid rgba(255,255,255,0.15);
+    }
+  }
 
-  /* ─── Hero Section with Wave Divider ─────────────────────── */
-  .hero-section { position: relative; padding: 140px 5% 100px;
-    background: linear-gradient(135deg, #1e1b4b 0%, #2563eb 60%, #0d9488 100%);
-    color: #fff; text-align: center; overflow: hidden; }
+  .phone-screen { width: 100%; height: 100%; display: flex; flex-direction: column; background: #f8fafc; position: relative; overflow: hidden; }
 
-  .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; border-radius: 99px;
-    background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); font-size: 12px; font-weight: 800;
-    margin-bottom: 24px; border: 1px solid rgba(255,255,255,0.25); text-transform: uppercase; letter-spacing: 0.05em; }
-
-  .hero-title { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; line-height: 1.15; letter-spacing: -0.03em;
-    max-width: 900px; margin: 0 auto 20px; }
-
-  .hero-subtitle { font-size: 1.15rem; color: rgba(255,255,255,0.85); max-width: 680px; margin: 0 auto 36px; font-weight: 500; }
-
-  .hero-cta-group { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
-  
-  .btn-hero-primary { padding: 16px 36px; border-radius: 99px; background: #fff; color: var(--primary-blue);
-    font-size: 15px; font-weight: 800; box-shadow: 0 10px 30px rgba(0,0,0,0.25); transition: all 0.2s ease; }
-  .btn-hero-primary:hover { transform: translateY(-2px); box-shadow: 0 15px 40px rgba(0,0,0,0.3); }
-  
-  .btn-hero-secondary { padding: 16px 32px; border-radius: 99px; background: rgba(255,255,255,0.12); color: #fff;
-    font-size: 15px; font-weight: 700; border: 1px solid rgba(255,255,255,0.3); backdrop-filter: blur(10px); transition: all 0.2s ease; }
-  .btn-hero-secondary:hover { background: rgba(255,255,255,0.2); }
-
-  /* Wave Curve Divider */
-  .hero-wave { position: absolute; bottom: -1px; left: 0; right: 0; width: 100%; height: 60px; fill: var(--bg-light); }
-
-  /* ─── Stats Banner ────────────────────────────────────────── */
-  .stats-banner { max-width: 1100px; margin: -40px auto 60px; position: relative; z-index: 20;
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; padding: 0 20px; }
-
-  .stat-card { background: var(--surface-white); border: 1px solid var(--border-color); border-radius: 20px;
-    padding: 24px; text-align: center; box-shadow: var(--shadow-card); }
-  .stat-number { font-size: 2.2rem; font-weight: 900; color: var(--primary-blue); line-height: 1; margin-bottom: 6px; }
-  .stat-label { font-size: 13px; font-weight: 700; color: var(--text-muted); }
-
-  /* ─── Interactive Live App Showcase Section ──────────────── */
-  .showcase-section { max-width: 1200px; margin: 0 auto 80px; padding: 0 20px; text-align: center; }
-  .section-tag { font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.08em; color: var(--primary-blue); margin-bottom: 8px; }
-  .section-heading { font-size: 2.2rem; font-weight: 900; color: var(--text-heading); margin-bottom: 12px; letter-spacing: -0.02em; }
-  .section-desc { font-size: 1.05rem; color: var(--text-body); max-width: 620px; margin: 0 auto 40px; }
-
-  /* Integrated Mobile Interactive Frame */
-  .app-preview-container { display: flex; justify-content: center; align-items: center; padding: 20px 0; }
-  
-  /* Smartphone Container */
-  .phone-frame { position: relative; width: 100%; max-width: 410px;
-    height: 840px; background: #0f172a; border-radius: 48px;
-    padding: 10px; box-shadow: 0 25px 60px -10px rgba(15,23,42,0.4), 0 0 0 8px #1e293b; text-align: left; }
-  
-  .phone-screen { width: 100%; height: 100%; border-radius: 38px; overflow: hidden;
-    display: flex; flex-direction: column; background: #f8fafc; position: relative; }
-
-  .phone-pill { position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
-    width: 112px; height: 24px; background: #000; border-radius: 16px; z-index: 40;
-    display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; }
-  .phone-pill-dot { width: 8px; height: 8px; border-radius: 50%; background: #0f172a; box-shadow: inset 0 0 0 2px #1e293b; }
-
-  /* High Contrast inside Phone */
+  /* High Contrast WCAG AAA mode */
   .hc .phone-screen { background: #000 !important; color: #FFD700 !important; }
   .hc .top-bar { background: #000 !important; border-bottom: 2px solid #FFD700 !important; }
   .hc .status-bar { color: #FFD700 !important; }
@@ -133,76 +73,78 @@
 
   .lg .screen-body, .lg button, .lg input { font-size: 1.12rem !important; }
 
-  /* ─── Phone App Header ────────────────────────────────────── */
+  /* ─── Native App Header & Status Bar ──────────────────────── */
   .top-bar { flex-shrink: 0; background: rgba(255, 255, 255, 0.95);
     border-bottom: 1px solid #e2e8f0; backdrop-filter: blur(12px); position: relative; z-index: 30; }
+  
   .status-bar { display: flex; justify-content: space-between; align-items: center;
-    padding: 14px 18px 2px; font-size: 11px; font-weight: 700; color: #64748b; font-family: 'Inter', sans-serif; }
+    padding: 12px 18px 2px; font-size: 11px; font-weight: 700; color: #64748b; font-family: 'Inter', sans-serif; }
   .status-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
   .status-dot.online { background: #10b981; }
   .status-dot.local { background: var(--primary-blue); animation: pulse 1.5s infinite; }
   
-  .app-bar { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px 10px; }
-  .app-logo { display: flex; align-items: center; gap: 8px; }
-  .logo-icon { width: 34px; height: 34px; border-radius: 10px;
+  .app-bar { display: flex; align-items: center; justify-content: space-between; padding: 8px 14px 10px; }
+  .app-logo { display: flex; align-items: center; gap: 10px; }
+  .logo-icon { width: 36px; height: 36px; border-radius: 10px;
     background: linear-gradient(135deg, var(--primary-blue), var(--primary-indigo)); color: #fff;
-    display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 16px; box-shadow: 0 2px 8px rgba(37,99,235,0.25); }
-  .logo-text h1 { font-size: 15px; font-weight: 800; color: #0f172a; line-height: 1; letter-spacing: -0.02em; }
-  .logo-text span { font-size: 10px; color: #64748b; font-weight: 600; }
+    display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 18px; box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
+  .logo-text h1 { font-size: 16px; font-weight: 800; color: #0f172a; line-height: 1; letter-spacing: -0.02em; }
+  .logo-text span { font-size: 10.5px; color: #64748b; font-weight: 600; }
   
-  .top-controls { display: flex; align-items: center; gap: 4px; }
-  .tc-btn { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center;
+  .top-controls { display: flex; align-items: center; gap: 5px; }
+  .tc-btn { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center;
     justify-content: center; font-size: 14px; color: #475569; transition: all .15s ease;
     background: #f1f5f9; border: 1px solid #e2e8f0; }
   .tc-btn:active { transform: scale(.92); }
   .tc-btn.active { background: #dbeafe; color: var(--primary-blue); border-color: #93c5fd; }
   .tc-btn.hc-active { background: #FFD700; color: #000; border-color: #FFD700; font-weight: 900; }
-  .lang-btn { height: 28px; padding: 0 8px; border-radius: 8px; border: 1px solid #cbd5e1;
-    font-size: 11px; font-weight: 700; color: #475569; display: flex; align-items: center; gap: 4px; background: #fff; }
+  .lang-btn { height: 30px; padding: 0 10px; border-radius: 10px; border: 1px solid #cbd5e1;
+    font-size: 11.5px; font-weight: 800; color: #334155; display: flex; align-items: center; gap: 4px; background: #fff; }
 
+  /* ─── Scrollable Screen Body ──────────────────────────────── */
   .screen-body { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; position: relative; z-index: 10; }
 
-  /* ─── Phone App Navigation ────────────────────────────────── */
-  .bottom-nav { flex-shrink: 0; background: rgba(255, 255, 255, 0.96);
-    border-top: 1px solid #e2e8f0; backdrop-filter: blur(12px); padding: 5px 0 3px; z-index: 30; }
+  /* ─── Native Bottom Tab Navigation Bar ────────────────────── */
+  .bottom-nav { flex-shrink: 0; background: rgba(255, 255, 255, 0.98);
+    border-top: 1px solid #e2e8f0; backdrop-filter: blur(16px); padding: 6px 0 6px; z-index: 30; }
   .nav-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; padding: 0 4px; }
   .nav-btn { display: flex; flex-direction: column; align-items: center; justify-content: center;
-    padding: 5px 2px 3px; border-radius: 10px; color: #64748b; transition: all .15s ease; gap: 1px; }
+    padding: 6px 2px 4px; border-radius: 12px; color: #64748b; transition: all .15s ease; gap: 2px; background: transparent; border: none; }
   .nav-btn.active { background: #eff6ff; color: var(--primary-blue); font-weight: 800; }
   .nav-label { font-size: 9px; font-weight: 700; text-align: center; line-height: 1; }
-  .nav-home-bar { width: 96px; height: 4px; border-radius: 2px; background: #cbd5e1; margin: 4px auto 0; opacity: .7; }
+  .nav-home-bar { width: 110px; height: 4px; border-radius: 2px; background: #cbd5e1; margin: 4px auto 0; opacity: .8; }
 
   /* ─── App Screen UI Primitives ────────────────────────────── */
-  .screen-pad { padding: 14px; display: flex; flex-direction: column; gap: 12px; min-height: 100%; }
-  .back-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 12px;
-    font-weight: 700; color: #475569; padding: 5px 10px; border-radius: 8px; background: #fff; border: 1px solid #e2e8f0; }
+  .screen-pad { padding: 16px; display: flex; flex-direction: column; gap: 14px; min-height: 100%; }
+  .back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 12px;
+    font-weight: 700; color: #475569; padding: 6px 12px; border-radius: 10px; background: #fff; border: 1px solid #e2e8f0; }
   .row-between { display: flex; align-items: center; justify-content: space-between; }
   
-  .badge { display: inline-flex; align-items: center; padding: 3px 10px;
-    border-radius: 99px; font-size: 10px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+  .badge { display: inline-flex; align-items: center; padding: 4px 11px;
+    border-radius: 99px; font-size: 10.5px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
   .badge-blue { background: #dbeafe; color: #1e40af; }
   .badge-green { background: #dcfce7; color: #166534; }
   .badge-amber { background: #fef3c7; color: #92400e; }
   .badge-purple { background: #f3e8ff; color: #6b21a8; }
   .badge-indigo { background: #e0e7ff; color: #3730a3; }
   
-  .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 18px; padding: 14px; box-shadow: var(--shadow-sm); }
-  .section-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 12px; box-shadow: var(--shadow-sm); }
+  .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 16px; box-shadow: 0 4px 20px -2px rgba(15,23,42,0.05); }
+  .section-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
   
   .btn-primary { display: flex; align-items: center; justify-content: center; gap: 8px;
-    padding: 12px 16px; border-radius: 12px; font-weight: 700; font-size: 13.5px;
-    background: var(--primary-blue); color: #fff; box-shadow: 0 4px 12px rgba(37,99,235,0.25);
-    transition: all .15s ease; width: 100%; }
+    padding: 14px 18px; border-radius: 14px; font-weight: 800; font-size: 14px;
+    background: var(--primary-blue); color: #fff; box-shadow: 0 6px 18px rgba(37,99,235,0.3);
+    transition: all .15s ease; width: 100%; border: none; cursor: pointer; }
   .btn-primary:active { transform: scale(.98); background: #1d4ed8; }
   
   .btn-ghost { display: flex; align-items: center; justify-content: center; gap: 6px;
-    padding: 9px 14px; border-radius: 10px; font-weight: 600; font-size: 12px;
-    border: 1px solid #e2e8f0; color: #475569; transition: all .15s; background: #fff; }
+    padding: 10px 14px; border-radius: 12px; font-weight: 700; font-size: 12px;
+    border: 1px solid #e2e8f0; color: #475569; transition: all .15s; background: #fff; cursor: pointer; }
   
   .chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
-  .chip { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 99px; padding: 3px 10px; font-size: 11px; font-weight: 700; color: var(--primary-blue); }
+  .chip { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 99px; padding: 4px 11px; font-size: 11px; font-weight: 700; color: var(--primary-blue); }
   
-  .infobox { border-radius: 12px; padding: 10px 12px; border: 1px solid; font-size: 11.5px; line-height: 1.5; }
+  .infobox { border-radius: 14px; padding: 12px 14px; border: 1px solid; font-size: 12px; line-height: 1.5; }
   .infobox-blue { background: #eff6ff; border-color: #bfdbfe; color: #1e40af; }
   .infobox-green { background: #f0fdf4; border-color: #bbf7d0; color: #166534; }
   .infobox-amber { background: #fffbeb; border-color: #fde68a; color: #92400e; }
@@ -211,38 +153,38 @@
   .progress-track { background: #e2e8f0; border-radius: 99px; height: 8px; overflow: hidden; }
   .progress-fill { height: 100%; border-radius: 99px; background: var(--primary-blue); transition: width .35s ease; }
   
-  .section-label { font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: #64748b; margin-bottom: 6px; }
+  .section-label { font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: #64748b; margin-bottom: 6px; }
 
-  /* ─── Hero Mic Button ─────────────────────────────────────── */
-  .voice-hero-container { position: relative; display: flex; align-items: center; justify-content: center; padding: 8px 0; }
-  .voice-btn { width: 104px; height: 104px; border-radius: 50%; display: flex;
+  /* ─── Voice Hero Button ───────────────────────────────────── */
+  .voice-hero-container { position: relative; display: flex; align-items: center; justify-content: center; padding: 12px 0; }
+  .voice-btn { width: 110px; height: 110px; border-radius: 50%; display: flex;
     flex-direction: column; align-items: center; justify-content: center; gap: 4px;
-    background: var(--primary-blue); color: #fff; box-shadow: 0 8px 24px rgba(37,99,235,0.35);
+    background: var(--primary-blue); color: #fff; box-shadow: 0 10px 28px rgba(37,99,235,0.4);
     transition: all .2s ease; font-size: 11px; font-weight: 800; text-transform: uppercase;
-    letter-spacing: .05em; z-index: 10; border: none; }
+    letter-spacing: .05em; z-index: 10; border: none; cursor: pointer; }
   .voice-btn:active { transform: scale(.94); }
-  .voice-btn.listening { background: #dc2626; box-shadow: 0 8px 24px rgba(220,38,38,0.4); }
-  .voice-btn svg { width: 38px; height: 38px; }
+  .voice-btn.listening { background: #dc2626; box-shadow: 0 10px 28px rgba(220,38,38,0.4); }
+  .voice-btn svg { width: 40px; height: 40px; }
 
   @keyframes pulse-aura {
-    0% { box-shadow: 0 0 0 0 rgba(37,99,235,0.4), 0 8px 24px rgba(37,99,235,0.35); }
-    70% { box-shadow: 0 0 0 18px rgba(37,99,235,0), 0 8px 24px rgba(37,99,235,0.35); }
-    100% { box-shadow: 0 0 0 0 rgba(37,99,235,0), 0 8px 24px rgba(37,99,235,0.35); }
+    0% { box-shadow: 0 0 0 0 rgba(37,99,235,0.4), 0 10px 28px rgba(37,99,235,0.35); }
+    70% { box-shadow: 0 0 0 20px rgba(37,99,235,0), 0 10px 28px rgba(37,99,235,0.35); }
+    100% { box-shadow: 0 0 0 0 rgba(37,99,235,0), 0 10px 28px rgba(37,99,235,0.35); }
   }
   .voice-btn:not(.listening) { animation: pulse-aura 2.2s infinite ease-out; }
 
   /* ─── Toggle Switch ───────────────────────────────────────── */
-  .toggle { position: relative; width: 42px; height: 24px; flex-shrink: 0; }
+  .toggle { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
   .toggle input { opacity: 0; width: 0; height: 0; }
   .toggle-slider { position: absolute; inset: 0; border-radius: 99px; background: #cbd5e1; transition: .2s ease; cursor: pointer; }
   .toggle-slider::before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; bottom: 3px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: .2s ease; }
   .toggle input:checked + .toggle-slider { background: var(--primary-blue); }
-  .toggle input:checked + .toggle-slider::before { transform: translateX(18px); }
+  .toggle input:checked + .toggle-slider::before { transform: translateX(20px); }
 
   /* ─── Camera Viewport HUD ─────────────────────────────────── */
-  .cam-viewport { width: 100%; height: 210px; background: #0f172a; border-radius: 16px; overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center; border: 1px solid #e2e8f0; }
+  .cam-viewport { width: 100%; height: 210px; background: #0f172a; border-radius: 18px; overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center; border: 1px solid #e2e8f0; }
   .cam-viewport video { width: 100%; height: 100%; object-fit: cover; }
-  .cam-label { position: absolute; top: 10px; left: 10px; background: rgba(15,23,42,0.9); border: 1px solid #10b981; border-radius: 20px; padding: 4px 10px; font-size: 10px; font-weight: 800; color: #34d399; display: flex; align-items: center; gap: 6px; }
+  .cam-label { position: absolute; top: 12px; left: 12px; background: rgba(15,23,42,0.9); border: 1px solid #10b981; border-radius: 20px; padding: 4px 10px; font-size: 10px; font-weight: 800; color: #34d399; display: flex; align-items: center; gap: 6px; }
   .cam-pulse { width: 7px; height: 7px; border-radius: 50%; background: #34d399; animation: pulse 1s infinite; }
 
   .scanner-line { position: absolute; left: 0; right: 0; height: 2px; background: var(--primary-blue); box-shadow: 0 0 10px var(--primary-blue); animation: scan 2s ease-in-out infinite; z-index: 10; }
@@ -250,265 +192,95 @@
 
   /* ─── Bento Grid Action Cards ─────────────────────────────── */
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .action-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 12px; text-align: left; transition: all .15s ease; display: flex; flex-direction: column; gap: 4px; box-shadow: var(--shadow-sm); }
+  .action-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 14px; text-align: left; transition: all .15s ease; display: flex; flex-direction: column; gap: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); cursor: pointer; }
   .action-card:active { transform: scale(.97); }
   .action-card.featured { border-color: #93c5fd; background: linear-gradient(180deg, #ffffff 0%, #eff6ff 100%); }
-  .action-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
-  .action-icon svg { width: 18px; height: 18px; color: #fff; }
-  .action-title { font-size: 14px; font-weight: 800; color: var(--text-primary); line-height: 1.1; letter-spacing: -0.01em; }
+  .action-icon { width: 38px; height: 38px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+  .action-icon svg { width: 20px; height: 20px; color: #fff; }
+  .action-title { font-size: 14px; font-weight: 800; color: var(--text-heading); line-height: 1.1; letter-spacing: -0.01em; }
   .action-sub { font-size: 10.5px; color: var(--text-muted); line-height: 1.35; font-weight: 500; }
   .action-link { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; margin-top: 2px; display: flex; align-items: center; gap: 3px; }
 
   /* ─── Form Inputs ─────────────────────────────────────────── */
   .field-wrap { position: relative; }
-  .field-input { width: 100%; padding: 12px 42px 12px 14px; border-radius: 12px; border: 1px solid #cbd5e1; font-size: 13.5px; font-weight: 600; color: var(--text-primary); background: #fff; outline: none; transition: all .15s ease; }
+  .field-input { width: 100%; padding: 13px 44px 13px 16px; border-radius: 14px; border: 1px solid #cbd5e1; font-size: 14px; font-weight: 600; color: var(--text-heading); background: #fff; outline: none; transition: all .15s ease; }
   .field-input:focus { border-color: var(--primary-blue); box-shadow: 0 0 0 3px rgba(37,99,235,0.12); }
-  .field-mic-btn { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; border-radius: 8px; background: var(--primary-blue); color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: none; }
+  .field-mic-btn { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 32px; height: 32px; border-radius: 10px; background: var(--primary-blue); color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: none; cursor: pointer; }
   .field-mic-btn.recording { background: #dc2626; animation: pulse 0.7s infinite; }
 
-  .spinner { width: 36px; height: 36px; border: 3px solid #e2e8f0; border-top-color: var(--primary-blue); border-radius: 50%; animation: spin .7s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; border-radius: 40px; }
-
   .gesture-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
-  .gesture-btn { padding: 8px 4px; border-radius: 10px; text-align: center; border: 1px solid #e2e8f0; background: #fff; transition: all .15s; }
+  .gesture-btn { padding: 10px 4px; border-radius: 12px; text-align: center; border: 1px solid #e2e8f0; background: #fff; transition: all .15s; cursor: pointer; }
   .gesture-btn.active { background: #10b981; color: #fff; border-color: #10b981; }
   .gesture-btn:active { transform: scale(.94); }
-  .gesture-en { font-size: 10.5px; font-weight: 800; }
-  .gesture-hi { font-size: 8.5px; opacity: .8; font-weight: 500; }
+  .gesture-en { font-size: 11px; font-weight: 800; }
 
   .obj-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-  .obj-btn { padding: 10px 4px; border-radius: 12px; text-align: center; border: 1px solid #e2e8f0; background: #fff; transition: all .15s; }
+  .obj-btn { padding: 12px 6px; border-radius: 14px; text-align: center; border: 1px solid #e2e8f0; background: #fff; transition: all .15s; cursor: pointer; }
   .obj-btn.active { background: #d97706; color: #fff; border-color: #d97706; font-weight: 800; }
   .obj-btn:active { transform: scale(.94); }
-  .obj-en { font-size: 11.5px; font-weight: 800; }
-  .obj-hi { font-size: 9.5px; opacity: .85; font-weight: 500; }
+  .obj-en { font-size: 12px; font-weight: 800; }
 
-  .pref-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
+  .pref-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
   .pref-row:last-child { border-bottom: none; }
-  .pref-label { font-size: 13px; font-weight: 700; color: var(--text-primary); }
-  .pref-sub { font-size: 10.5px; color: var(--text-muted); font-weight: 500; }
+  .pref-label { font-size: 13.5px; font-weight: 700; color: var(--text-heading); }
+  .pref-sub { font-size: 11px; color: var(--text-muted); font-weight: 500; }
 
-  .toast { position: absolute; bottom: 84px; left: 50%; transform: translateX(-50%); background: #0f172a; color: #fff; font-size: 12px; font-weight: 700; padding: 10px 20px; border-radius: 99px; white-space: nowrap; z-index: 200; box-shadow: 0 4px 16px rgba(0,0,0,0.25); animation: toast-in .25s ease; }
-  @keyframes toast-in { from{opacity:0;transform:translate(-50%,10px)} to{opacity:1;transform:translateX(-50%)} }
-
-  .bbox { position: absolute; border: 2px solid #34d399; border-radius: 10px; background: rgba(52,211,153,0.1); display: flex; flex-direction: column; justify-content: space-between; padding: 5px; transition: all .35s ease; }
-  .bbox-label { font-size: 9px; font-weight: 800; font-family: monospace; background: #34d399; color: #000; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; width: fit-content; }
-  .bbox-conf { font-size: 9px; font-family: monospace; color: #34d399; font-weight: 700; background: rgba(0,0,0,.8); padding: 2px 6px; border-radius: 4px; align-self: flex-end; }
-
-  .cert { background: linear-gradient(135deg, #f0fdf4 0%, #eff6ff 100%); border: 1.5px solid #10b981; border-radius: 16px; padding: 16px; box-shadow: var(--shadow-sm); }
-  .cert-token { font-family: monospace; font-size: 10.5px; font-weight: 800; background: #dcfce7; color: #15803d; padding: 3px 9px; border-radius: 6px; border: 1px solid #bbf7d0; }
-  .cert-row { display: flex; justify-content: space-between; font-size: 11.5px; padding: 5px 0; border-bottom: 1px solid rgba(0,0,0,.06); color: var(--text-secondary); }
+  .cert { background: linear-gradient(135deg, #f0fdf4 0%, #eff6ff 100%); border: 1.5px solid #10b981; border-radius: 18px; padding: 18px; box-shadow: var(--shadow-card); }
+  .cert-token { font-family: monospace; font-size: 11px; font-weight: 800; background: #dcfce7; color: #15803d; padding: 3px 9px; border-radius: 6px; border: 1px solid #bbf7d0; }
+  .cert-row { display: flex; justify-content: space-between; font-size: 12px; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,.06); color: var(--text-body); }
   .cert-row:last-child { border-bottom: none; }
 
-  /* ─── Multipurpose SaaS Landing Grid Features Section ──────── */
-  .features-grid-section { max-width: 1200px; margin: 40px auto 80px; padding: 0 20px; }
-  .bento-features { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
-  .bento-card { background: #fff; border: 1px solid var(--border-color); border-radius: 20px; padding: 30px; box-shadow: var(--shadow-card); transition: all 0.25s ease; }
-  .bento-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); border-color: #bfdbfe; }
-  .bento-icon-box { width: 50px; height: 50px; border-radius: 14px; background: var(--bg-tint); border: 1px solid #bfdbfe; display: flex; align-items: center; justify-content: center; color: var(--primary-blue); margin-bottom: 20px; }
-  .bento-title { font-size: 1.2rem; font-weight: 800; color: var(--text-heading); margin-bottom: 8px; letter-spacing: -0.01em; }
-  .bento-desc { font-size: 14px; color: var(--text-body); line-height: 1.6; }
-
-  /* ─── Dark Footer Section ─────────────────────────────────── */
-  .footer-dark { background: var(--primary-dark); color: #fff; padding: 60px 5% 40px; margin-top: 60px; border-top: 1px solid #1e293b; }
-  .footer-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; }
-  .footer-col h4 { font-size: 15px; font-weight: 800; margin-bottom: 18px; color: #fff; letter-spacing: -0.01em; }
-  .footer-col ul { list-style: none; font-size: 13.5px; color: #94a3b8; display: flex; flex-direction: column; gap: 10px; }
-  .footer-col ul a:hover { color: #fff; }
-  .footer-bottom { max-width: 1200px; margin: 40px auto 0; padding-top: 24px; border-top: 1px solid #1e293b; display: flex; align-items: center; justify-content: space-between; font-size: 12.5px; color: #64748b; flex-wrap: wrap; gap: 16px; }
+  #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
 </style>
 </head>
 <body>
 
-<!-- GLOBAL NAVIGATION HEADER -->
-<header class="header-nav">
-  <div class="brand-logo">
-    <div class="logo-mark">स</div>
-    <span>Sahayak AI</span>
-  </div>
-
-  <ul class="nav-links">
-    <li><a href="#showcase">Product Demo</a></li>
-    <li><a href="#pipeline">7-Stage Architecture</a></li>
-    <li><a href="#features">Capabilities</a></li>
-    <li><a href="#twin">Accessibility Twin</a></li>
-  </ul>
-
-  <div class="nav-actions">
-    <button class="btn-nav-primary" onclick="document.getElementById('showcase').scrollIntoView({behavior:'smooth'})">Try Live App</button>
-  </div>
-</header>
-
-<!-- HERO SECTION WITH WAVE DIVIDER -->
-<section class="hero-section">
-  <div class="hero-badge">
-    ⚡ Intent-Aware Accessibility Copilot Platform
-  </div>
-  <h1 class="hero-title">
-    Empowering Universal Accessibility with Real-Time AI Orchestration
-  </h1>
-  <p class="hero-subtitle">
-    Sahayak AI bridges digital and physical interaction barriers using single-step form linearization, OCR document comprehension, MediaPipe 3D sign translation, and spatial vision guidance.
-  </p>
-  <div class="hero-cta-group">
-    <button class="btn-hero-primary" onclick="document.getElementById('showcase').scrollIntoView({behavior:'smooth'})">Launch Product Showcase ↓</button>
-    <a href="https://github.com/Satvik2Sharma/AccessIt" target="_blank" class="btn-hero-secondary">View GitHub Repository ↗</a>
-  </div>
-
-  <!-- Organic Wave Shape Divider -->
-  <svg class="hero-wave" viewBox="0 0 1440 120" preserveAspectRatio="none">
-    <path d="M0,32L60,42.7C120,53,240,75,360,80C480,85,600,75,720,58.7C840,43,960,21,1080,16C1200,11,1320,21,1380,26.7L1440,32L1440,120L1380,120C1320,120,1200,120,1080,120C960,120,840,120,720,120C600,120,480,120,360,120C240,120,120,120,60,120L0,120Z"></path>
-  </svg>
-</section>
-
-<!-- STATS BANNER -->
-<section class="stats-banner">
-  <div class="stat-card">
-    <div class="stat-number">7</div>
-    <div class="stat-label">Architectural Pipeline Stages</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-number">100%</div>
-    <div class="stat-label">WCAG AAA Compliance</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-number">3+</div>
-    <div class="stat-label">Core Hackathon Demos</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-number">0ms</div>
-    <div class="stat-label">Local Fallback Latency</div>
-  </div>
-</section>
-
-<!-- INTERACTIVE PRODUCT SHOWCASE SECTION -->
-<section class="showcase-section" id="showcase">
-  <div class="section-tag">Interactive Mobile App Showcase</div>
-  <h2 class="section-heading">Test the Mobile App Interface Live</h2>
-  <p class="section-desc">Interact with Sahayak AI directly in the smartphone device frame below. Switch languages, toggle WCAG AAA high contrast, test voice dictation, and navigate all 7 screens.</p>
-
-  <div class="app-preview-container">
-    <div class="phone-frame" id="phoneFrame">
-      <div class="phone-pill"><div class="phone-pill-dot"></div></div>
-      <div class="phone-screen" id="phoneScreen">
-        <!-- TOP BAR -->
-        <header class="top-bar">
-          <div class="status-bar" id="statusBar">
-            <span>09:41</span>
-            <span id="backendLabel">
-              <span class="status-dot local" id="statusDot"></span>
-              <span id="statusText">AI Engine Ready</span>
-              &nbsp;·&nbsp;5G&nbsp;·&nbsp;100%
-            </span>
-          </div>
-          <div class="app-bar">
-            <div class="app-logo">
-              <div class="logo-icon">स</div>
-              <div class="logo-text">
-                <h1 id="appTitle">सहायक AI</h1>
-                <span>Accessibility Copilot</span>
-              </div>
-            </div>
-            <div class="top-controls">
-              <button class="tc-btn" id="audioBtn" title="Toggle Voice Guidance" onclick="toggleAudio()">🔊</button>
-              <button class="tc-btn" id="hcBtn" title="Toggle High Contrast (WCAG AAA)" onclick="toggleHC()">◑</button>
-              <button class="tc-btn" id="lgBtn" title="Toggle Large Text" onclick="toggleLargeText()">A</button>
-              <button class="lang-btn" id="langBtn" onclick="toggleLang()">🌐 हिं</button>
+<div class="mobile-app-wrapper">
+  <div class="phone-frame" id="phoneFrame">
+    <div class="phone-screen" id="phoneScreen">
+      <!-- NATIVE MOBILE TOP BAR -->
+      <header class="top-bar">
+        <div class="status-bar" id="statusBar">
+          <span>09:41</span>
+          <span id="backendLabel">
+            <span class="status-dot local" id="statusDot"></span>
+            <span id="statusText">AI Engine Ready</span>
+            &nbsp;·&nbsp;5G&nbsp;·&nbsp;100%
+          </span>
+        </div>
+        <div class="app-bar">
+          <div class="app-logo">
+            <div class="logo-icon">स</div>
+            <div class="logo-text">
+              <h1 id="appTitle">सहायक AI</h1>
+              <span>Accessibility Copilot</span>
             </div>
           </div>
-        </header>
+          <div class="top-controls">
+            <button class="tc-btn" id="audioBtn" title="Toggle Voice Guidance" onclick="toggleAudio()">🔊</button>
+            <button class="tc-btn" id="hcBtn" title="Toggle High Contrast (WCAG AAA)" onclick="toggleHC()">◑</button>
+            <button class="tc-btn" id="lgBtn" title="Toggle Large Text" onclick="toggleLargeText()">A</button>
+            <button class="lang-btn" id="langBtn" onclick="toggleLang()">🌐 हिं</button>
+          </div>
+        </div>
+      </header>
 
-        <!-- SCREEN BODY -->
-        <div class="screen-body" id="screenBody"></div>
+      <!-- SCREEN CONTENT VIEWPORT -->
+      <main class="screen-body" id="screenBody"></main>
 
-        <!-- BOTTOM TOOLBAR -->
-        <nav class="bottom-nav">
-          <div class="nav-grid" id="navGrid"></div>
-          <div class="nav-home-bar"></div>
-        </nav>
-      </div>
-      <canvas id="confetti-canvas"></canvas>
+      <!-- NATIVE BOTTOM TAB NAVIGATION -->
+      <nav class="bottom-nav">
+        <div class="nav-grid" id="navGrid"></div>
+        <div class="nav-home-bar"></div>
+      </nav>
     </div>
+    <canvas id="confetti-canvas"></canvas>
   </div>
-</section>
-
-<!-- MULTIPURPOSE PLATFORM FEATURES GRID -->
-<section class="features-grid-section" id="features">
-  <div style="text-align:center;margin-bottom:48px">
-    <div class="section-tag">Core Platform Features</div>
-    <h2 class="section-heading">Designed for Every Accessibility Need</h2>
-  </div>
-
-  <div class="bento-features">
-    <div class="bento-card">
-      <div class="bento-icon-box">✓</div>
-      <h3 class="bento-title">Form Linearization</h3>
-      <p class="bento-desc">Transforms dense 9pt multi-field paper forms into a single voice-guided field at a time with haptic touch verification.</p>
-    </div>
-
-    <div class="bento-card">
-      <div class="bento-icon-box">📄</div>
-      <h3 class="bento-title">OCR Document Comprehension</h3>
-      <p class="bento-desc">Extracts deadlines, prerequisite requirements, and simplifies complex legal notices into clear bilingual audio bullet points.</p>
-    </div>
-
-    <div class="bento-card">
-      <div class="bento-icon-box">🤙</div>
-      <h3 class="bento-title">ISL Sign Interpreter</h3>
-      <p class="bento-desc">Real-time MediaPipe 3D tracking of 21 hand landmarks to translate Indian Sign Language gestures directly into speech.</p>
-    </div>
-
-    <div class="bento-card">
-      <div class="bento-icon-box">🔍</div>
-      <h3 class="bento-title">Spatial Vision Guidance</h3>
-      <p class="bento-desc">YOLO-powered directional object locator providing haptic vibration cues and voice guidance to find objects in physical space.</p>
-    </div>
-  </div>
-</section>
-
-<!-- DARK FOOTER SECTION -->
-<footer class="footer-dark">
-  <div class="footer-container">
-    <div class="footer-col">
-      <div class="brand-logo" style="color:#fff;margin-bottom:16px">
-        <div class="logo-mark">स</div>
-        <span>Sahayak AI</span>
-      </div>
-      <p style="font-size:13px;color:#94a3b8;line-height:1.6">Intent-Aware Personal Accessibility Copilot empowering visually, motor, and cognitively impaired users in India.</p>
-    </div>
-
-    <div class="footer-col">
-      <h4>Platform Capabilities</h4>
-      <ul>
-        <li><a href="#showcase">Form Linearization (Demo 2)</a></li>
-        <li><a href="#showcase">Notice Comprehension (Demo 1)</a></li>
-        <li><a href="#showcase">ISL Interpreter (Demo 3)</a></li>
-        <li><a href="#showcase">Spatial Object Finder</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-col">
-      <h4>Accessibility Guarantees</h4>
-      <ul>
-        <li><a href="#">WCAG AAA High Contrast</a></li>
-        <li><a href="#">Non-Medical Ethics Guarantee</a></li>
-        <li><a href="#">Interaction Friction Telemetry</a></li>
-        <li><a href="#">Offline Local Fallback</a></li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="footer-bottom">
-    <span>© 2026 Sahayak AI. Open Source under MIT License.</span>
-    <span>Designed for Hackathon & Product Presentation</span>
-  </div>
-</footer>
+</div>
 
 <script>
 // ═══════════════════════════════════════════════════════════════
-//  APP STATE & INTEGRATED LOGIC
+//  SAHAYAK AI MOBILE APP ENGINE & STATE
 // ═══════════════════════════════════════════════════════════════
 const state = {
   screen: 'home',
@@ -559,14 +331,8 @@ const ICON = {
   arrow_l: `<svg class="icon" viewBox="0 0 24 24" width="16" height="16"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>`,
   check: `<svg class="icon" viewBox="0 0 24 24" width="16" height="16"><polyline points="20 6 9 17 4 12"/></svg>`,
   award: `<svg class="icon" viewBox="0 0 24 24" width="32" height="32"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>`,
-  shield: `<svg class="icon" viewBox="0 0 24 24" width="16" height="16"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
-  zap: `<svg class="icon" viewBox="0 0 24 24" width="12" height="12"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
   sparkle: `<svg class="icon" viewBox="0 0 24 24" width="16" height="16"><path d="M12 2L9.09 9.09 2 12l7.09 2.91L12 22l2.91-7.09L22 12l-7.09-2.91L12 2z"/></svg>`,
-  rotate: `<svg class="icon" viewBox="0 0 24 24" width="14" height="14"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>`,
-  thumbs: `<svg class="icon" viewBox="0 0 24 24" width="14" height="14"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>`,
-  video: `<svg class="icon" viewBox="0 0 24 24" width="16" height="16"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>`,
-  map_pin: `<svg class="icon" viewBox="0 0 24 24" width="14" height="14"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>`,
-  bar: `<svg class="icon" viewBox="0 0 24 24" width="18" height="18"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,
+  zap: `<svg class="icon" viewBox="0 0 24 24" width="12" height="12"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
 };
 
 const haptics = {
@@ -574,11 +340,6 @@ const haptics = {
   confirm: () => { try { navigator.vibrate?.(60); } catch(_){} },
   success: () => { try { navigator.vibrate?.([60,50,90]); } catch(_){} },
   celebrate: () => { try { navigator.vibrate?.([70,40,100,40,150]); } catch(_){} },
-  directional: (d) => { try {
-    if (d.includes('RIGHT')) navigator.vibrate?.([40,60,100]);
-    else if (d.includes('LEFT')) navigator.vibrate?.([100,60,40]);
-    else navigator.vibrate?.(50);
-  } catch(_){} },
 };
 
 function speak(text) {
@@ -649,10 +410,6 @@ function buildFormFlow() {
   return {
     task_id: 'task_form_' + Math.floor(10000 + Math.random()*90000),
     total_steps: 7,
-    barriers: [
-      { cat: 'VISUAL', sev: 'HIGH', desc: isH ? '9pt बारीक द्वि-स्तंभ प्रारूप' : 'Dense 9pt 2-column form layout' },
-      { cat: 'MOTOR', sev: 'MEDIUM', desc: isH ? 'कागजी बक्सों में हस्तलेखन' : 'Manual handwriting in constricted boxes' },
-    ],
     steps: [
       { fi:'full_name', label: isH?'पूरा नाम':'Full Name', prompt: isH?'फ़ॉर्म में 7 ज़रूरी जानकारियां हैं। पहला सवाल: आपका पूरा नाम?':'7 required fields. Step 1: What is your full name?', display: isH?'चरण 1/7: पूरा नाम':'Step 1/7: Full Name' },
       { fi:'dob', label: isH?'जन्मतिथि':'Date of Birth', prompt: isH?'धन्यवाद। आपकी जन्मतिथि? (दिन/महीना/साल)':'Thank you. Your date of birth? (DD/MM/YYYY)', display: isH?'चरण 2/7: जन्मतिथि':'Step 2/7: Date of Birth' },
@@ -670,42 +427,26 @@ function buildDocData() {
   return {
     title: isH ? 'राष्ट्रीय मेधावी छात्रवृत्ति सूचना 2026' : 'National Merit Scholarship Notification 2026',
     deadlines: ['September 30, 2026 ' + (isH?'(अंतिम तिथि)':'')],
-    docs: [
-      isH?'आय प्रमाण पत्र (Income < ₹2.5L)':'Income Certificate (< ₹2.5 Lakhs)',
-      isH?'आधार कार्ड (Aadhaar Card)':'Aadhaar Card',
-      isH?'कक्षा 10 अंकतालिका':'Class 10 Marksheet',
-      isH?'बैंक पासबुक':'Bank Passbook',
-    ],
     summary: isH
-      ? 'यह भारत सरकार की राष्ट्रीय मेधावी छात्रवृत्ति योजना 2026 की सूचना है। अंतिम तिथि 30 सितंबर 2026 है। आपको आय प्रमाण पत्र, आधार कार्ड और 10वीं की मार्कशीट की आवश्यकता होगी। सहायक copilot आवेदन में मदद कर सकता है।'
-      : 'This is the National Merit Scholarship 2026 official notice. Deadline: September 30, 2026. Required: Income Certificate (<₹2.5L), Aadhaar Card, and Class 10 marksheet. Sahayak Copilot can guide you through the form.',
-    spoken: isH
-      ? 'अंतिम तिथि 30 सितंबर है। आपको आय प्रमाण पत्र और आधार कार्ड चाहिए। क्या मैं फ़ॉर्म भरने में मदद करूँ?'
-      : 'Deadline is September 30. You need Income Certificate and Aadhaar Card. Should I help fill the form?',
+      ? 'यह भारत सरकार की राष्ट्रीय मेधावी छात्रवृत्ति योजना 2026 की सूचना है। अंतिम तिथि 30 सितंबर 2026 है। आपको आय प्रमाण पत्र, आधार कार्ड और 10वीं की मार्कशीट की आवश्यकता होगी।'
+      : 'This is the National Merit Scholarship 2026 official notice. Deadline: September 30, 2026. Required: Income Certificate (<₹2.5L), Aadhaar Card, and Class 10 marksheet.',
   };
 }
 
 const signs = {
-  HELP: {hi:'सहायता चाहिए', en:'I need Help', spoken_hi:'मुझे सहायता चाहिए', spoken_en:'I need help', conf:0.96},
-  THANK_YOU: {hi:'धन्यवाद', en:'Thank You', spoken_hi:'बहुत धन्यवाद', spoken_en:'Thank you very much', conf:0.94},
-  WATER: {hi:'पानी चाहिए', en:'Water Please', spoken_hi:'मुझे पानी चाहिए', spoken_en:'Water please', conf:0.95},
-  YES: {hi:'हाँ (YES)', en:'Yes / Agreed', spoken_hi:'हाँ, बिल्कुल', spoken_en:'Yes, confirmed', conf:0.97},
-  NO: {hi:'नहीं (NO)', en:'No / Disagree', spoken_hi:'नहीं', spoken_en:'No', conf:0.96},
+  HELP: {hi:'सहायता चाहिए', en:'I need Help'},
+  THANK_YOU: {hi:'धन्यवाद', en:'Thank You'},
+  WATER: {hi:'पानी चाहिए', en:'Water Please'},
+  YES: {hi:'हाँ (YES)', en:'Yes / Agreed'},
+  NO: {hi:'नहीं (NO)', en:'No / Disagree'},
 };
 
 const objects = {
-  bottle: { hi:'बोतल आपके दाईं ओर हाथ की पहुंच में है।', en:'Your bottle is slightly to your right, within arm reach.', haptic:'PULSE_RIGHT', bbox:{right:'12%',top:'18%',width:'28%',height:'55%'} },
-  keys: { hi:'चाबियां मेज पर बाईं ओर रखी हैं।', en:'Keys are on the desk towards your left.', haptic:'PULSE_LEFT', bbox:{left:'10%',top:'30%',width:'26%',height:'30%'} },
-  phone: { hi:'फोन सीधे आपके सामने मेज के केंद्र में है।', en:'Phone is directly in front of you at table center.', haptic:'PULSE_CENTER', bbox:{left:'32%',top:'22%',width:'36%',height:'44%'} },
-  document: { hi:'दस्तावेज़ मेज पर सीधे आपके सामने रखा है।', en:'Document is centered directly in front of you.', haptic:'PULSE_CENTER', bbox:{left:'20%',top:'20%',width:'60%',height:'50%'} },
+  bottle: { hi:'बोतल आपके दाईं ओर हाथ की पहुंच में है।', en:'Your bottle is slightly to your right, within arm reach.' },
+  keys: { hi:'चाबियां मेज पर बाईं ओर रखी हैं।', en:'Keys are on the desk towards your left.' },
+  phone: { hi:'फोन सीधे आपके सामने मेज के केंद्र में है।', en:'Phone is directly in front of you at table center.' },
+  document: { hi:'दस्तावेज़ मेज पर सीधे आपके सामने रखा है।', en:'Document is centered directly in front of you.' },
 };
-
-const heatmapData = [
-  {dot:'red', inter:'Physical Document Upload & Alignment', reason:'Camera angle tilt caused 2 retries', retries:2},
-  {dot:'yellow', inter:'Multi-part Address Input', reason:'Voice transcription needed clarification', retries:1},
-  {dot:'green', inter:'Name & Category Selection', reason:'Confirmed first-try with 100% accuracy', retries:0},
-  {dot:'green', inter:'12-Digit Aadhaar Dictation', reason:'4-4-4 chunking parsed seamlessly', retries:0},
-];
 
 function applyTheme() {
   const frame = document.getElementById('phoneFrame');
@@ -875,9 +616,9 @@ function renderHome() {
       </button>
     </div>
 
-    <button onclick="navigate('heatmap')" style="width:100%;padding:12px 14px;border-radius:16px;
+    <button onclick="navigate('heatmap')" style="width:100%;padding:14px 16px;border-radius:16px;
       background:#fff;border:1px solid #e2e8f0;display:flex;align-items:center;
-      justify-content:space-between;font-size:12px;font-weight:700;color:#334155;box-shadow:0 1px 3px rgba(0,0,0,0.03)">
+      justify-content:space-between;font-size:12.5px;font-weight:700;color:#334155;box-shadow:0 2px 8px rgba(0,0,0,0.03);cursor:pointer">
       <span style="display:flex;align-items:center;gap:8px">
         <span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block"></span>
         ${t('चरण 7: सुलभता हीटमैप','Stage 7: Live Accessibility Heatmap')}
@@ -962,11 +703,11 @@ function renderComplete() {
         </div>
         <button onclick="speakStep()" style="width:38px;height:38px;border-radius:10px;
           background:#eff6ff;color:#2563eb;display:flex;align-items:center;justify-content:center;
-          border:1px solid #bfdbfe;flex-shrink:0">
+          border:1px solid #bfdbfe;flex-shrink:0;cursor:pointer">
           ${ICON.volume}
         </button>
       </div>
-      <p style="font-size:12px;color:#475569;line-height:1.55;margin-bottom:14px;font-weight:500">
+      <p style="font-size:12.5px;color:#475569;line-height:1.55;margin-bottom:14px;font-weight:500">
         "${step.prompt}"
       </p>
 
@@ -1080,8 +821,9 @@ function renderTalk() {
       <span class="badge badge-green">DEMO 3: ISL INTERPRETER</span>
     </div>
 
-    <div class="card">
-      <div style="font-size:1.5rem;font-weight:800;color:#0f172a">${state.lang==='Hindi'?s.hi:s.en}</div>
+    <div class="card" style="text-align:center;padding:24px">
+      <div style="font-size:1.6rem;font-weight:800;color:#0f172a;margin-bottom:4px">${state.lang==='Hindi'?s.hi:s.en}</div>
+      <div style="font-size:11px;color:#10b981;font-weight:800;text-transform:uppercase">Gesture Detected (96% Conf)</div>
     </div>
 
     <div class="gesture-grid">
@@ -1106,10 +848,20 @@ function renderSee() {
       <span class="badge badge-amber">SPATIAL VISION</span>
     </div>
     <div class="card">
-      <h3>${state.lang==='Hindi'?obj.hi:obj.en}</h3>
+      <h3 style="font-size:14px;font-weight:800;color:#0f172a">${state.lang==='Hindi'?obj.hi:obj.en}</h3>
+    </div>
+    <div class="obj-grid">
+      ${Object.keys(objects).map(id => `
+        <button class="obj-btn ${state.selectedObj===id?'active':''}" onclick="selectObj('${id}')">
+          <div class="obj-en">${id.toUpperCase()}</div>
+        </button>`).join('')}
     </div>
   </div>`;
 }
+
+window.selectObj = function(id) {
+  haptics.click(); state.selectedObj = id; render();
+};
 
 function renderHeatmap() {
   return `
@@ -1119,7 +871,8 @@ function renderHeatmap() {
       <span class="badge badge-purple">STAGE 7: LEARNING</span>
     </div>
     <div class="card">
-      <h3>Telemetry Analytics Active</h3>
+      <h3 style="font-size:14px;font-weight:800;color:#0f172a;margin-bottom:6px">Telemetry Analytics Active</h3>
+      <p style="font-size:12px;color:#64748b">Real-time accessibility friction tracking enabled across 7 operational modules.</p>
     </div>
   </div>`;
 }
@@ -1132,7 +885,8 @@ function renderProfile() {
       <span class="badge badge-blue">TWIN PROFILE</span>
     </div>
     <div class="card">
-      <h3>Accessibility Preferences Saved</h3>
+      <h3 style="font-size:14px;font-weight:800;color:#0f172a;margin-bottom:8px">Accessibility Twin Saved</h3>
+      <p style="font-size:12px;color:#64748b">Voice first, single-step linearization, and simplified language preferences active.</p>
     </div>
   </div>`;
 }
