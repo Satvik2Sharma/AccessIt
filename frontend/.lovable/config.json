@@ -1,0 +1,9 @@
+{
+  "projectName": "Sahayak AI",
+  "description": "Intent-Aware Personal Accessibility Copilot for India",
+  "framework": "react",
+  "buildTool": "vite",
+  "styling": "tailwind",
+  "entry": "src/main.tsx",
+  "componentsDir": "src/components"
+}
