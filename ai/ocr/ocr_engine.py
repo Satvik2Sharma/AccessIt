@@ -199,8 +199,8 @@ class DocumentOCREngine:
                 authority = "N/A"
                 deadlines = []
                 detected_docs = []
-                summary_en = "No readable text detected in this image frame."
-                summary_hi = "इस छवि में कोई पठनीय पाठ नहीं पाया गया।"
+                summary_en = "Could not read this document. Please move closer / improve lighting / try again."
+                summary_hi = "दस्तावेज़ को पढ़ा नहीं जा सका। कृपया कैमरे को पास लाएँ या रोशनी में पुनः प्रयास करें।"
             else:
                 title = "National Merit Scholarship Notice 2026"
                 authority = "Ministry of Education & Social Welfare"

@@ -55,7 +55,6 @@ class _SignTalkScreenState extends State<SignTalkScreen> with WidgetsBindingObse
 
   Future<void> _initCamera() async {
     final isHindi = widget.twin.language == 'Hindi';
-    // Front camera is optimal for signing
     final ok = await _cameraService.initialize(preferredLens: CameraLensDirection.front);
     if (!mounted) return;
 
@@ -66,15 +65,28 @@ class _SignTalkScreenState extends State<SignTalkScreen> with WidgetsBindingObse
             ? 'कृपया हाथ को कैमरे के सामने लाएं'
             : 'Hold hand inside target frame to sign';
       });
-      // Start 1FPS live analysis loop automatically
+      // Start 1FPS live analysis loop automatically with real front camera frames
       _startLiveSignStream();
     } else {
+      String msg;
+      if (_cameraService.state == CameraState.permissionDenied) {
+        msg = isHindi
+            ? 'कैमरा अनुमति अस्वीकृत। कृपया डिवाइस सेटिंग्स में अनुमति दें।'
+            : 'Camera permission denied. Please grant camera permission in device settings.';
+      } else if (_cameraService.state == CameraState.unavailable) {
+        msg = isHindi
+            ? 'डिवाइस पर फ्रंट कैमरा उपलब्ध नहीं है।'
+            : 'Front camera hardware is unavailable on this device.';
+      } else {
+        msg = _cameraService.errorMessage ?? (isHindi ? 'कैमरा प्रारंभ विफल।' : 'Camera initialization failed.');
+      }
       setState(() {
-        _detectedSign = isHindi ? 'सिम्युलेटेड मोड' : 'Simulated Mode';
-        _caption = isHindi
-            ? 'कैमरा उपलब्ध नहीं (बटन दबाकर संकेत पहचानें)'
-            : 'Camera unavailable (Use button to recognize sign)';
+        _detectedSign = isHindi ? 'कैमरा अनुपलब्ध' : 'Camera Unavailable';
+        _caption = msg;
+        _confidence = 0.0;
+        _hasDetected = false;
       });
+      _speak(msg);
     }
   }
 
@@ -159,25 +171,46 @@ class _SignTalkScreenState extends State<SignTalkScreen> with WidgetsBindingObse
 
   void _triggerManualRecognition() async {
     HapticsService.tactileClick();
-    setState(() {
-      _isAnalyzing = true;
-      _detectedSign = 'Processing gesture...';
-    });
 
     if (_cameraService.isReady) {
+      setState(() {
+        _isAnalyzing = true;
+        _detectedSign = 'Processing real frame...';
+      });
       final bytes = await _cameraService.captureFrameBytes();
-      if (bytes != null) {
+      if (bytes != null && bytes.isNotEmpty) {
         await _processSignFrame(bytes);
         return;
       }
     }
 
-    // Fallback simulation
+    if (!mounted) return;
+    final isHindi = widget.twin.language == 'Hindi';
+    final msg = _cameraService.errorMessage ?? (isHindi ? 'कैमरा तैयार नहीं है।' : 'Camera hardware is not ready.');
+    setState(() {
+      _detectedSign = isHindi ? 'कैमरा तैयार नहीं है' : 'Camera Not Ready';
+      _caption = msg;
+      _isAnalyzing = false;
+      _confidence = 0.0;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(msg), backgroundColor: Colors.red.shade800),
+    );
+  }
+
+  void _triggerDemoSimulation() async {
+    // Explicit demo simulation only
+    setState(() {
+      _isAnalyzing = true;
+      _detectedSign = 'Running demo simulation...';
+    });
+    HapticsService.tactileClick();
+
     final res = await ApiService.predictSign(widget.twin);
     if (!mounted) return;
 
     setState(() {
-      _detectedSign = res['sign'] ?? 'HELP';
+      _detectedSign = '[DEMO] ${res['sign'] ?? 'HELP'}';
       _caption = res['caption'] ?? 'HELP [सहायता]';
       _confidence = ((res['confidence'] ?? 0.95) as num).toDouble();
       _hasDetected = true;
@@ -255,21 +288,43 @@ class _SignTalkScreenState extends State<SignTalkScreen> with WidgetsBindingObse
                     color: Colors.black,
                     width: double.infinity,
                     height: double.infinity,
+                    padding: const EdgeInsets.all(24),
                     child: Center(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
-                            _cameraService.state == CameraState.initializing
-                                ? Icons.hourglass_top
-                                : Icons.videocam_off_outlined,
-                            size: 64,
-                            color: Colors.white24,
+                            _cameraService.state == CameraState.permissionDenied
+                                ? Icons.no_photography_outlined
+                                : (_cameraService.state == CameraState.initializing
+                                    ? Icons.hourglass_top
+                                    : Icons.videocam_off_outlined),
+                            size: 56,
+                            color: Colors.amberAccent,
                           ),
                           const SizedBox(height: 12),
                           Text(
-                            _cameraService.errorMessage ?? 'Simulated Viewport Active',
-                            style: const TextStyle(color: Colors.white54, fontSize: 13),
+                            _cameraService.errorMessage ?? (isHindi ? 'फ्रंट कैमरा उपलब्ध नहीं है' : 'Front Camera Unavailable'),
+                            style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: theme.colorScheme.primary,
+                              foregroundColor: theme.colorScheme.onPrimary,
+                            ),
+                            icon: const Icon(Icons.refresh),
+                            label: Text(isHindi ? 'कैमरा पुनः शुरू करें' : 'Retry Camera'),
+                            onPressed: _initCamera,
+                          ),
+                          const SizedBox(height: 8),
+                          TextButton(
+                            onPressed: _triggerDemoSimulation,
+                            child: Text(
+                              isHindi ? 'ऑफ़लाइन डेमो चलाएं (परीक्षण)' : 'Run Offline Demo (Test)',
+                              style: const TextStyle(color: Colors.white60, fontSize: 12),
+                            ),
                           ),
                         ],
                       ),

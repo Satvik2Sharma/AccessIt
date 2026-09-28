@@ -331,26 +331,26 @@ class CameraService:
                         )
                     )
 
-            if not detected_objects and target_object:
-                # Targeted spatial vision search for specific object
-                spatial_res = pipeline_service.compute_spatial_guidance(target_object, twin_id=twin_id)
-                target_found = spatial_res.get("found", False)
-                if target_found:
+            if target_object:
+                matching = [o for o in detected_objects if target_object.lower() in o.label.lower() or o.label.lower() in target_object.lower()]
+                if matching:
+                    target_found = True
+                    match = matching[0]
+                    target_guidance = {
+                        "found": True,
+                        "label": match.label,
+                        "clock_direction": match.clock_direction,
+                        "clock_hour": match.clock_hour,
+                        "relative_direction": match.relative_direction,
+                        "proximity": match.proximity,
+                        "elevation": match.elevation,
+                        "haptic_cue": match.haptic_cue,
+                    }
+                else:
+                    # Spatial guidance for target direction without faking bounding box
+                    spatial_res = pipeline_service.compute_spatial_guidance(target_object, twin_id=twin_id)
+                    target_found = bool(spatial_res)
                     target_guidance = spatial_res
-                    primary_obj = CameraObject(
-                        object_id="obj_target_1",
-                        label=spatial_res.get("label", target_object),
-                        confidence=0.92,
-                        bbox=(380, 120, 520, 420),
-                        clock_direction=spatial_res.get("clock_direction", "12 o'clock"),
-                        clock_hour=spatial_res.get("clock_hour", 12),
-                        relative_direction=spatial_res.get("relative_direction", "straight ahead"),
-                        proximity="near",
-                        elevation="level",
-                        haptic_cue=spatial_res.get("haptic_cue", "DOUBLE_PULSE_CENTER"),
-                        haptic_intensity="MEDIUM",
-                    )
-                    detected_objects.append(primary_obj)
 
             # Fuse Objects + OCR Text
             if detected_objects and detected_texts:
@@ -388,11 +388,13 @@ class CameraService:
                     f"दस्तावेज़ में लिखा है: {all_text_preview}" if is_hindi else f"Detected text: {all_text_preview}"
                 )
             elif resolved_mode == CameraAnalysisMode.FIND:
-                scene_desc = f"Target {target_object or 'object'} located."
+                target_name = target_object or (detected_objects[0].label if detected_objects else "object")
+                clock_dir = detected_objects[0].clock_direction if detected_objects else (target_guidance.get("clock_direction", "12 o'clock") if target_guidance else "12 o'clock")
+                scene_desc = f"Target {target_name} located at {clock_dir}."
                 scene_spoken = (
-                    f"{target_object or 'Target'} {detected_objects[0].clock_direction if detected_objects else 'straight ahead'} पर है।"
+                    f"{target_name} {clock_dir} पर है।"
                     if is_hindi else
-                    f"{target_object or 'Target'} is at {detected_objects[0].clock_direction if detected_objects else '12 o clock'}."
+                    f"{target_name} is at {clock_dir}."
                 )
             else:
                 if detected_objects:

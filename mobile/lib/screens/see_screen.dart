@@ -64,16 +64,26 @@ class _SeeScreenState extends State<SeeScreen> with WidgetsBindingObserver {
             ? 'कैमरा तैयार है। लक्ष्य वस्तु चुनें या स्कैन करें।'
             : 'Camera ready. Select an object or tap scan.';
       });
-      // Start initial scan
+      // Start initial scan with real camera frame
       _scanFrame();
     } else {
+      String msg;
+      if (_cameraService.state == CameraState.permissionDenied) {
+        msg = isHindi
+            ? 'कैमरा अनुमति अस्वीकृत। कृपया डिवाइस सेटिंग्स में अनुमति दें।'
+            : 'Camera permission denied. Please grant camera access in device settings.';
+      } else if (_cameraService.state == CameraState.unavailable) {
+        msg = isHindi
+            ? 'डिवाइस पर कोई कैमरा उपलब्ध नहीं है।'
+            : 'No camera hardware found on this device.';
+      } else {
+        msg = _cameraService.errorMessage ?? (isHindi ? 'कैमरा प्रारंभ विफल।' : 'Camera initialization failed.');
+      }
       setState(() {
-        _guidanceText = isHindi
-            ? 'कैमरा उपलब्ध नहीं है (सिम्युलेटेड मोड सक्रिय)'
-            : 'Camera hardware unavailable (Simulated fallback active)';
+        _guidanceText = msg;
+        _primaryObject = null;
       });
-      // Execute simulated search
-      _findObjectSimulated(_selectedObject);
+      _speak(msg);
     }
   }
 
@@ -120,13 +130,25 @@ class _SeeScreenState extends State<SeeScreen> with WidgetsBindingObserver {
 
     if (_cameraService.isReady) {
       final bytes = await _cameraService.captureFrameBytes();
-      if (bytes != null) {
+      if (bytes != null && bytes.isNotEmpty) {
         await _processFrame(bytes);
         return;
       }
     }
 
-    _findObjectSimulated(_selectedObject);
+    if (!mounted) return;
+    final isHindi = widget.twin.language == 'Hindi';
+    final err = _cameraService.errorMessage ?? (isHindi ? 'कैमरा तैयार नहीं है।' : 'Camera hardware is not ready.');
+    setState(() {
+      _guidanceText = err;
+      _primaryObject = null;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(err),
+        backgroundColor: Colors.red.shade800,
+      ),
+    );
   }
 
   Future<void> _processFrame(Uint8List frameBytes) async {
@@ -142,6 +164,7 @@ class _SeeScreenState extends State<SeeScreen> with WidgetsBindingObserver {
     );
 
     if (!mounted) return;
+    final isHindi = widget.twin.language == 'Hindi';
 
     CameraDetectedObject? match;
     if (res.objects.isNotEmpty) {
@@ -154,10 +177,17 @@ class _SeeScreenState extends State<SeeScreen> with WidgetsBindingObserver {
 
     setState(() {
       _primaryObject = match;
-      _guidanceText = res.guidance.isNotEmpty ? res.guidance : '${match?.label ?? _selectedObject} detected';
+      if (match != null) {
+        _guidanceText = res.guidance.isNotEmpty
+            ? res.guidance
+            : (isHindi ? '${match.label} ${match.clockDirection} पर है।' : '${match.label} detected at ${match.clockDirection}.');
+      } else {
+        _guidanceText = res.guidance.isNotEmpty
+            ? res.guidance
+            : (isHindi ? 'कैमरे में कोई वस्तु नहीं मिली। कृपया कैमरा आगे बढ़ाएं।' : 'No objects detected in camera view. Move camera closer.');
+      }
       _isAnalyzing = false;
     });
-
 
     final cue = res.hapticCue ?? (match?.relativeDirection.contains('right') == true ? 'PULSE_RIGHT' : 'PULSE_LEFT');
     HapticsService.directionalBuzz(cue);
@@ -165,9 +195,10 @@ class _SeeScreenState extends State<SeeScreen> with WidgetsBindingObserver {
   }
 
   void _findObjectSimulated(String objectName) async {
+    // Explicit demo fallback only — labelled clearly as simulated
     setState(() {
       _selectedObject = objectName;
-      _guidanceText = 'Locating $objectName...';
+      _guidanceText = 'Demo simulation: Locating $objectName...';
       _isAnalyzing = true;
     });
     HapticsService.tactileClick();
@@ -176,7 +207,7 @@ class _SeeScreenState extends State<SeeScreen> with WidgetsBindingObserver {
     if (!mounted) return;
 
     setState(() {
-      _guidanceText = res['display_guidance'] ?? '$objectName found';
+      _guidanceText = '[DEMO] ${res['display_guidance'] ?? '$objectName found'}';
       _isAnalyzing = false;
       _primaryObject = CameraDetectedObject(
         label: objectName,
@@ -198,7 +229,9 @@ class _SeeScreenState extends State<SeeScreen> with WidgetsBindingObserver {
     setState(() {
       _selectedObject = obj;
     });
-    _scanFrame();
+    if (_cameraService.isReady) {
+      _scanFrame();
+    }
   }
 
   Future<void> _toggleLens() async {
@@ -249,22 +282,43 @@ class _SeeScreenState extends State<SeeScreen> with WidgetsBindingObserver {
                     color: Colors.black,
                     width: double.infinity,
                     height: double.infinity,
+                    padding: const EdgeInsets.all(24),
                     child: Center(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
-                            _cameraService.state == CameraState.initializing
-                                ? Icons.hourglass_top
-                                : Icons.videocam_off_outlined,
-                            size: 64,
-                            color: Colors.white38,
+                            _cameraService.state == CameraState.permissionDenied
+                                ? Icons.no_photography_outlined
+                                : (_cameraService.state == CameraState.initializing
+                                    ? Icons.hourglass_top
+                                    : Icons.videocam_off_outlined),
+                            size: 56,
+                            color: Colors.amberAccent,
                           ),
                           const SizedBox(height: 12),
                           Text(
-                            _cameraService.errorMessage ?? 'Simulated Viewport Active',
-                            style: const TextStyle(color: Colors.white60, fontSize: 13),
+                            _cameraService.errorMessage ?? (isHindi ? 'कैमरा उपलब्ध नहीं है' : 'Camera Hardware Unavailable'),
+                            style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
                             textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: theme.colorScheme.primary,
+                              foregroundColor: theme.colorScheme.onPrimary,
+                            ),
+                            icon: const Icon(Icons.refresh),
+                            label: Text(isHindi ? 'कैमरा पुनः प्रारंभ करें' : 'Retry Camera'),
+                            onPressed: _initCamera,
+                          ),
+                          const SizedBox(height: 8),
+                          TextButton(
+                            onPressed: () => _findObjectSimulated(_selectedObject),
+                            child: Text(
+                              isHindi ? 'ऑफ़लाइन डेमो चलाएं (परीक्षण)' : 'Run Offline Demo (Simulated)',
+                              style: const TextStyle(color: Colors.white60, fontSize: 12),
+                            ),
                           ),
                         ],
                       ),
@@ -294,7 +348,7 @@ class _SeeScreenState extends State<SeeScreen> with WidgetsBindingObserver {
                         Text(
                           hasCamera
                               ? (_cameraService.currentLensDirection == CameraLensDirection.front ? 'FRONT CAM' : 'REAR CAM')
-                              : 'SIMULATED',
+                              : 'CAMERA OFFLINE',
                           style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
                         ),
                         if (_isLiveScanActive) ...[
@@ -310,40 +364,64 @@ class _SeeScreenState extends State<SeeScreen> with WidgetsBindingObserver {
 
                 // Dynamic Object Bounding Target
                 if (_primaryObject != null)
-                  Positioned(
-                    right: 40,
-                    top: 100,
-                    child: Container(
-                      width: 140,
-                      height: 180,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.greenAccent, width: 2.5),
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.greenAccent.withOpacity(0.12),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            color: Colors.greenAccent,
-                            child: Text(
-                              '${_primaryObject!.label.toUpperCase()} [${_primaryObject!.clockDirection}]',
-                              style: const TextStyle(color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold),
-                            ),
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final box = _primaryObject!.bbox;
+                      double left = constraints.maxWidth * 0.25;
+                      double top = constraints.maxHeight * 0.20;
+                      double width = constraints.maxWidth * 0.50;
+                      double height = constraints.maxHeight * 0.50;
+
+                      if (box != null && box.length == 4) {
+                        if (box[0] <= 1.0 && box[2] <= 1.0) {
+                          left = box[0] * constraints.maxWidth;
+                          top = box[1] * constraints.maxHeight;
+                          width = (box[2] - box[0]) * constraints.maxWidth;
+                          height = (box[3] - box[1]) * constraints.maxHeight;
+                        } else {
+                          left = (box[0] / 640.0) * constraints.maxWidth;
+                          top = (box[1] / 480.0) * constraints.maxHeight;
+                          width = ((box[2] - box[0]) / 640.0) * constraints.maxWidth;
+                          height = ((box[3] - box[1]) / 480.0) * constraints.maxHeight;
+                        }
+                      }
+
+                      return Positioned(
+                        left: left.clamp(10.0, constraints.maxWidth - 100),
+                        top: top.clamp(10.0, constraints.maxHeight - 80),
+                        width: width.clamp(80.0, constraints.maxWidth - 20),
+                        height: height.clamp(60.0, constraints.maxHeight - 20),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.greenAccent, width: 2.5),
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.greenAccent.withOpacity(0.12),
                           ),
-                          const Spacer(),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                            color: Colors.black87,
-                            child: Text(
-                              '${_primaryObject!.proximity.toUpperCase()} • ${_primaryObject!.relativeDirection}',
-                              style: const TextStyle(color: Colors.white, fontSize: 9),
-                            ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                color: Colors.greenAccent,
+                                child: Text(
+                                  '${_primaryObject!.label.toUpperCase()} [${_primaryObject!.clockDirection}]',
+                                  style: const TextStyle(color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              const Spacer(),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                color: Colors.black87,
+                                child: Text(
+                                  '${_primaryObject!.proximity.toUpperCase()} • ${_primaryObject!.relativeDirection}',
+                                  style: const TextStyle(color: Colors.white, fontSize: 9),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
+                        ),
+                      );
+                    },
                   ),
 
                 // Center Reticle

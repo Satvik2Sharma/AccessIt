@@ -6,7 +6,7 @@ import 'dart:async';
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 
-enum CameraState { uninitialized, initializing, active, paused, error, unavailable }
+enum CameraState { uninitialized, initializing, active, paused, permissionDenied, unavailable, error }
 
 class MobileCameraService {
   static final MobileCameraService _instance = MobileCameraService._internal();
@@ -51,6 +51,17 @@ class MobileCameraService {
       await _initController(_cameras[_selectedCameraIndex]);
       _state = CameraState.active;
       return true;
+    } on CameraException catch (e) {
+      if (e.code == 'CameraAccessDenied' ||
+          e.code == 'CameraAccessDeniedWithoutPrompt' ||
+          e.code == 'cameraPermissionNotGranted') {
+        _state = CameraState.permissionDenied;
+        _errorMessage = 'Camera permission denied. Please grant camera access in system settings.';
+      } else {
+        _state = CameraState.error;
+        _errorMessage = 'Camera error: ${e.description ?? e.code}';
+      }
+      return false;
     } catch (e) {
       _state = CameraState.error;
       _errorMessage = 'Camera initialization failed: $e';

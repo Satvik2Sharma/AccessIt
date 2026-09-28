@@ -195,13 +195,42 @@ class CameraEngine:
 
         # C. SEE / TARGET OBJECT SEARCH
         elif effective_mode == "see":
-            target = plan.get("target_object") or "bottle"
-            guidance = self.assistance_engine.assist_find_object(target, twin)
-            result_dict["primary_interpretation"] = guidance.get("spoken_guidance", f"Searching for {target}")
-            result_dict["spoken_feedback"] = guidance.get("spoken_guidance", "")
-            result_dict["display_feedback"] = guidance.get("display_guidance", "")
-            result_dict["haptic_cue"] = guidance.get("haptic_cue")
-            result_dict["spatial_objects"] = [guidance]
+            target = plan.get("target_object") or target_object
+            scene = self.scene_engine.analyze(
+                image_bytes=image_bytes,
+                twin=twin,
+                task_type=TaskType.SEE,
+                target_labels=[target] if target else None,
+            )
+            result_dict["scene_summary"] = scene.summary
+            result_dict["spatial_objects"] = [
+                {
+                    "label": obj.label,
+                    "confidence": obj.confidence,
+                    "clock_direction": obj.direction,
+                    "relative_direction": obj.horizontal_zone,
+                    "proximity": obj.proximity,
+                    "elevation": obj.elevation,
+                    "haptic_cue": obj.haptic_cue,
+                    "associated_text": obj.associated_text,
+                    "bbox": obj.bbox,
+                }
+                for obj in scene.objects
+            ]
+            if scene.objects:
+                primary = scene.relevant_objects[0] if scene.relevant_objects else scene.objects[0]
+                result_dict["primary_interpretation"] = f"{primary.label} detected ({primary.direction})"
+                result_dict["spoken_feedback"] = scene.summary or f"{primary.label} at {primary.direction}"
+                result_dict["display_feedback"] = scene.summary or f"{primary.label} at {primary.direction}"
+                result_dict["haptic_cue"] = primary.haptic_cue
+            else:
+                result_dict["primary_interpretation"] = "No objects detected in view"
+                result_dict["spoken_feedback"] = (
+                    "दृश्य में कोई स्पष्ट वस्तु नहीं मिली।" if is_hindi
+                    else "No objects clearly identified in view. Please move closer or adjust camera."
+                )
+                result_dict["display_feedback"] = "No objects detected in camera view."
+                result_dict["haptic_cue"] = "NONE"
 
         # D. NAVIGATION
         elif effective_mode == "navigation":

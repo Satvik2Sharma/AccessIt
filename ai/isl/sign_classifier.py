@@ -14,12 +14,17 @@ from typing import Dict, Any, List, Optional, Tuple
 import numpy as np
 from PIL import Image
 
-logger = logging.getLogger(__name__)
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+DEFAULT_MODEL_PATH = os.path.join(ROOT_DIR, "models", "gesture_recognizer.task")
 
 
 class ISLInterpreterService:
-    def __init__(self, model_path: str = "models/gesture_recognizer.task"):
-        self.model_path = model_path
+    def __init__(self, model_path: Optional[str] = None):
+        self.model_path = model_path or DEFAULT_MODEL_PATH
+        if not os.path.isabs(self.model_path) and not os.path.exists(self.model_path):
+            candidate = os.path.join(ROOT_DIR, self.model_path)
+            if os.path.exists(candidate):
+                self.model_path = candidate
         self._recognizer = None
         self._session_history: Dict[str, deque] = {}
         self.confidence_threshold = 0.45
@@ -336,18 +341,17 @@ class ISLInterpreterService:
             except Exception as e:
                 logger.warning("Error during MediaPipe sign recognition: %s", e)
 
-        # 5. Default Deterministic Fallback (only when MediaPipe is unavailable)
-        meta = self.emergency_vocabulary["HELP"]
+        # 5. When real image_bytes are provided and MediaPipe is unavailable or errored
         raw_res = {
-            "sign": "HELP",
-            "confidence": 0.95,
-            "sign_type": meta["type"],
-            "spoken_output": meta["en"],
-            "hindi_translation": meta["hi"],
-            "haptic_feedback": "SUCCESS_DOUBLE_PULSE",
-            "caption": "HELP [मदद चाहिए]",
+            "sign": "UNCERTAIN",
+            "confidence": 0.0,
+            "sign_type": "UNCERTAIN",
+            "spoken_output": "Gesture unclear",
+            "hindi_translation": "संकेत स्पष्ट नहीं है",
+            "haptic_feedback": "NONE",
+            "caption": "Gesture unclear, please hold hand steady.",
             "landmarks_count": 0,
-            "method": "HEURISTIC_FALLBACK",
+            "method": "UNAVAILABLE",
         }
         return self._smooth_prediction(raw_res, session_id)
 
