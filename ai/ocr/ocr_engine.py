@@ -193,39 +193,21 @@ class DocumentOCREngine:
             if doc.lower() in text_source.lower()
         ]
 
-        if not deadlines and not detected_docs and not text_source:
-            # Fallback to demo scholarship notice
-            title = "National Merit Scholarship Notice 2026"
-            authority = "Ministry of Education & Social Welfare"
-            deadlines = ["September 30, 2026"]
-            detected_docs = [
-                "Income Certificate (< 2.5 Lakhs)",
-                "Aadhaar Card",
-                "Class 10 Marksheet",
-                "Active Bank Account with IFSC",
-            ]
-            summary_en = "This is a National Merit Scholarship notice. The deadline to apply is September 30. You need an income certificate, Aadhaar card, marksheet, and bank details."
-            summary_hi = "यह राष्ट्रीय छात्रवृत्ति 2026 की आधिकारिक सूचना है। आवेदन की अंतिम तिथि 30 सितंबर है। आपको आय प्रमाण पत्र, आधार कार्ड, 10वीं की मार्कशीट और बैंक खाते की आवश्यकता होगी।"
+        if not text_source.strip():
+            title = "Unrecognized Document"
+            authority = "N/A"
+            deadlines = []
+            detected_docs = []
+            summary_en = "No readable text detected in this image frame."
+            summary_hi = "इस छवि में कोई पठनीय पाठ नहीं पाया गया।"
         else:
-            title = "Official Notice"
-            if text_source:
-                first_lines = text_source.split("\n")[:4]
-                for l in first_lines:
-                    if any(k in l.upper() for k in ["SCHOLARSHIP", "NOTICE", "ADMISSION", "GOVERNMENT", "MINISTRY", "DEPARTMENT"]):
-                        title = l.strip()
-                        break
-            authority = "Public Authority"
-            if not deadlines:
-                deadlines = ["September 30, 2026"]
-            if not detected_docs:
-                detected_docs = [
-                    "Income Certificate (< Rs. 2,50,000)",
-                    "12-Digit Aadhaar Card for Biometric Verification",
-                    "Class 10 High School Board Marksheet",
-                    "Active Bank Account with IFSC Code",
-                ]
-            summary_en = f"{title}. Critical deadline: {', '.join(deadlines)}. Required: {', '.join(detected_docs[:3])}."
-            summary_hi = f"यह {title} है। आवेदन की अंतिम तिथि {', '.join(deadlines)} है। आवश्यक दस्तावेज: {', '.join(detected_docs[:3])}।"
+            title = "Extracted Document"
+            first_lines = [l.strip() for l in text_source.split("\n") if l.strip()][:4]
+            if first_lines:
+                title = first_lines[0][:60]
+            authority = "Document Authority"
+            summary_en = f"Extracted text preview: {text_source[:200]}"
+            summary_hi = f"पढ़ा गया विवरण: {text_source[:200]}"
 
         readability = self._compute_readability_metrics(summary_en)
 
