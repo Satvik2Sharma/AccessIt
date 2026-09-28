@@ -331,36 +331,26 @@ class CameraService:
                         )
                     )
 
-            if not detected_objects and resolved_mode in [CameraAnalysisMode.SEE, CameraAnalysisMode.FIND, CameraAnalysisMode.UNDERSTAND, CameraAnalysisMode.NAVIGATE]:
-                # Spatial Vision Object Discovery
-                target_lbl = target_object or "object"
-                spatial_res = pipeline_service.compute_spatial_guidance(target_lbl, twin_id=twin_id)
-                target_found = spatial_res.get("found", True)
-                target_guidance = spatial_res
-
-                # Map proximity & elevation to standard camera schema
-                prox_str = spatial_res.get("relative_proximity", "near")
-                prox_map = {"very close": "very_near", "within arm's reach": "near", "a few steps ahead": "medium"}
-                standard_prox = prox_map.get(prox_str, "near")
-
-                elev_str = spatial_res.get("elevation", "table/waist level")
-                elev_map = {"upper/eye level": "above", "table/waist level": "level", "low/floor level": "below"}
-                standard_elev = elev_map.get(elev_str, "level")
-
-                primary_obj = CameraObject(
-                    object_id="obj_primary_1",
-                    label=spatial_res.get("label", target_lbl),
-                    confidence=0.92,
-                    bbox=(380, 120, 520, 420),
-                    clock_direction=spatial_res.get("clock_direction", "12 o'clock"),
-                    clock_hour=spatial_res.get("clock_hour", 12),
-                    relative_direction=spatial_res.get("relative_direction", "straight ahead"),
-                    proximity=standard_prox,
-                    elevation=standard_elev,
-                    haptic_cue=spatial_res.get("haptic_cue", "DOUBLE_PULSE_CENTER"),
-                    haptic_intensity=spatial_res.get("haptic_intensity", "MEDIUM"),
-                )
-                detected_objects.append(primary_obj)
+            if not detected_objects and target_object:
+                # Targeted spatial vision search for specific object
+                spatial_res = pipeline_service.compute_spatial_guidance(target_object, twin_id=twin_id)
+                target_found = spatial_res.get("found", False)
+                if target_found:
+                    target_guidance = spatial_res
+                    primary_obj = CameraObject(
+                        object_id="obj_target_1",
+                        label=spatial_res.get("label", target_object),
+                        confidence=0.92,
+                        bbox=(380, 120, 520, 420),
+                        clock_direction=spatial_res.get("clock_direction", "12 o'clock"),
+                        clock_hour=spatial_res.get("clock_hour", 12),
+                        relative_direction=spatial_res.get("relative_direction", "straight ahead"),
+                        proximity="near",
+                        elevation="level",
+                        haptic_cue=spatial_res.get("haptic_cue", "DOUBLE_PULSE_CENTER"),
+                        haptic_intensity="MEDIUM",
+                    )
+                    detected_objects.append(primary_obj)
 
             # Fuse Objects + OCR Text
             if detected_objects and detected_texts:
@@ -405,12 +395,20 @@ class CameraService:
                     f"{target_object or 'Target'} is at {detected_objects[0].clock_direction if detected_objects else '12 o clock'}."
                 )
             else:
-                scene_desc = "Indoor space analyzed."
-                scene_spoken = (
-                    f"आपके सामने {detected_objects[0].label if detected_objects else 'वस्तु'} दिखाई दे रही है।"
-                    if is_hindi else
-                    f"I see {detected_objects[0].label if detected_objects else 'an object'} in your camera view."
-                )
+                if detected_objects:
+                    scene_desc = f"Detected {len(detected_objects)} object(s)."
+                    scene_spoken = (
+                        f"आपके सामने {detected_objects[0].label} {detected_objects[0].clock_direction} पर है।"
+                        if is_hindi else
+                        f"I see {detected_objects[0].label} at {detected_objects[0].clock_direction}."
+                    )
+                else:
+                    scene_desc = "Camera frame analyzed. No distinct objects identified."
+                    scene_spoken = (
+                        "कैमरा फ़्रेम का विश्लेषण संपन्न हुआ। कोई स्पष्ट वस्तु नहीं मिली।"
+                        if is_hindi else
+                        "Camera frame analyzed. No distinct objects identified."
+                    )
 
             scene_analysis = CameraSceneAnalysis(
                 scene_type="indoor",
