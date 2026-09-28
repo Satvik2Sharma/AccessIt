@@ -700,6 +700,15 @@ function renderNav() {
     </button>`).join('');
 }
 
+
+function toggleCameraFacing() {
+  haptics.click();
+  stopCameraStream();
+  state.cameraFacing = state.cameraFacing === 'environment' ? 'user' : 'environment';
+  state.cameraState = 'idle';
+  render();
+}
+
 function stopCameraStream() {
   if (state.cameraStream) {
     state.cameraStream.getTracks().forEach(t => t.stop());
@@ -1031,12 +1040,15 @@ function renderCamera() {
     </div>
 
     <!-- Interactive Camera Action Controls -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-      <button id="btnStartCamera" class="btn-ghost" style="padding:12px;font-size:12px;font-weight:800">
-        📷 ${state.cameraStream ? (isH?'कैमरा चालू है':'Camera Active') : (isH?'कैमरा चालू करें':'Start Live Camera')}
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+      <button id="btnStartCamera" class="btn-ghost" style="padding:10px 4px;font-size:11px;font-weight:800">
+        📷 ${state.cameraStream ? (isH?'चालू':'Active') : (isH?'चालू करें':'Start')}
       </button>
-      <button id="btnCaptureAnalyze" class="btn-primary" style="padding:12px;font-size:12px">
-        📸 ${isH?'कैप्चर व AI विश्लेषण':'Capture & Analyze'}
+      <button onclick="toggleCameraFacing()" class="btn-ghost" style="padding:10px 4px;font-size:11px;font-weight:800">
+        🔄 ${state.cameraFacing==='environment' ? (isH?'पीछे':'Back Cam') : (isH?'सामने':'Front Cam')}
+      </button>
+      <button id="btnCaptureAnalyze" class="btn-primary" style="padding:10px 4px;font-size:11px">
+        📸 ${isH?'कैप्चर':'Capture'}
       </button>
     </div>
 
