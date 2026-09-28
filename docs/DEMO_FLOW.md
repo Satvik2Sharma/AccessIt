@@ -20,11 +20,12 @@ Judges will not see isolated buttons for OCR, YOLO, or TTS. They will observe an
 ## 🚦 Feature Capability Classification
 
 In accordance with transparent engineering principles:
-* **Demo 1 (Notice Comprehension)**: `IMPLEMENTED` (RapidOCR CPU ONNX engine, entity parsing, Hindi/English summaries).
-* **Demo 2 (Form Completion)**: `IMPLEMENTED` (Real OCR field discovery, barrier engine, 7-step linearized voice flow, field-level semantic validation, TaskVerificationService token).
-* **Demo 3 (ISL Gesture Recognition)**: `PARTIALLY IMPLEMENTED` (MediaPipe 21-point 3D tracking loaded lazily; verified support for `HELP`, `A`, `ONE`, `TWO`, `YES`, `NO`).
-* **Feature 4 (Camera Intelligence & Fusion)**: `IMPLEMENTED` (Intent-aware camera frame pipeline with AUTO/SEE/READ/FIND/UNDERSTAND/NAVIGATE modes, session continuity, and multimodal responses).
-* **Optional Wow Demo (Spatial Guidance)**: `DEMO/MOCK` (Directional math & haptics functional; live YOLO weights disabled by default to stay within 2.5 GB RAM).
+* **Demo 1 (Notice Comprehension)**: `REAL / INTEGRATED` (Physical camera snapshot capture via MobileCameraService, RapidOCR CPU ONNX engine, entity parsing, Hindi/English summaries).
+* **Demo 2 (Form Completion)**: `REAL / INTEGRATED` (Real OCR field discovery, barrier engine, 7-step linearized voice flow, field-level semantic validation, TaskVerificationService token, SQLite persistence).
+* **Demo 3 (ISL Gesture Recognition)**: `REAL / INTEGRATED` (Front camera live video stream at controlled 1 FPS rate, MediaPipe 21-point 3D hand tracking, confidence thresholding, no-hand-detected guidance, temporal debouncing, TTS announcement, and haptic feedback).
+* **Feature 4 (Camera Intelligence & Spatial Vision)**: `REAL / INTEGRATED` (Real device camera stream with 1 FPS analysis loop, intent-aware AUTO/SEE/READ/FIND/UNDERSTAND/NAVIGATE pipeline, clock directions, proximity heuristics, and TTS spatial guidance).
+* **Voice Copilot**: `REAL / INTEGRATED` (Hardware STT via speech_to_text with fallback text modal dialog, flutter_tts speech response, and semantic intent routing).
+* **Persistence & Storage**: `REAL / INTEGRATED` (Thread-safe local SQLite database storing sessions, verifications, user accessibility profiles, and telemetry without external cloud dependencies).
 
 
 ---

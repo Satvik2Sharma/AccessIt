@@ -70,7 +70,7 @@ export class ApiService {
   static async classifyIntent(query: string, twin: AccessibilityTwin): Promise<{ intent: string; confidence: number; summary: string }> {
     if (this.backendAvailable) {
       try {
-        const res = await fetch(`/intent`, {
+        const res = await fetch(`${getApiBaseUrl()}/intent`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ query, twin_id: twin.id }),
@@ -124,12 +124,15 @@ export class ApiService {
   }
 
   // 2. Form Completion: Analyze Form Document
-  static async analyzeForm(twin: AccessibilityTwin): Promise<AccessibleTaskFlow> {
+  static async analyzeForm(twin: AccessibilityTwin, imageBlob?: Blob | File | null): Promise<AccessibleTaskFlow> {
     if (this.backendAvailable) {
       try {
         const formData = new FormData();
         formData.append('twin_id', twin.id);
-        const res = await fetch(`/complete/analyze`, {
+        if (imageBlob) {
+          formData.append('image', imageBlob, 'form.jpg');
+        }
+        const res = await fetch(`${getApiBaseUrl()}/complete/analyze`, {
           method: 'POST',
           body: formData,
         });
@@ -295,7 +298,7 @@ export class ApiService {
   ): Promise<{ verification: VerificationResult; completedField: string }> {
     if (this.backendAvailable) {
       try {
-        const res = await fetch(`/complete/respond`, {
+        const res = await fetch(`${getApiBaseUrl()}/complete/respond`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -342,7 +345,8 @@ export class ApiService {
   // 4. Document Understanding (Demo 1)
   static async readDocument(
     query: string,
-    twin: AccessibilityTwin
+    twin: AccessibilityTwin,
+    imageBlob?: Blob | File | null,
   ): Promise<{
     title: string;
     deadlines: string[];
@@ -357,7 +361,10 @@ export class ApiService {
         const formData = new FormData();
         formData.append('query', query);
         formData.append('twin_id', twin.id);
-        const res = await fetch(`/read`, {
+        if (imageBlob) {
+          formData.append('image', imageBlob, 'document.jpg');
+        }
+        const res = await fetch(`${getApiBaseUrl()}/read`, {
           method: 'POST',
           body: formData,
         });
@@ -409,7 +416,8 @@ export class ApiService {
   // 5. Sign Language Translation (Demo 3)
   static async predictSign(
     gestureName: string = 'HELP',
-    twin: AccessibilityTwin
+    twin: AccessibilityTwin,
+    imageBlob?: Blob | File | null,
   ): Promise<{
     sign: string;
     caption: string;
@@ -421,15 +429,18 @@ export class ApiService {
       try {
         const formData = new FormData();
         formData.append('twin_id', twin.id);
-        const res = await fetch(`/isl/predict`, {
+        if (imageBlob) {
+          formData.append('image', imageBlob, 'gesture.jpg');
+        }
+        const res = await fetch(`${getApiBaseUrl()}/isl/predict`, {
           method: 'POST',
           body: formData,
         });
         if (res.ok) {
           const data = await res.json();
           return {
-            sign: data.sign_detected || gestureName,
-            caption: `${data.sign_detected} [${data.spoken_output}]`,
+            sign: data.sign || data.sign_detected || gestureName,
+            caption: data.caption || `${data.sign_detected || gestureName} [${data.spoken_output || ''}]`,
             spokenText: data.spoken_output || gestureName,
             confidence: data.confidence || 0.95,
             hapticCue: data.haptic_feedback || 'SUCCESS_DOUBLE_PULSE',
@@ -502,7 +513,7 @@ export class ApiService {
         const formData = new FormData();
         formData.append('target_object', targetObject);
         formData.append('twin_id', twin.id);
-        const res = await fetch(`/see`, {
+        const res = await fetch(`${getApiBaseUrl()}/see`, {
           method: 'POST',
           body: formData,
         });
@@ -572,7 +583,7 @@ export class ApiService {
   static async getHeatmap(): Promise<{ heatmap: HeatmapItem[]; recommendation: Recommendation }> {
     if (this.backendAvailable) {
       try {
-        const res = await fetch(`/learning/heatmap`);
+        const res = await fetch(`${getApiBaseUrl()}/learning/heatmap`);
         if (res.ok) {
           const data = await res.json();
           return {
