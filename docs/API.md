@@ -1,15 +1,22 @@
-# Sahayak AI — Complete REST API Specification
+# Adapt-X (formerly Sahayak AI) — Complete REST API Specification
 
+**Product**: Adapt-X — Intent-Aware Personal Accessibility Copilot  
 **Base URL**: `/api/v1`  
 **Data Exchange**: Normalized JSON & Multipart Image Streams  
 **Architecture**: FastAPI 7-Stage Intent-Aware Accessibility Orchestrator
 
 ---
 
-## Complete API Endpoint Directory (24 Endpoints)
+## Complete API Endpoint Directory (30 Endpoints)
 
 | Category | Method | Path | Status | Purpose |
 | :--- | :--- | :--- | :--- | :--- |
+| **Auth** | `POST` | `/auth/login` | `IMPLEMENTED` | Authenticate user via password, PIN, or voice token |
+| **Auth** | `POST` | `/auth/register` | `IMPLEMENTED` | Register user & initialize custom Accessibility Twin |
+| **Auth** | `POST` | `/auth/guest` | `IMPLEMENTED` | 1-Click Judge Guest login with preset personas |
+| **Auth** | `GET` | `/auth/me` | `IMPLEMENTED` | Retrieve active authenticated session & profile |
+| **Auth** | `POST` | `/auth/logout` | `IMPLEMENTED` | Terminate session & clear tokens |
+| **Auth** | `GET` | `/auth/personas` | `IMPLEMENTED` | List preset accessibility personas for judges |
 | **System** | `GET` | `/health` | `IMPLEMENTED` | Orchestrator health & engine readiness |
 | **Profile** | `GET` | `/accessibility/profile` | `IMPLEMENTED` | Fetch user's Accessibility Twin |
 | **Profile** | `POST` | `/accessibility/profile` | `IMPLEMENTED` | Update Accessibility Twin preferences |
@@ -17,6 +24,7 @@
 | **Camera** | `POST` | `/camera/analyze` | `IMPLEMENTED` | Intent-aware camera frame intelligence & fusion |
 | **Camera** | `POST` | `/camera/session` | `IMPLEMENTED` | Initialize continuous camera session |
 | **Camera** | `GET` | `/camera/session` | `IMPLEMENTED` | Retrieve active camera session state & history |
+| **Camera** | `POST` | `/camera/session/reset` | `IMPLEMENTED` | Reset frame history & duplicate suppression |
 | **Form** | `POST` | `/complete/analyze` | `IMPLEMENTED` | Real OCR form scan & flow compilation |
 | **Form** | `POST` | `/complete/respond` | `IMPLEMENTED` | Submit field response with validation |
 | **Document** | `POST` | `/read` | `IMPLEMENTED` | OCR document notice extraction |
@@ -38,111 +46,58 @@
 | **Learning** | `GET` | `/learning/personalization` | `IMPLEMENTED` | Fetch personalization settings |
 | **Learning** | `POST` | `/learning/personalization` | `IMPLEMENTED` | Update personalization settings |
 
-
 ---
 
-## Detailed Endpoints & Payloads
+## Key Authentication & Judge Endpoints
 
-### 1. Document Q&A (`POST /api/v1/read/qa`)
+### 1. Judge 1-Click Guest Login (`POST /api/v1/auth/guest`)
 * **Request**:
 ```json
 {
-  "document_id": "doc_842a19c0",
-  "question": "What is the application deadline?",
-  "twin_id": "default_user",
-  "language": "English"
+  "persona": "low_vision",
+  "preferred_language": "English",
+  "custom_name": "Lead Hackathon Judge"
 }
 ```
 * **Response (200 OK)**:
 ```json
 {
-  "document_id": "doc_842a19c0",
-  "question": "What is the application deadline?",
-  "answer": "The application deadline is September 30, 2026.",
-  "spoken_answer": "The application deadline is September 30, 2026.",
-  "supporting_extracted_info": ["September 30, 2026"],
-  "confidence": 0.94,
-  "source_section": "Key Deadlines",
-  "related_actions": ["Set Reminder for Deadline", "Prepare Aadhaar & Income Certificate"],
-  "language": "English",
-  "haptic_cue": "TOUCH_CONFIRM"
+  "success": true,
+  "token": "adaptx_token_9f83a0bc819241d7",
+  "token_type": "Bearer",
+  "user": {
+    "user_id": "usr_guest_38f2910a",
+    "username": "judge_low_vision",
+    "full_name": "Lead Hackathon Judge",
+    "twin_id": "twin_usr_guest_38f2910a",
+    "is_guest": true,
+    "active_persona": "low_vision"
+  },
+  "twin": {
+    "id": "twin_usr_guest_38f2910a",
+    "language": "English",
+    "visual": {
+      "large_text": true,
+      "high_contrast": true,
+      "magnification_level": 1.75
+    },
+    "haptics": {
+      "enabled": true,
+      "intensity": "strong"
+    },
+    "preferred_input": "voice",
+    "preferred_output": "voice_and_text"
+  },
+  "message": "Welcome! Logged in as Lead Hackathon Judge with 'low_vision' accessibility persona."
 }
 ```
 
-### 2. Spatial Vision (`POST /api/v1/see/spatial`)
+### 2. Standard Login (`POST /api/v1/auth/login`)
 * **Request**:
 ```json
 {
-  "target_object": "water bottle",
-  "twin_id": "default_user",
-  "current_heading_degrees": 0.0
-}
-```
-* **Response (200 OK)**:
-```json
-{
-  "label": "water bottle",
-  "relative_direction": "to your right",
-  "clock_hour": 4,
-  "clock_direction": "at 4 o'clock",
-  "elevation": "table/waist level",
-  "relative_proximity": "within arm's reach",
-  "spoken_guidance": "Your water bottle is at 4 o'clock, table/waist level, within arm's reach.",
-  "display_guidance": "Water bottle: at 4 o'clock | table/waist level (within arm's reach)",
-  "haptic_cue": "PULSE_RIGHT",
-  "haptic_intensity": "MEDIUM",
-  "normalized_coordinates": {"x": 0.7, "y": 0.56},
-  "area_ratio": 0.137,
-  "found": true
-}
-```
-
-### 3. Voice Assistant Command (`POST /api/v1/voice/command`)
-* **Request**:
-```json
-{
-  "transcript": "scholarship form bharna hai",
-  "twin_id": "default_user",
-  "active_session_id": null
-}
-```
-* **Response (200 OK)**:
-```json
-{
-  "transcript": "scholarship form bharna hai",
-  "detected_language": "hi",
-  "classified_intent": "FORM_COMPLETION",
-  "intent_confidence": 0.95,
-  "suggested_action": "START_FORM_COMPLETION",
-  "spoken_reply": "मैंने फ़ॉर्म भरने का इरादा पहचाना है। आइए चरण दर चरण फ़ॉर्म पूरा करते हैं।",
-  "display_reply": "मैंने फ़ॉर्म भरने का इरादा पहचाना है। आइए चरण दर चरण फ़ॉर्म पूरा करते हैं।",
-  "session_id": "voice_3a9f01bc",
-  "parameters": {"rationale": "High confidence pattern match for form filling in Hindi"},
-  "haptic_cue": "TOUCH_CONFIRM"
-}
-```
-
-### 4. Smart Navigation (`POST /api/v1/navigation/guide`)
-* **Request**:
-```json
-{
-  "session_id": null,
-  "target_destination": "exit",
-  "detected_labels": ["door", "clear path"],
-  "twin_id": "default_user"
-}
-```
-* **Response (200 OK)**:
-```json
-{
-  "session_id": "nav_40bc1829",
-  "direction": "Slightly to your left",
-  "clock_direction": "11 o'clock",
-  "instruction": "Exit door is 5 steps ahead at 11 o'clock. Clear path ahead.",
-  "spoken_guidance": "The exit door is ahead at 11 o'clock, about 5 steps away. Path is clear.",
-  "urgency": "NORMAL",
-  "obstacles_in_path": [],
-  "haptic_cue": "DOUBLE_PULSE_CENTER",
-  "is_destination_reached": false
+  "username": "judge",
+  "password": "demo",
+  "auth_modality": "password"
 }
 ```

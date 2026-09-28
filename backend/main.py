@@ -54,8 +54,10 @@ from backend.routes.navigation import router as navigation_router
 from backend.routes.verification import router as verification_router
 from backend.routes.learning import router as learning_router
 from backend.routes.camera import router as camera_router
+from backend.routes.auth import router as auth_router
 
 logger = logging.getLogger("sahayak.api")
+
 
 # Initialize FastAPI application
 app = FastAPI(
@@ -130,6 +132,7 @@ async def health_check():
             "document_qa": True,
             "session_service": True,
             "camera_intelligence": True,
+            "auth_service": True,
         },
     }
 
@@ -173,6 +176,7 @@ async def classify_intent(request: IntentRequest):
 # ----------------------------------------------------
 # Register Modular Domain Routers
 # ----------------------------------------------------
+app.include_router(auth_router, prefix=settings.api_prefix)
 app.include_router(complete_router, prefix=settings.api_prefix)
 app.include_router(read_router, prefix=settings.api_prefix)
 app.include_router(isl_router, prefix=settings.api_prefix)
@@ -184,6 +188,7 @@ app.include_router(navigation_router, prefix=settings.api_prefix)
 app.include_router(verification_router, prefix=settings.api_prefix)
 app.include_router(learning_router, prefix=settings.api_prefix)
 app.include_router(camera_router, prefix=settings.api_prefix)
+
 
 
 if __name__ == "__main__":
