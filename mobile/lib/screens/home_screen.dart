@@ -90,8 +90,20 @@ class _HomeScreenState extends State<HomeScreen> {
             tooltip: 'Accessibility Twin',
             onPressed: () => Navigator.pushNamed(context, '/profile'),
           ),
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Sign Out',
+            onPressed: () async {
+              HapticsService.tactileClick();
+              await ApiService.logout();
+              if (context.mounted) {
+                Navigator.pushReplacementNamed(context, '/login');
+              }
+            },
+          ),
         ],
       ),
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Column(

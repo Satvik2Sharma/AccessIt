@@ -1,12 +1,12 @@
 """
 Adapt-X (Sahayak AI) — Authentication & Persona Schemas
-Defines structured data contracts for User Authentication, Onboarding,
+Defines structured data contracts for User Authentication, Email Registration,
 Preset Accessibility Personas for Hackathon Judges, and Session Management.
 """
 
 from enum import Enum
 from typing import Optional, Dict, Any, List
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 from datetime import datetime
 from shared.schemas.models import AccessibilityTwin, LanguagePreference
 
@@ -28,7 +28,8 @@ class JudgePersona(str, Enum):
 
 
 class LoginRequest(BaseModel):
-    username: str
+    email: Optional[str] = None
+    username: Optional[str] = None
     password: Optional[str] = None
     pin: Optional[str] = None
     voice_auth_token: Optional[str] = None
@@ -36,10 +37,12 @@ class LoginRequest(BaseModel):
 
 
 class RegisterRequest(BaseModel):
-    username: str
-    full_name: str
+    name: str = Field(description="Full user display name")
+    email: str = Field(description="Valid user email address")
+    password: str = Field(description="Account password (min 6 characters)")
+    confirm_password: Optional[str] = None
+    username: Optional[str] = None
     preferred_language: LanguagePreference = LanguagePreference.ENGLISH
-    password: Optional[str] = "AdaptX@2026"
     pin: Optional[str] = "1234"
     initial_twin: Optional[AccessibilityTwin] = None
 
@@ -52,6 +55,7 @@ class GuestLoginRequest(BaseModel):
 
 class UserProfile(BaseModel):
     user_id: str
+    email: str
     username: str
     full_name: str
     twin_id: str

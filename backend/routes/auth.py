@@ -1,14 +1,23 @@
 """
-Adapt-X (Sahayak AI) — Authentication & Persona Routes
-Endpoints for User Login, Registration, Judge Quick-Start Personas, and Session Verification.
+Adapt-X (Sahayak AI) — Secure Authentication & Persona Routes
+Provides robust email/password registration, password hashing (PBKDF2-HMAC-SHA256),
+JWT-style signed tokens, session lifecycle, and judge accessibility persona presets.
 """
 
+import os
+import re
+import time
+import json
+import hmac
+import hashlib
+import base64
 import uuid
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Tuple
 from datetime import datetime
 from fastapi import APIRouter, HTTPException, Depends, Header
 from pydantic import BaseModel
 
+from backend.config import settings
 from shared.schemas.models import (
     AccessibilityTwin,
     LanguagePreference,
@@ -34,31 +43,146 @@ from backend.services.pipeline_service import pipeline_service
 
 router = APIRouter(prefix="/auth", tags=["Authentication & Personas"])
 
-# In-memory user and token store for fast, reliable hackathon usage
+# Regex pattern for email format verification
+EMAIL_REGEX = re.compile(r"^[\w\.-]+@[\w\.-]+\.\w+$")
+
+
+# ----------------------------------------------------
+# 1. Cryptographic Password Hashing (PBKDF2-HMAC-SHA256)
+# ----------------------------------------------------
+
+def hash_password(password: str) -> str:
+    """Hashes a plaintext password using PBKDF2-HMAC-SHA256 with a unique random salt."""
+    salt = os.urandom(16).hex()
+    key = hashlib.pbkdf2_hmac(
+        "sha256",
+        password.encode("utf-8"),
+        salt.encode("utf-8"),
+        iterations=100_000,
+    ).hex()
+    return f"{salt}${key}"
+
+
+def verify_password(plain_password: str, hashed_value: str) -> bool:
+    """Verifies a plaintext password against a salt$key hashed string."""
+    try:
+        if "$" not in hashed_value:
+            # Fallback legacy check
+            return plain_password == hashed_value
+        salt, expected_key = hashed_value.split("$", 1)
+        computed_key = hashlib.pbkdf2_hmac(
+            "sha256",
+            plain_password.encode("utf-8"),
+            salt.encode("utf-8"),
+            iterations=100_000,
+        ).hex()
+        return hmac.compare_digest(computed_key, expected_key)
+    except Exception:
+        return False
+
+
+# ----------------------------------------------------
+# 2. Signed Token Management (HMAC-SHA256)
+# ----------------------------------------------------
+
+def _base64url_encode(data: bytes) -> str:
+    return base64.urlsafe_b64encode(data).decode("utf-8").rstrip("=")
+
+
+def _base64url_decode(data: str) -> bytes:
+    padding = "=" * (4 - (len(data) % 4)) if len(data) % 4 != 0 else ""
+    return base64.urlsafe_b64decode(data + padding)
+
+
+def create_access_token(user_id: str, email: str, twin_id: str, expires_in_hours: int = 24) -> str:
+    """Generates a cryptographically signed HMAC-SHA256 JWT-style token."""
+    header = {"alg": "HS256", "typ": "JWT"}
+    now_ts = int(time.time())
+    payload = {
+        "sub": user_id,
+        "email": email,
+        "twin_id": twin_id,
+        "iat": now_ts,
+        "exp": now_ts + (expires_in_hours * 3600),
+    }
+
+    header_b64 = _base64url_encode(json.dumps(header).encode("utf-8"))
+    payload_b64 = _base64url_encode(json.dumps(payload).encode("utf-8"))
+    signing_input = f"{header_b64}.{payload_b64}".encode("utf-8")
+
+    signature = hmac.new(
+        settings.jwt_secret.encode("utf-8"),
+        signing_input,
+        hashlib.sha256
+    ).digest()
+    sig_b64 = _base64url_encode(signature)
+
+    return f"{header_b64}.{payload_b64}.{sig_b64}"
+
+
+def verify_access_token(token: str) -> Dict[str, Any]:
+    """Decodes and validates a signed token signature and expiration timestamp."""
+    try:
+        parts = token.split(".")
+        if len(parts) != 3:
+            raise ValueError("Malformed token format.")
+
+        header_b64, payload_b64, sig_b64 = parts
+        signing_input = f"{header_b64}.{payload_b64}".encode("utf-8")
+        expected_sig = hmac.new(
+            settings.jwt_secret.encode("utf-8"),
+            signing_input,
+            hashlib.sha256
+        ).digest()
+
+        actual_sig = _base64url_decode(sig_b64)
+        if not hmac.compare_digest(expected_sig, actual_sig):
+            raise ValueError("Invalid token signature.")
+
+        payload_bytes = _base64url_decode(payload_b64)
+        payload = json.loads(payload_bytes.decode("utf-8"))
+
+        # Check expiration
+        if payload.get("exp", 0) < int(time.time()):
+            raise ValueError("Token has expired.")
+
+        return payload
+    except Exception as e:
+        raise HTTPException(status_code=401, detail=f"Authentication error: {str(e)}")
+
+
+# ----------------------------------------------------
+# 3. In-Memory Verified User & Token Store
+# ----------------------------------------------------
+
 _USER_STORE: Dict[str, Dict[str, Any]] = {
-    "judge": {
+    "judge@adaptx.ai": {
         "user_id": "usr_judge_001",
+        "email": "judge@adaptx.ai",
         "username": "judge",
         "full_name": "Hackathon Judge",
-        "password": "demo",
+        "password_hash": hash_password("demo1234"),
         "pin": "1234",
         "twin_id": "twin_judge",
         "is_guest": True,
         "active_persona": "low_vision",
+        "created_at": datetime.utcnow().isoformat(),
     },
-    "default_user": {
+    "aarav@adaptx.ai": {
         "user_id": "usr_default_001",
-        "username": "default_user",
+        "email": "aarav@adaptx.ai",
+        "username": "aarav",
         "full_name": "Aarav Sharma",
-        "password": "password123",
+        "password_hash": hash_password("password123"),
         "pin": "1234",
         "twin_id": "default_user",
         "is_guest": False,
         "active_persona": "default",
+        "created_at": datetime.utcnow().isoformat(),
     },
 }
 
-_ACTIVE_SESSIONS: Dict[str, Dict[str, Any]] = {}
+_ACTIVE_TOKENS: Dict[str, Dict[str, Any]] = {}
 
 
 def _create_persona_twin(persona: JudgePersona, twin_id: str, language: LanguagePreference) -> AccessibilityTwin:
@@ -125,6 +249,10 @@ def _create_persona_twin(persona: JudgePersona, twin_id: str, language: Language
         )
 
 
+# ----------------------------------------------------
+# 4. REST Endpoints
+# ----------------------------------------------------
+
 @router.get("/personas", response_model=List[PersonaPresetInfo])
 async def get_judge_personas():
     """
@@ -135,7 +263,7 @@ async def get_judge_personas():
         PersonaPresetInfo(
             persona_id="low_vision",
             title="Low Vision & Glare Sensitivity",
-            description="Enables high-contrast cards, 12-hour clock spatial audio guidance, and haptic pulses.",
+            description="Enables high-contrast cards, 12-hour clock spatial audio guidance, and tactile haptic pulses.",
             barriers_addressed=["Small text", "Low contrast documents", "Spatial orientation without visual cues"],
             twin_configuration={"high_contrast": True, "large_text": True, "haptics": "strong", "output": "voice_and_text"},
         ),
@@ -163,143 +291,70 @@ async def get_judge_personas():
     ]
 
 
-@router.post("/guest", response_model=AuthResponse)
-async def guest_login(req: GuestLoginRequest):
-    """
-    Instant 1-Click Guest Login for Hackathon Judges.
-    Sets up an authenticated session and auto-configures the specified Accessibility Twin persona.
-    """
-    token = f"adaptx_token_{uuid.uuid4().hex[:16]}"
-    user_id = f"usr_guest_{uuid.uuid4().hex[:8]}"
-    twin_id = f"twin_{user_id}"
-
-    # Generate specialized Accessibility Twin
-    twin = _create_persona_twin(req.persona, twin_id, req.preferred_language)
-    pipeline_service.twin_service.update_twin(twin)
-
-    user_profile = UserProfile(
-        user_id=user_id,
-        username=f"judge_{req.persona.value}",
-        full_name=req.custom_name or f"Judge ({req.persona.value.replace('_', ' ').title()})",
-        twin_id=twin_id,
-        is_guest=True,
-        active_persona=req.persona.value,
-    )
-
-    _ACTIVE_SESSIONS[token] = {
-        "user": user_profile.dict(),
-        "twin_id": twin_id,
-        "token": token,
-        "created_at": datetime.utcnow().isoformat(),
-    }
-
-    return AuthResponse(
-        token=token,
-        user=user_profile,
-        twin=twin,
-        message=f"Welcome! Logged in as {user_profile.full_name} with '{req.persona.value}' accessibility persona.",
-    )
-
-
-@router.post("/login", response_model=AuthResponse)
-async def login(req: LoginRequest):
-    """
-    Authenticates user by password, PIN, or voice token and returns session + twin profile.
-    """
-    username = req.username.strip()
-    user_data = _USER_STORE.get(username)
-
-    if not user_data:
-        # Fallback dynamic creation for demo reliability
-        user_id = f"usr_{username}"
-        twin_id = f"twin_{username}"
-        user_data = {
-            "user_id": user_id,
-            "username": username,
-            "full_name": username.replace("_", " ").title(),
-            "password": req.password or "demo",
-            "pin": req.pin or "1234",
-            "twin_id": twin_id,
-            "is_guest": False,
-            "active_persona": "default",
-        }
-        _USER_STORE[username] = user_data
-
-    # Check credentials
-    if req.auth_modality == AuthModality.PIN:
-        if req.pin and req.pin != user_data.get("pin", "1234"):
-            raise HTTPException(status_code=401, detail="Invalid PIN.")
-    elif req.auth_modality == AuthModality.PASSWORD:
-        if req.password and req.password != user_data.get("password", "demo") and req.password != "demo":
-            raise HTTPException(status_code=401, detail="Invalid password.")
-
-    twin = pipeline_service.twin_service.get_twin(user_data["twin_id"])
-    token = f"adaptx_token_{uuid.uuid4().hex[:16]}"
-
-    user_profile = UserProfile(
-        user_id=user_data["user_id"],
-        username=user_data["username"],
-        full_name=user_data["full_name"],
-        twin_id=user_data["twin_id"],
-        is_guest=user_data.get("is_guest", False),
-        active_persona=user_data.get("active_persona", "default"),
-    )
-
-    _ACTIVE_SESSIONS[token] = {
-        "user": user_profile.dict(),
-        "twin_id": user_data["twin_id"],
-        "token": token,
-        "created_at": datetime.utcnow().isoformat(),
-    }
-
-    return AuthResponse(
-        token=token,
-        user=user_profile,
-        twin=twin,
-        message="Login successful.",
-    )
-
-
 @router.post("/register", response_model=AuthResponse)
 async def register(req: RegisterRequest):
     """
-    Registers a new user and sets up their initial Accessibility Twin preferences.
+    Registers a new user with email, name, password validation, and sets up their Accessibility Twin.
     """
-    username = req.username.strip()
+    # 1. Validate email format
+    email = req.email.strip().lower()
+    if not EMAIL_REGEX.match(email):
+        raise HTTPException(status_code=400, detail="Invalid email format. Please provide a valid email address.")
+
+    # 2. Validate password strength
+    password = req.password
+    if not password or len(password) < 6:
+        raise HTTPException(status_code=400, detail="Password is too weak. Must be at least 6 characters.")
+
+    # 3. Check password confirmation if provided
+    if req.confirm_password and req.confirm_password != password:
+        raise HTTPException(status_code=400, detail="Passwords do not match.")
+
+    # 4. Check duplicate email / username
+    if email in _USER_STORE:
+        raise HTTPException(status_code=400, detail="An account with this email already exists.")
+
+    username = req.username.strip().lower() if req.username else email.split("@")[0]
+    for u in _USER_STORE.values():
+        if u["username"] == username:
+            username = f"{username}_{uuid.uuid4().hex[:4]}"
+            break
+
     user_id = f"usr_{uuid.uuid4().hex[:8]}"
     twin_id = f"twin_{username}"
 
+    # 5. Initialize Accessibility Twin
     twin = req.initial_twin or AccessibilityTwin(id=twin_id, language=req.preferred_language)
     pipeline_service.twin_service.update_twin(twin)
 
-    user_data = {
+    # 6. Store user with hashed password
+    user_record = {
         "user_id": user_id,
+        "email": email,
         "username": username,
-        "full_name": req.full_name,
-        "password": req.password or "AdaptX@2026",
+        "full_name": req.name.strip(),
+        "password_hash": hash_password(password),
         "pin": req.pin or "1234",
         "twin_id": twin_id,
         "is_guest": False,
         "active_persona": "custom",
+        "created_at": datetime.utcnow().isoformat(),
     }
-    _USER_STORE[username] = user_data
+    _USER_STORE[email] = user_record
 
-    token = f"adaptx_token_{uuid.uuid4().hex[:16]}"
+    # 7. Generate authenticated session token
+    token = create_access_token(user_id=user_id, email=email, twin_id=twin_id)
+    _ACTIVE_TOKENS[token] = user_record
+
     user_profile = UserProfile(
         user_id=user_id,
+        email=email,
         username=username,
-        full_name=req.full_name,
+        full_name=req.name.strip(),
         twin_id=twin_id,
         is_guest=False,
         active_persona="custom",
     )
-
-    _ACTIVE_SESSIONS[token] = {
-        "user": user_profile.dict(),
-        "twin_id": twin_id,
-        "token": token,
-        "created_at": datetime.utcnow().isoformat(),
-    }
 
     return AuthResponse(
         token=token,
@@ -309,47 +364,156 @@ async def register(req: RegisterRequest):
     )
 
 
+@router.post("/login", response_model=AuthResponse)
+async def login(req: LoginRequest):
+    """
+    Authenticates user by email/username and password or PIN. Returns access token and Accessibility Twin.
+    """
+    identifier = (req.email or req.username or "").strip().lower()
+    if not identifier:
+        raise HTTPException(status_code=400, detail="Email or username is required.")
+
+    # Look up by email or username
+    user_record = None
+    if identifier in _USER_STORE:
+        user_record = _USER_STORE[identifier]
+    else:
+        for u in _USER_STORE.values():
+            if u["username"].lower() == identifier or u["email"].lower() == identifier:
+                user_record = u
+                break
+
+    if not user_record:
+        # Nonexistent user
+        raise HTTPException(status_code=401, detail="Invalid email or password.")
+
+    # Validate credential based on modality
+    if req.auth_modality == AuthModality.PIN:
+        if not req.pin or req.pin != user_record.get("pin", "1234"):
+            raise HTTPException(status_code=401, detail="Invalid PIN.")
+    else:
+        password = req.password or ""
+        if not password or not verify_password(password, user_record.get("password_hash", "")):
+            raise HTTPException(status_code=401, detail="Invalid email or password.")
+
+    twin = pipeline_service.twin_service.get_twin(user_record["twin_id"])
+    token = create_access_token(
+        user_id=user_record["user_id"],
+        email=user_record["email"],
+        twin_id=user_record["twin_id"]
+    )
+    _ACTIVE_TOKENS[token] = user_record
+
+    user_profile = UserProfile(
+        user_id=user_record["user_id"],
+        email=user_record["email"],
+        username=user_record["username"],
+        full_name=user_record["full_name"],
+        twin_id=user_record["twin_id"],
+        is_guest=user_record.get("is_guest", False),
+        active_persona=user_record.get("active_persona", "default"),
+    )
+
+    return AuthResponse(
+        token=token,
+        user=user_profile,
+        twin=twin,
+        message="Login successful.",
+    )
+
+
+@router.post("/guest", response_model=AuthResponse)
+async def guest_login(req: GuestLoginRequest):
+    """
+    Instant 1-Click Guest Login for Hackathon Judges.
+    Sets up an authenticated session and auto-configures the specified Accessibility Twin persona.
+    """
+    user_id = f"usr_guest_{uuid.uuid4().hex[:8]}"
+    email = f"judge_{req.persona.value}_{uuid.uuid4().hex[:4]}@adaptx.ai"
+    username = f"judge_{req.persona.value}"
+    twin_id = f"twin_{user_id}"
+
+    twin = _create_persona_twin(req.persona, twin_id, req.preferred_language)
+    pipeline_service.twin_service.update_twin(twin)
+
+    user_record = {
+        "user_id": user_id,
+        "email": email,
+        "username": username,
+        "full_name": req.custom_name or f"Judge ({req.persona.value.replace('_', ' ').title()})",
+        "password_hash": hash_password("judge_demo"),
+        "pin": "1234",
+        "twin_id": twin_id,
+        "is_guest": True,
+        "active_persona": req.persona.value,
+        "created_at": datetime.utcnow().isoformat(),
+    }
+    _USER_STORE[email] = user_record
+
+    token = create_access_token(user_id=user_id, email=email, twin_id=twin_id)
+    _ACTIVE_TOKENS[token] = user_record
+
+    user_profile = UserProfile(
+        user_id=user_id,
+        email=email,
+        username=username,
+        full_name=user_record["full_name"],
+        twin_id=twin_id,
+        is_guest=True,
+        active_persona=req.persona.value,
+    )
+
+    return AuthResponse(
+        token=token,
+        user=user_profile,
+        twin=twin,
+        message=f"Welcome! Logged in as {user_profile.full_name} with '{req.persona.value}' accessibility persona.",
+    )
+
+
 @router.get("/me", response_model=AuthResponse)
 async def get_current_user(authorization: Optional[str] = Header(None)):
     """
-    Validates current bearer token and returns user profile + active Accessibility Twin.
+    Validates bearer token signature and expiration, returning user profile and active Accessibility Twin.
     """
     if not authorization:
-        # Return default user for frictionless demo if no token passed
-        twin = pipeline_service.twin_service.get_twin("default_user")
-        return AuthResponse(
-            token="demo_token",
-            user=UserProfile(
-                user_id="usr_default",
-                username="default_user",
-                full_name="Aarav Sharma",
-                twin_id="default_user",
-                is_guest=False,
-            ),
-            twin=twin,
-            message="Authenticated via default session.",
-        )
+        raise HTTPException(status_code=401, detail="Authorization header is required.")
 
     token = authorization.replace("Bearer ", "").strip()
-    session = _ACTIVE_SESSIONS.get(token)
-    if not session:
-        twin = pipeline_service.twin_service.get_twin("default_user")
-        return AuthResponse(
-            token=token,
-            user=UserProfile(
-                user_id="usr_default",
-                username="default_user",
-                full_name="Aarav Sharma",
-                twin_id="default_user",
-            ),
-            twin=twin,
-            message="Session active.",
-        )
+    payload = verify_access_token(token)
 
-    twin = pipeline_service.twin_service.get_twin(session["twin_id"])
+    # Check active token or user store
+    user_id = payload.get("sub")
+    email = payload.get("email")
+    twin_id = payload.get("twin_id", "default_user")
+
+    user_record = _ACTIVE_TOKENS.get(token) or _USER_STORE.get(email)
+    if not user_record:
+        # Fallback profile from payload
+        user_record = {
+            "user_id": user_id,
+            "email": email,
+            "username": email.split("@")[0] if email else "user",
+            "full_name": "Authenticated User",
+            "twin_id": twin_id,
+            "is_guest": False,
+            "active_persona": "custom",
+        }
+
+    twin = pipeline_service.twin_service.get_twin(twin_id)
+    user_profile = UserProfile(
+        user_id=user_record["user_id"],
+        email=user_record.get("email", email or "user@adaptx.ai"),
+        username=user_record.get("username", "user"),
+        full_name=user_record.get("full_name", "User"),
+        twin_id=twin_id,
+        is_guest=user_record.get("is_guest", False),
+        active_persona=user_record.get("active_persona"),
+    )
+
     return AuthResponse(
         token=token,
-        user=UserProfile(**session["user"]),
+        user=user_profile,
         twin=twin,
         message="Session active.",
     )
@@ -357,8 +521,8 @@ async def get_current_user(authorization: Optional[str] = Header(None)):
 
 @router.post("/logout")
 async def logout(authorization: Optional[str] = Header(None)):
-    """Logs out and terminates active session."""
+    """Logs out by revoking the active session token."""
     if authorization:
         token = authorization.replace("Bearer ", "").strip()
-        _ACTIVE_SESSIONS.pop(token, None)
+        _ACTIVE_TOKENS.pop(token, None)
     return {"status": "SUCCESS", "message": "Logged out successfully."}

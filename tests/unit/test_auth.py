@@ -1,5 +1,5 @@
 """
-Adapt-X — Unit Tests for Authentication & Judge Personas
+Adapt-X — Unit Tests for Authentication, Password Hashing, JWT Tokens & Schemas
 """
 
 import sys
@@ -22,7 +22,50 @@ from shared.schemas.auth_models import (
     AuthResponse,
 )
 from shared.schemas.models import LanguagePreference
-from backend.routes.auth import _create_persona_twin, _USER_STORE
+from backend.routes.auth import (
+    hash_password,
+    verify_password,
+    create_access_token,
+    verify_access_token,
+    _create_persona_twin,
+    EMAIL_REGEX,
+)
+
+
+def test_password_hashing_and_verification():
+    raw_pass = "SecurePass@2026"
+    hashed = hash_password(raw_pass)
+    assert hashed != raw_pass
+    assert "$" in hashed
+    assert verify_password(raw_pass, hashed) is True
+    assert verify_password("WrongPassword", hashed) is False
+
+
+def test_token_creation_and_validation():
+    token = create_access_token("usr_123", "test@adaptx.ai", "twin_123", expires_in_hours=2)
+    assert token is not None
+    assert len(token.split(".")) == 3
+
+    payload = verify_access_token(token)
+    assert payload["sub"] == "usr_123"
+    assert payload["email"] == "test@adaptx.ai"
+    assert payload["twin_id"] == "twin_123"
+
+
+def test_invalid_token_tampering():
+    token = create_access_token("usr_123", "test@adaptx.ai", "twin_123")
+    tampered_token = token[:-5] + "ABCDE"
+    try:
+        verify_access_token(tampered_token)
+        assert False, "Should have raised HTTPException for tampered token"
+    except Exception as e:
+        assert "401" in str(e) or "signature" in str(e).lower()
+
+
+def test_email_regex_validation():
+    assert EMAIL_REGEX.match("valid.user@adaptx.ai") is not None
+    assert EMAIL_REGEX.match("not-an-email") is None
+    assert EMAIL_REGEX.match("missing@domain") is None
 
 
 def test_persona_twin_generation_low_vision():
@@ -53,16 +96,13 @@ def test_persona_twin_generation_elderly():
     assert twin.comprehension.read_instructions_aloud is True
 
 
-def test_auth_request_schema_validation():
-    req = LoginRequest(username="judge", password="demo", auth_modality=AuthModality.PASSWORD)
-    assert req.username == "judge"
-    assert req.auth_modality == AuthModality.PASSWORD
-
-
 if __name__ == "__main__":
+    test_password_hashing_and_verification()
+    test_token_creation_and_validation()
+    test_invalid_token_tampering()
+    test_email_regex_validation()
     test_persona_twin_generation_low_vision()
     test_persona_twin_generation_motor()
     test_persona_twin_generation_hearing()
     test_persona_twin_generation_elderly()
-    test_auth_request_schema_validation()
     print("All unit/test_auth.py tests passed successfully!")

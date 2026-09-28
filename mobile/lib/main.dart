@@ -1,9 +1,11 @@
-// Sahayak AI — Mobile Application Entry Point
+// Adapt-X (Sahayak AI) — Mobile Application Entry Point
 // Intent-Aware Personal Accessibility Copilot
 
 import 'package:flutter/material.dart';
 import 'models/accessibility_twin.dart';
 import 'theme/accessibility_theme.dart';
+import 'screens/splash_screen.dart';
+import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/complete_form_screen.dart';
 import 'screens/read_document_screen.dart';
@@ -51,13 +53,21 @@ class _SahayakAppState extends State<SahayakApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Sahayak AI',
+      title: 'Adapt-X',
       debugShowCheckedModeBanner: false,
       theme: _twin.highContrast
           ? AccessibilityTheme.highContrastTheme(largeText: _twin.largeText)
           : AccessibilityTheme.standardTheme(largeText: _twin.largeText),
-      initialRoute: '/home',
+      initialRoute: '/splash',
       routes: {
+        '/splash': (context) => SplashScreen(
+              twin: _twin,
+              onAuthenticated: _updateTwin,
+            ),
+        '/login': (context) => LoginScreen(
+              twin: _twin,
+              onAuthenticated: _updateTwin,
+            ),
         '/home': (context) => HomeScreen(
               twin: _twin,
               onToggleTheme: _toggleTheme,

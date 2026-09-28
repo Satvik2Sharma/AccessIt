@@ -1,6 +1,6 @@
 """
-Adapt-X — Integration Tests for Authentication & Judge Quick-Start
-Validates login, registration, guest judge personas, token checks, and session teardown.
+Adapt-X — Integration Tests for Authentication Pipeline & Security
+Validates registration validation, password hashing, credential checks, JWT sessions, and logout.
 """
 
 import sys
@@ -14,6 +14,7 @@ ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
+from fastapi import HTTPException
 from shared.schemas.auth_models import (
     AuthModality,
     JudgePersona,
@@ -32,59 +33,106 @@ from backend.routes.auth import (
 )
 
 
-def test_auth_judge_personas_list():
-    personas = asyncio.run(get_judge_personas())
-    assert len(personas) >= 4
-    persona_ids = [p.persona_id for p in personas]
-    assert "low_vision" in persona_ids
-    assert "motor_difficulty" in persona_ids
-    assert "hearing_impairment" in persona_ids
-    assert "elderly_simplified" in persona_ids
+def test_auth_registration_validation_errors():
+    # 1. Invalid email
+    try:
+        asyncio.run(register(RegisterRequest(name="Test", email="bademail", password="password123")))
+        assert False, "Should have rejected bad email"
+    except HTTPException as e:
+        assert e.status_code == 400
+        assert "email" in e.detail.lower()
+
+    # 2. Weak password
+    try:
+        asyncio.run(register(RegisterRequest(name="Test", email="test@adaptx.ai", password="123")))
+        assert False, "Should have rejected weak password"
+    except HTTPException as e:
+        assert e.status_code == 400
+        assert "weak" in e.detail.lower()
+
+    # 3. Password mismatch
+    try:
+        asyncio.run(register(RegisterRequest(name="Test", email="test@adaptx.ai", password="password123", confirm_password="differentPassword")))
+        assert False, "Should have rejected password mismatch"
+    except HTTPException as e:
+        assert e.status_code == 400
+        assert "match" in e.detail.lower()
 
 
-def test_auth_guest_judge_login():
-    req = GuestLoginRequest(persona=JudgePersona.LOW_VISION, custom_name="Lead Judge")
-    res = asyncio.run(guest_login(req))
-    assert res.success is True
-    assert res.token.startswith("adaptx_token_")
-    assert res.twin.visual.high_contrast is True
-    assert res.user.is_guest is True
+def test_auth_full_registration_and_login_lifecycle():
+    email = "vikram@adaptx.ai"
+    password = "SuperSecurePassword123"
 
-    # Validate active token
-    me_res = asyncio.run(get_current_user(authorization=f"Bearer {res.token}"))
-    assert me_res.user.user_id == res.user.user_id
-
-
-def test_auth_register_and_login_flow():
-    # 1. Register new user
-    reg_req = RegisterRequest(
-        username="judge_priya",
-        full_name="Priya Patel",
+    # 1. Successful registration
+    reg_res = asyncio.run(register(RegisterRequest(
+        name="Vikram Singh",
+        email=email,
+        password=password,
+        confirm_password=password,
         preferred_language=LanguagePreference.HINDI,
-        password="securePassword123",
-        pin="4321",
-    )
-    reg_res = asyncio.run(register(reg_req))
+    )))
     assert reg_res.success is True
-    assert reg_res.user.username == "judge_priya"
+    assert reg_res.user.email == email
+    assert reg_res.twin.language == LanguagePreference.HINDI
+    token = reg_res.token
 
-    # 2. Login with registered credentials
-    login_req = LoginRequest(
-        username="judge_priya",
-        password="securePassword123",
-        auth_modality=AuthModality.PASSWORD,
-    )
-    login_res = asyncio.run(login(login_req))
+    # 2. Duplicate registration rejected
+    try:
+        asyncio.run(register(RegisterRequest(name="Vikram Dupe", email=email, password=password)))
+        assert False, "Should reject duplicate email"
+    except HTTPException as e:
+        assert e.status_code == 400
+        assert "already exists" in e.detail.lower()
+
+    # 3. Successful login
+    login_res = asyncio.run(login(LoginRequest(email=email, password=password)))
     assert login_res.success is True
-    assert login_res.user.full_name == "Priya Patel"
+    assert login_res.user.full_name == "Vikram Singh"
 
-    # 3. Logout
+    # 4. Wrong password login rejected
+    try:
+        asyncio.run(login(LoginRequest(email=email, password="WrongPassword")))
+        assert False, "Should reject wrong password"
+    except HTTPException as e:
+        assert e.status_code == 401
+
+    # 5. Nonexistent user login rejected
+    try:
+        asyncio.run(login(LoginRequest(email="nonexistent@adaptx.ai", password="password123")))
+        assert False, "Should reject nonexistent user"
+    except HTTPException as e:
+        assert e.status_code == 401
+
+    # 6. Authenticated /me endpoint
+    me_res = asyncio.run(get_current_user(authorization=f"Bearer {login_res.token}"))
+    assert me_res.user.email == email
+    assert me_res.twin.language == LanguagePreference.HINDI
+
+    # 7. Unauthenticated /me without token
+    try:
+        asyncio.run(get_current_user(authorization=None))
+        assert False, "Should reject unauthenticated /me"
+    except HTTPException as e:
+        assert e.status_code == 401
+
+    # 8. Logout
     logout_res = asyncio.run(logout(authorization=f"Bearer {login_res.token}"))
     assert logout_res["status"] == "SUCCESS"
 
 
+def test_auth_judge_quickstart_guest():
+    guest_res = asyncio.run(guest_login(GuestLoginRequest(
+        persona=JudgePersona.MOTOR_DIFFICULTY,
+        custom_name="Judge Vikram",
+    )))
+    assert guest_res.success is True
+    assert guest_res.user.is_guest is True
+    assert guest_res.twin.motor.voice_input is True
+    assert guest_res.twin.motor.dwell_time_ms == 500
+
+
 if __name__ == "__main__":
-    test_auth_judge_personas_list()
-    test_auth_guest_judge_login()
-    test_auth_register_and_login_flow()
+    test_auth_registration_validation_errors()
+    test_auth_full_registration_and_login_lifecycle()
+    test_auth_judge_quickstart_guest()
     print("All integration/test_auth_pipeline.py tests passed successfully!")

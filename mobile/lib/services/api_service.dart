@@ -1,4 +1,4 @@
-// Sahayak AI — API Service for FastAPI Orchestrator
+// Adapt-X (Sahayak AI) — API Service for FastAPI Orchestrator & Authentication
 
 import 'dart:convert';
 import 'dart:io';
@@ -7,6 +7,13 @@ import '../models/accessibility_twin.dart';
 import '../models/task_flow.dart';
 
 class ApiService {
+  static String? _authToken;
+  static Map<String, dynamic>? _currentUser;
+
+  static String? get authToken => _authToken;
+  static Map<String, dynamic>? get currentUser => _currentUser;
+  static bool get isAuthenticated => _authToken != null;
+
   // Uses 10.0.2.2 for Android emulator or 127.0.0.1 for desktop/linux/web
   static String get baseUrl {
     try {
@@ -16,6 +23,155 @@ class ApiService {
     } catch (_) {}
     return 'http://127.0.0.1:8000/api/v1';
   }
+
+  static Map<String, String> _getHeaders() {
+    final headers = {'Content-Type': 'application/json'};
+    if (_authToken != null) {
+      headers['Authorization'] = 'Bearer $_authToken';
+    }
+    return headers;
+  }
+
+  // ----------------------------------------------------
+  // Authentication & Session Management
+  // ----------------------------------------------------
+
+  static Future<Map<String, dynamic>> login({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final res = await http.post(
+        Uri.parse('$baseUrl/auth/login'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'email': email.trim(),
+          'password': password,
+          'auth_modality': 'password',
+        }),
+      ).timeout(const Duration(seconds: 8));
+
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200 && data['success'] == true) {
+        _authToken = data['token'];
+        _currentUser = data['user'];
+        return {'success': true, 'data': data};
+      } else {
+        return {
+          'success': false,
+          'message': data['detail'] ?? data['message'] ?? 'Invalid email or password.'
+        };
+      }
+    } catch (e) {
+      return {'success': false, 'message': 'Unable to connect to server ($e)'};
+    }
+  }
+
+  static Future<Map<String, dynamic>> register({
+    required String name,
+    required String email,
+    required String password,
+    String? confirmPassword,
+    String preferredLanguage = 'English',
+  }) async {
+    try {
+      final res = await http.post(
+        Uri.parse('$baseUrl/auth/register'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'name': name.trim(),
+          'email': email.trim(),
+          'password': password,
+          'confirm_password': confirmPassword ?? password,
+          'preferred_language': preferredLanguage,
+        }),
+      ).timeout(const Duration(seconds: 8));
+
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200 && data['success'] == true) {
+        _authToken = data['token'];
+        _currentUser = data['user'];
+        return {'success': true, 'data': data};
+      } else {
+        return {
+          'success': false,
+          'message': data['detail'] ?? data['message'] ?? 'Registration failed.'
+        };
+      }
+    } catch (e) {
+      return {'success': false, 'message': 'Unable to connect to server ($e)'};
+    }
+  }
+
+  static Future<Map<String, dynamic>> guestLogin({
+    String persona = 'low_vision',
+    String language = 'English',
+    String customName = 'Hackathon Judge',
+  }) async {
+    try {
+      final res = await http.post(
+        Uri.parse('$baseUrl/auth/guest'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'persona': persona,
+          'preferred_language': language,
+          'custom_name': customName,
+        }),
+      ).timeout(const Duration(seconds: 8));
+
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200 && data['success'] == true) {
+        _authToken = data['token'];
+        _currentUser = data['user'];
+        return {'success': true, 'data': data};
+      } else {
+        return {'success': false, 'message': data['detail'] ?? 'Guest login failed.'};
+      }
+    } catch (e) {
+      return {'success': false, 'message': 'Unable to connect to server ($e)'};
+    }
+  }
+
+  static Future<Map<String, dynamic>> getMe() async {
+    if (_authToken == null) {
+      return {'success': false, 'message': 'Not logged in'};
+    }
+    try {
+      final res = await http.get(
+        Uri.parse('$baseUrl/auth/me'),
+        headers: _getHeaders(),
+      ).timeout(const Duration(seconds: 5));
+
+      if (res.statusCode == 200) {
+        final data = jsonDecode(res.body);
+        _currentUser = data['user'];
+        return {'success': true, 'data': data};
+      } else {
+        _authToken = null;
+        _currentUser = null;
+        return {'success': false, 'message': 'Session expired'};
+      }
+    } catch (_) {
+      return {'success': false, 'message': 'Connection error'};
+    }
+  }
+
+  static Future<void> logout() async {
+    try {
+      if (_authToken != null) {
+        await http.post(
+          Uri.parse('$baseUrl/auth/logout'),
+          headers: _getHeaders(),
+        ).timeout(const Duration(seconds: 3));
+      }
+    } catch (_) {}
+    _authToken = null;
+    _currentUser = null;
+  }
+
+  // ----------------------------------------------------
+  // Core AI & Domain Endpoints
+  // ----------------------------------------------------
 
   static Future<bool> checkHealth() async {
     try {
@@ -30,7 +186,7 @@ class ApiService {
     try {
       final res = await http.post(
         Uri.parse('$baseUrl/intent'),
-        headers: {'Content-Type': 'application/json'},
+        headers: _getHeaders(),
         body: jsonEncode({'query': query, 'twin_id': twin.id}),
       );
       if (res.statusCode == 200) {
@@ -68,7 +224,7 @@ class ApiService {
     try {
       final res = await http.post(
         Uri.parse('$baseUrl/complete/respond'),
-        headers: {'Content-Type': 'application/json'},
+        headers: _getHeaders(),
         body: jsonEncode({
           'task_id': taskId,
           'field_id': fieldId,
@@ -142,7 +298,8 @@ class ApiService {
     try {
       final res = await http.post(
         Uri.parse('$baseUrl/see'),
-        body: {'target_object': objectName, 'twin_id': twin.id},
+        headers: _getHeaders(),
+        body: jsonEncode({'target_object': objectName, 'twin_id': twin.id}),
       );
       if (res.statusCode == 200) {
         return jsonDecode(res.body);
@@ -162,7 +319,7 @@ class ApiService {
 
   static Future<Map<String, dynamic>> getHeatmap() async {
     try {
-      final res = await http.get(Uri.parse('$baseUrl/learning/heatmap'));
+      final res = await http.get(Uri.parse('$baseUrl/learning/heatmap'), headers: _getHeaders());
       if (res.statusCode == 200) {
         return jsonDecode(res.body);
       }
