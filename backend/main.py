@@ -48,6 +48,7 @@ from backend.routes.assistance import router as assistance_router
 from backend.routes.navigation import router as navigation_router
 from backend.routes.verification import router as verification_router
 from backend.routes.learning import router as learning_router
+from backend.routes.camera import router as camera_router
 
 logger = logging.getLogger("sahayak.api")
 
@@ -176,6 +177,7 @@ app.include_router(assistance_router, prefix=settings.api_prefix)
 app.include_router(navigation_router, prefix=settings.api_prefix)
 app.include_router(verification_router, prefix=settings.api_prefix)
 app.include_router(learning_router, prefix=settings.api_prefix)
+app.include_router(camera_router, prefix=settings.api_prefix)
 
 
 if __name__ == "__main__":

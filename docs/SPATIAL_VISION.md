@@ -1,11 +1,12 @@
 # Sahayak AI — Spatial Vision & Directional Guidance
 
-**Status**: `IMPLEMENTED` (Spatial Direction & Bounding Box Coordinates) / `PARTIAL` (Live On-Device Object Stream)
+**Status**: `IMPLEMENTED` (Full Spatial Direction, Object Detection Adapters & Camera Pipeline Integration)
 
 ---
 
 ## 1. Overview & Purpose
 Spatial Vision allows visually impaired users to locate physical objects in their immediate environment without needing fine manual sight. Rather than returning dry millimeter estimates, the system models spatial positions as **12-Hour Clock Directions** relative to the user's forward heading, combined with **Vertical Elevation** and **Relative Proximity**.
+This is integrated directly into the `ai/vision/` modules and orchestrated through `ai/camera/camera_engine.py`.
 
 ---
 

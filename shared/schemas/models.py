@@ -219,6 +219,13 @@ from shared.schemas.task_models import (
     RecoveryResult,
     PersonalizationProfile,
 )
+from shared.schemas.camera_models import (
+    CameraMode,
+    FrameQualityMetrics,
+    CameraFrame,
+    CameraAnalysisRequest,
+    CameraAnalysisResult,
+)
 
 
 # ====================================================
