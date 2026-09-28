@@ -14,14 +14,28 @@ class ApiService {
   static Map<String, dynamic>? get currentUser => _currentUser;
   static bool get isAuthenticated => _authToken != null;
 
-  // Uses 10.0.2.2 for Android emulator or 127.0.0.1 for desktop/linux/web
+  static String? overrideBaseUrl;
+
+  // Supports custom backend URL via --dart-define=BACKEND_URL=http://<LAN_IP>:8000/api/v1,
+  // runtime override, 10.0.2.2 for Android emulator, or 127.0.0.1 for local/web/desktop.
   static String get baseUrl {
+    if (overrideBaseUrl != null && overrideBaseUrl!.isNotEmpty) {
+      return overrideBaseUrl!;
+    }
+    const envUrl = String.fromEnvironment('BACKEND_URL');
+    if (envUrl.isNotEmpty) {
+      return envUrl;
+    }
     try {
       if (Platform.isAndroid) {
         return 'http://10.0.2.2:8000/api/v1';
       }
     } catch (_) {}
     return 'http://127.0.0.1:8000/api/v1';
+  }
+
+  static void setBaseUrl(String url) {
+    overrideBaseUrl = url.trim();
   }
 
   static Map<String, String> _getHeaders() {
