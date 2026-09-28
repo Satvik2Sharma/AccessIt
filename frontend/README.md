@@ -1,30 +1,32 @@
-# Sahayak AI — Web Frontend
+# React + TypeScript + Vite
 
-**Lead Contributor**: **Yashika Pundir** (*Web Frontend Lead & AI Camera Interface Architect*)
+This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
-## Overview
+Currently, two official plugins are available:
 
-The Sahayak AI Web Frontend is built with React 19, TypeScript, Tailwind CSS, and Vite. It provides an accessible, high-contrast, intent-aware user interface for real-time camera vision assistance, spatial object finding, document OCR reading, ISL sign language translation, and step-by-step form completion.
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
----
+## React Compiler
 
-## 🛠️ Development & Build Commands
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-```bash
-# Install dependencies
-npm install
+## Expanding the Oxlint configuration
 
-# Start local development server
-npm run dev
+If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
 
-# Production build check
-npm run build
+```json
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "typescript", "oxc"],
+  "options": {
+    "typeAware": true
+  },
+  "rules": {
+    "react/rules-of-hooks": "error",
+    "react/only-export-components": ["warn", { "allowConstantExport": true }]
+  }
+}
 ```
 
----
-
-## 👥 Core Contributors
-
-- **Yashika Pundir** — Web Frontend Lead
-- **Satvik Sharma** — Project Lead & Backend Systems
-- **Varanka** — AI Lead
+See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.

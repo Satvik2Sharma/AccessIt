@@ -1,322 +1,321 @@
 <!DOCTYPE html>
-<html lang="hi" data-theme="dark">
+<html lang="hi">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-<meta name="theme-color" content="#080c14" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="theme-color" content="#2563eb" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="description" content="Sahayak AI — Intent-Aware Personal Accessibility Copilot Platform" />
-<title>Sahayak AI (सहायक AI) — Multimodal Accessibility Platform</title>
-
-<!-- Premium Fonts: Outfit, Plus Jakarta Sans, Noto Sans Devanagari -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
+<meta name="description" content="Sahayak AI — Intent-Aware Personal Accessibility Copilot" />
+<title>Sahayak AI (सहायक AI) — Accessibility Copilot</title>
 <style>
-  /* ─── Premium Mobile & SaaS Theme Tokens ──────────────────────────── */
-  :root, [data-theme="dark"] {
-    --bg-app: #080c14;
-    --bg-screen: #0f172a;
-    --bg-card: #1e293b;
-    --bg-card-subtle: #162032;
-    --border-color: #334155;
-    --border-glow: #3b82f6;
-    --text-heading: #f8fafc;
-    --text-body: #cbd5e1;
-    --text-muted: #94a3b8;
-    --primary-blue: #3b82f6;
-    --primary-indigo: #6366f1;
-    --accent-teal: #14b8a6;
-    --accent-amber: #facc15;
-    --accent-rose: #f43f5e;
-    --topbar-bg: rgba(15, 23, 42, 0.95);
-    --bottomnav-bg: rgba(15, 23, 42, 0.96);
-    --card-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
-    --chip-bg: #1e3a8a;
-    --chip-border: #3b82f6;
-    --chip-text: #93c5fd;
-    --input-bg: #1e293b;
-    --input-border: #475569;
-    --input-text: #f8fafc;
-    --nav-active-bg: #1e3a8a;
-    --nav-active-text: #60a5fa;
-  }
+  /* ─── Reset & Base ────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    background: #0f172a; -webkit-tap-highlight-color: transparent; user-select: none; }
+  button { cursor: pointer; border: none; background: none; font-family: inherit; }
+  input, textarea { font-family: inherit; }
+  ::-webkit-scrollbar { display: none; }
 
-  [data-theme="light"] {
-    --bg-app: #e2e8f0;
-    --bg-screen: #f8fafc;
-    --bg-card: #ffffff;
-    --bg-card-subtle: #f1f5f9;
-    --border-color: #cbd5e1;
-    --border-glow: #2563eb;
-    --text-heading: #0f172a;
-    --text-body: #334155;
-    --text-muted: #64748b;
-    --primary-blue: #2563eb;
-    --primary-indigo: #4f46e5;
-    --accent-teal: #0d9488;
-    --accent-amber: #d97706;
-    --accent-rose: #e11d48;
-    --topbar-bg: rgba(255, 255, 255, 0.95);
-    --bottomnav-bg: rgba(255, 255, 255, 0.96);
-    --card-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.08);
-    --chip-bg: #eff6ff;
-    --chip-border: #bfdbfe;
-    --chip-text: #2563eb;
-    --input-bg: #ffffff;
-    --input-border: #cbd5e1;
-    --input-text: #0f172a;
-    --nav-active-bg: #eff6ff;
-    --nav-active-text: #2563eb;
-  }
+  /* ─── Phone Frame ─────────────────────────────────────────── */
+  #root { display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; padding: 16px; }
+  .phone-frame { position: relative; width: 100%; max-width: 400px;
+    height: min(860px, 96vh); background: #1e293b; border-radius: 48px;
+    padding: 12px; box-shadow: 0 30px 80px -10px rgba(0,0,0,.8),
+      0 0 0 6px #334155, inset 0 0 0 1px #475569; }
+  .phone-screen { width: 100%; height: 100%; border-radius: 38px; overflow: hidden;
+    display: flex; flex-direction: column; background: #f8fafc;
+    transition: background 0.2s, color 0.2s; position: relative; }
+  .phone-pill { position: absolute; top: 18px; left: 50%; transform: translateX(-50%);
+    width: 112px; height: 24px; background: #000; border-radius: 12px; z-index: 20;
+    display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; }
+  .phone-pill-dot { width: 10px; height: 10px; border-radius: 50%; background: #0f172a;
+    box-shadow: inset 0 0 0 2px #1e293b; }
 
-  [data-theme="contrast"] {
-    --bg-app: #000000;
-    --bg-screen: #000000;
-    --bg-card: #0a0a0a;
-    --bg-card-subtle: #111111;
-    --border-color: #FFD700;
-    --border-glow: #FFD700;
-    --text-heading: #FFD700;
-    --text-body: #FFD700;
-    --text-muted: #FFD700;
-    --primary-blue: #FFD700;
-    --primary-indigo: #FFD700;
-    --accent-teal: #FFD700;
-    --accent-amber: #FFD700;
-    --accent-rose: #FFD700;
-    --topbar-bg: #000000;
-    --bottomnav-bg: #000000;
-    --card-shadow: none;
-    --chip-bg: #FFD700;
-    --chip-border: #000000;
-    --chip-text: #000000;
-    --input-bg: #000000;
-    --input-border: #FFD700;
-    --input-text: #FFD700;
-    --nav-active-bg: #FFD700;
-    --nav-active-text: #000000;
-  }
+  /* ─── High Contrast Mode ──────────────────────────────────── */
+  .hc .phone-screen { background: #000; color: #FFD700; }
+  .hc .top-bar { background: #000 !important; border-bottom-color: #FFD700 !important; }
+  .hc .status-bar { color: #FFD700 !important; }
+  .hc .bottom-nav { background: #000 !important; border-top-color: #FFD700 !important; }
+  .hc .nav-btn { color: #FFD700 !important; }
+  .hc .nav-btn.active { background: #FFD700 !important; color: #000 !important; }
+  .hc .card { background: #111 !important; border-color: #FFD700 !important; }
+  .hc .screen-body { color: #FFD700; }
+  .hc .text-subtle { color: #fff !important; }
+  .hc .chip { background: #FFD700; color: #000; border-color: #000; }
+  .hc .btn-primary { background: #FFD700 !important; color: #000 !important; font-weight: 900; }
+  .hc .btn-ghost { border-color: #FFD700; color: #FFD700; }
+  .hc .text-muted { color: #aaa !important; }
+  .hc input, .hc textarea { background: #000; border-color: #FFD700; color: #FFD700; }
+  .hc .badge { background: #FFD700; color: #000; }
+  .hc .section-card { background: #111; border: 2px solid #FFD700; }
+  .hc .heatmap-dot-red { box-shadow: 0 0 0 4px rgba(255,0,0,.3) !important; }
+  .hc .heatmap-dot-yellow { box-shadow: 0 0 0 4px rgba(255,215,0,.3) !important; }
+  .hc .heatmap-dot-green { box-shadow: 0 0 0 4px rgba(0,255,100,.3) !important; }
+  .hc .tag { background: transparent; border: 1px solid #FFD700; color: #FFD700; }
+  .hc .infobox { background: #111; border-color: #FFD700; }
+  .hc .progress-track { background: #333; }
+  .hc .progress-fill { background: #FFD700; }
+  .hc .cam-viewport { border-color: #FFD700; }
+  .hc .voice-btn { background: #FFD700 !important; color: #000 !important;
+    box-shadow: 0 0 0 12px rgba(255,215,0,.18) !important; }
+  .hc .nav-label { color: #FFD700; }
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  
-  html, body {
-    width: 100%; height: 100%; height: 100dvh; overflow: hidden;
-    background: var(--bg-app);
-    font-family: 'Outfit', 'Plus Jakarta Sans', 'Noto Sans Devanagari', -apple-system, sans-serif;
-    letter-spacing: -0.015em; color: var(--text-body);
-    -webkit-font-smoothing: antialiased;
-    transition: background 0.25s ease, color 0.25s ease;
-  }
+  /* ─── Large Text Mode ─────────────────────────────────────── */
+  .lg .screen-body, .lg button, .lg input { font-size: 1.12rem; }
+  .lg h1 { font-size: 2rem !important; }
+  .lg h2 { font-size: 1.55rem !important; }
+  .lg h3 { font-size: 1.3rem !important; }
+  .lg .label-sm { font-size: 0.8rem !important; }
+  .lg .text-xs { font-size: 0.78rem !important; }
 
-  .mobile-app-wrapper { width: 100%; height: 100%; height: 100dvh; display: flex; justify-content: center; align-items: center; background: var(--bg-app); }
-
-  .phone-frame {
-    position: relative; width: 100%; max-width: 440px; height: 100%; height: 100dvh;
-    background: var(--bg-screen); display: flex; flex-direction: column; overflow: hidden;
-    box-shadow: 0 25px 60px -10px rgba(0,0,0,0.6); transition: all 0.25s ease;
-  }
-
-  @media (min-width: 480px) {
-    .phone-frame {
-      height: 94vh; max-height: 900px; border-radius: 40px; border: 1px solid var(--border-color);
-    }
-  }
-
-  .phone-screen { width: 100%; height: 100%; display: flex; flex-direction: column; background: var(--bg-screen); position: relative; overflow: hidden; }
-
-  .lg .screen-body, .lg button, .lg input { font-size: 1.12rem !important; }
-
-  /* ─── Top Bar & Controls ──────────────────────────────────── */
-  .top-bar { flex-shrink: 0; background: var(--topbar-bg);
-    border-bottom: 1px solid var(--border-color); backdrop-filter: blur(12px); position: relative; z-index: 30; }
-  
+  /* ─── Top Bar ─────────────────────────────────────────────── */
+  .top-bar { flex-shrink: 0; background: rgba(255,255,255,.96);
+    border-bottom: 1px solid #e2e8f0; backdrop-filter: blur(8px); position: relative; z-index: 10; }
   .status-bar { display: flex; justify-content: space-between; align-items: center;
-    padding: 8px 16px 2px; font-size: 11px; font-weight: 700; color: var(--text-muted); font-family: 'Outfit', sans-serif; }
-  .status-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
-  .status-dot.online { background: #10b981; box-shadow: 0 0 6px #10b981; }
-  .status-dot.local { background: var(--primary-blue); animation: pulse 1.5s infinite; }
-  
-  .app-bar { display: flex; align-items: center; justify-content: space-between; padding: 6px 12px 8px; }
-  .app-logo { display: flex; align-items: center; gap: 10px; }
-  .logo-icon { width: 36px; height: 36px; border-radius: 10px;
-    background: linear-gradient(135deg, var(--primary-blue), var(--primary-indigo)); color: #fff;
-    display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 18px; box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
-  [data-theme="contrast"] .logo-icon { background: #FFD700; color: #000; }
+    padding: 6px 18px 0; font-size: 11px; font-weight: 700; color: #64748b; }
+  .status-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+    margin-right: 4px; vertical-align: middle; }
+  .status-dot.online { background: #22c55e; }
+  .status-dot.local { background: #3b82f6; animation: pulse 1.5s infinite; }
+  .app-bar { display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 12px 10px; }
+  .app-logo { display: flex; align-items: center; gap: 8px; }
+  .logo-icon { width: 32px; height: 32px; border-radius: 10px;
+    background: linear-gradient(135deg, #2563eb, #6366f1); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 15px; box-shadow: 0 2px 8px rgba(37,99,235,.35); }
+  .logo-text h1 { font-size: 15px; font-weight: 900; color: #0f172a; line-height: 1; letter-spacing: -.3px; }
+  .logo-text span { font-size: 10px; color: #64748b; }
+  .top-controls { display: flex; align-items: center; gap: 2px; }
+  .tc-btn { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center;
+    justify-content: center; font-size: 16px; color: #475569; transition: all .15s; }
+  .tc-btn:active { transform: scale(.9); }
+  .tc-btn.active { background: #dbeafe; color: #2563eb; }
+  .tc-btn.hc-active { background: #FFD700; color: #000; border-radius: 8px; }
+  .lang-btn { height: 28px; padding: 0 8px; border-radius: 8px; border: 1.5px solid #cbd5e1;
+    font-size: 11px; font-weight: 700; color: #475569; display: flex; align-items: center; gap: 4px; }
 
-  .logo-text h1 { font-size: 16px; font-weight: 800; color: var(--text-heading); line-height: 1; letter-spacing: -0.02em; }
-  .logo-text span { font-size: 10.5px; color: var(--text-muted); font-weight: 600; }
-  
-  .top-controls { display: flex; align-items: center; gap: 4px; }
-  .tc-btn { height: 32px; padding: 0 8px; border-radius: 10px; display: flex; align-items: center; gap: 4px;
-    justify-content: center; font-size: 11.5px; font-weight: 800; color: var(--text-body); transition: all .15s ease;
-    background: var(--bg-card); border: 1px solid var(--border-color); cursor: pointer; }
-  .tc-btn:active { transform: scale(.92); }
-  .tc-btn.active { background: var(--primary-blue); color: #fff; border-color: var(--primary-blue); }
-  [data-theme="contrast"] .tc-btn.active { background: #FFD700; color: #000; }
+  /* ─── Screen Body ─────────────────────────────────────────── */
+  .screen-body { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
 
-  .lang-btn { height: 32px; padding: 0 8px; border-radius: 10px; border: 1px solid var(--border-color);
-    font-size: 11px; font-weight: 800; color: var(--text-heading); display: flex; align-items: center; gap: 4px; background: var(--bg-card); cursor: pointer; }
+  /* ─── Bottom Nav ──────────────────────────────────────────── */
+  .bottom-nav { flex-shrink: 0; background: rgba(255,255,255,.96);
+    border-top: 1px solid #e2e8f0; backdrop-filter: blur(8px); padding: 4px 0 2px; }
+  .nav-grid { display: grid; grid-template-columns: repeat(7, 1fr);
+    gap: 2px; padding: 0 4px; }
+  .nav-btn { display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 4px 2px 3px; border-radius: 10px; color: #64748b; transition: all .15s; gap: 1px; }
+  .nav-btn.active { background: #eff6ff; color: #2563eb; }
+  .nav-btn svg { width: 19px; height: 19px; }
+  .nav-label { font-size: 9px; font-weight: 700; text-align: center; line-height: 1; }
+  .nav-home-bar { width: 96px; height: 4px; border-radius: 2px; background: #cbd5e1;
+    margin: 4px auto 0; opacity: .6; }
 
-  /* ─── Screen Viewport & Bottom Navigation ─────────────────── */
-  .screen-body { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; position: relative; z-index: 10; }
-
-  .bottom-nav { flex-shrink: 0; background: var(--bottomnav-bg);
-    border-top: 1px solid var(--border-color); backdrop-filter: blur(16px); padding: 6px 0 6px; z-index: 30; }
-  
-  .nav-grid { display: flex; align-items: center; justify-content: space-around; width: 100%; max-width: 540px; margin: 0 auto; overflow-x: auto; gap: 1px; padding: 0 2px; -webkit-overflow-scrolling: touch; }
-  .nav-grid::-webkit-scrollbar { display: none; }
-  .nav-btn { flex: 1; min-width: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px 1px 3px; border-radius: 12px; color: var(--text-muted); transition: all .15s ease; gap: 2px; background: transparent; border: none; cursor: pointer; }
-  .nav-btn.active { background: var(--nav-active-bg); color: var(--nav-active-text); font-weight: 800; }
-  .nav-btn svg { width: 18px; height: 18px; stroke-width: 2.2; }
-  .nav-label { font-size: 9px; font-weight: 800; text-align: center; line-height: 1; white-space: nowrap; }
-  
-  .nav-home-bar { width: 110px; height: 4px; border-radius: 2px; background: var(--border-color); margin: 4px auto 0; opacity: .8; }
-
-  /* ─── UI Primitives & Cards ──────────────────────────────── */
-  .screen-pad { padding: 14px; display: flex; flex-direction: column; gap: 12px; min-height: 100%; }
-  .back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 12px;
-    font-weight: 700; color: var(--text-body); padding: 6px 12px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border-color); cursor: pointer; }
+  /* ─── Common Components ───────────────────────────────────── */
+  .screen-pad { padding: 14px 14px 10px; display: flex; flex-direction: column; gap: 12px; min-height: 100%; }
+  .back-btn { display: inline-flex; align-items: center; gap: 4px; font-size: 12px;
+    font-weight: 700; color: #475569; padding: 6px 8px; border-radius: 8px; }
+  .back-btn:hover { background: #f1f5f9; }
   .row-between { display: flex; align-items: center; justify-content: space-between; }
-  
-  .badge { display: inline-flex; align-items: center; padding: 4px 10px;
-    border-radius: 99px; font-size: 10px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
-  .badge-blue { background: rgba(59,130,246,0.15); color: var(--primary-blue); border: 1px solid rgba(59,130,246,0.3); }
-  .badge-green { background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.3); }
-  .badge-amber { background: rgba(250,204,21,0.15); color: #facc15; border: 1px solid rgba(250,204,21,0.3); }
-  .badge-purple { background: rgba(168,85,247,0.15); color: #a855f7; border: 1px solid rgba(168,85,247,0.3); }
-  .badge-indigo { background: rgba(99,102,241,0.15); color: #6366f1; border: 1px solid rgba(99,102,241,0.3); }
-  .badge-rose { background: rgba(244,63,94,0.15); color: #f43f5e; border: 1px solid rgba(244,63,94,0.3); }
-  
-  .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 18px; padding: 14px; box-shadow: var(--card-shadow); color: var(--text-body); }
-  .section-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 12px; color: var(--text-body); }
-  
-  .btn-primary { display: flex; align-items: center; justify-content: center; gap: 8px;
-    padding: 13px 16px; border-radius: 14px; font-weight: 800; font-size: 13.5px;
-    background: var(--primary-blue); color: #fff; box-shadow: 0 6px 18px rgba(59,130,246,0.35);
-    transition: all .15s ease; width: 100%; border: none; cursor: pointer; }
-  [data-theme="contrast"] .btn-primary { background: #FFD700; color: #000; font-weight: 900; }
-  .btn-primary:active { transform: scale(.98); }
-  
+  .badge { display: inline-flex; align-items: center; padding: 3px 10px;
+    border-radius: 99px; font-size: 10px; font-weight: 900; letter-spacing: .06em;
+    text-transform: uppercase; }
+  .badge-blue { background: #dbeafe; color: #1d4ed8; }
+  .badge-green { background: #dcfce7; color: #15803d; }
+  .badge-amber { background: #fef3c7; color: #92400e; }
+  .badge-purple { background: #ede9fe; color: #6d28d9; }
+  .badge-indigo { background: #e0e7ff; color: #4338ca; }
+  .card { background: #fff; border: 1.5px solid #e2e8f0; border-radius: 18px;
+    padding: 14px; box-shadow: 0 1px 4px rgba(0,0,0,.05); }
+  .section-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 14px; }
+  .btn-primary { display: flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 13px 16px; border-radius: 14px; font-weight: 700; font-size: 14px;
+    background: #2563eb; color: #fff; box-shadow: 0 2px 8px rgba(37,99,235,.3);
+    transition: all .15s; width: 100%; }
+  .btn-primary:active { transform: scale(.97); }
   .btn-ghost { display: flex; align-items: center; justify-content: center; gap: 6px;
-    padding: 9px 12px; border-radius: 10px; font-weight: 700; font-size: 12px;
-    border: 1px solid var(--border-color); color: var(--text-body); transition: all .15s; background: var(--bg-card); cursor: pointer; }
-  
+    padding: 9px 14px; border-radius: 12px; font-weight: 600; font-size: 12px;
+    border: 1.5px solid #e2e8f0; color: #475569; transition: all .15s; }
+  .btn-ghost:active { transform: scale(.97); }
+  .tag { background: #f1f5f9; border-radius: 99px; padding: 3px 10px;
+    font-size: 11px; font-weight: 700; color: #475569; }
   .chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
-  .chip { background: var(--chip-bg); border: 1px solid var(--chip-border); border-radius: 99px; padding: 4px 10px; font-size: 10.5px; font-weight: 700; color: var(--chip-text); }
-  
-  .infobox { border-radius: 14px; padding: 12px; border: 1px solid var(--border-color); font-size: 12px; line-height: 1.5; background: var(--bg-card); color: var(--text-body); }
-  
-  .progress-track { background: var(--border-color); border-radius: 99px; height: 8px; overflow: hidden; }
-  .progress-fill { height: 100%; border-radius: 99px; background: var(--primary-blue); transition: width .35s ease; }
+  .chip { background: rgba(37,99,235,.12); border: 1px solid rgba(37,99,235,.25);
+    border-radius: 99px; padding: 3px 10px; font-size: 11px; font-weight: 700; color: #2563eb; }
+  .infobox { border-radius: 12px; padding: 10px 12px; border: 1.5px solid; font-size: 11px; line-height: 1.5; }
+  .infobox-blue { background: #eff6ff; border-color: #bfdbfe; color: #1e40af; }
+  .infobox-green { background: #f0fdf4; border-color: #bbf7d0; color: #166534; }
+  .infobox-amber { background: #fffbeb; border-color: #fde68a; color: #92400e; }
+  .infobox-purple { background: #faf5ff; border-color: #e9d5ff; color: #6b21a8; }
+  .progress-track { background: #e2e8f0; border-radius: 99px; height: 9px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 99px; background: #2563eb;
+    transition: width .35s ease; }
+  .section-label { font-size: 11px; font-weight: 900; letter-spacing: .06em;
+    text-transform: uppercase; color: #94a3b8; margin-bottom: 4px; }
+  .divider { border: none; border-top: 1px solid #f1f5f9; margin: 4px 0; }
 
-  /* ─── Journey Stepper Bar ─────────────────────────────────── */
-  .journey-bar { display: flex; align-items: center; gap: 4px; overflow-x: auto; padding: 8px 12px; background: var(--bg-card); border-bottom: 1px solid var(--border-color); -webkit-overflow-scrolling: touch; }
-  .journey-step-chip { display: flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 20px; font-size: 10.5px; font-weight: 800; white-space: nowrap; border: 1px solid var(--border-color); background: var(--bg-screen); color: var(--text-muted); cursor: pointer; }
-  .journey-step-chip.active { background: var(--primary-blue); color: #fff; border-color: var(--primary-blue); }
-  .journey-step-chip.done { background: rgba(16,185,129,0.15); color: #10b981; border-color: rgba(16,185,129,0.3); }
-
-  /* ─── Spatial HUD Camera Viewport ─────────────────────────── */
-  .cam-hud-viewport { width: 100%; height: 240px; background: #070a12; border-radius: 20px; overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center; border: 1.5px solid var(--border-color); box-shadow: inset 0 0 20px rgba(0,0,0,0.8); }
-  .cam-hud-overlay { position: absolute; inset: 0; pointer-events: none; }
-  .spatial-target-box { position: absolute; border: 2px solid #38bdf8; border-radius: 12px; background: rgba(56,189,248,0.12); padding: 4px; display: flex; flex-direction: column; justify-content: space-between; }
-  .spatial-label-badge { background: #0284c7; color: #fff; font-size: 9.5px; font-weight: 900; padding: 2px 6px; border-radius: 6px; text-transform: uppercase; width: fit-content; }
-  .spatial-clock-pill { background: rgba(15,23,42,0.9); color: #fef08a; font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 8px; border: 1px solid #eab308; }
-
-  /* ─── Voice Waveform Animation ────────────────────────────── */
-  .waveform-box { display: flex; align-items: center; justify-content: center; gap: 4px; height: 36px; padding: 0 10px; }
-  .wave-bar { width: 4px; height: 12px; background: var(--primary-blue); border-radius: 4px; animation: wave-anim 1s ease-in-out infinite; }
-  .wave-bar:nth-child(2) { animation-delay: 0.15s; }
-  .wave-bar:nth-child(3) { animation-delay: 0.3s; }
-  .wave-bar:nth-child(4) { animation-delay: 0.45s; }
-  .wave-bar:nth-child(5) { animation-delay: 0.6s; }
-  @keyframes wave-anim { 0%, 100% { height: 8px; } 50% { height: 32px; } }
-
-  /* ─── Hero Voice Button ───────────────────────────────────── */
-  .voice-hero-container { position: relative; display: flex; align-items: center; justify-content: center; padding: 8px 0; }
+  /* ─── Mic Button ──────────────────────────────────────────── */
   .voice-btn { width: 108px; height: 108px; border-radius: 50%; display: flex;
     flex-direction: column; align-items: center; justify-content: center; gap: 4px;
-    background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%); color: #fff; box-shadow: 0 10px 30px rgba(37,99,235,0.45);
-    transition: all .2s ease; font-size: 11px; font-weight: 800; text-transform: uppercase;
-    letter-spacing: .05em; z-index: 10; border: 2px solid rgba(255,255,255,0.3); cursor: pointer; }
-  [data-theme="contrast"] .voice-btn { background: #FFD700; color: #000; border-color: #000; }
-  .voice-btn:active { transform: scale(.94); }
-  .voice-btn.listening { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); box-shadow: 0 10px 30px rgba(239,68,68,0.5); }
-  .voice-btn svg { width: 40px; height: 40px; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.25)); }
+    background: linear-gradient(135deg, #2563eb, #6366f1); color: #fff;
+    box-shadow: 0 0 0 14px rgba(37,99,235,.15), 0 8px 24px rgba(37,99,235,.4);
+    transition: all .2s; font-size: 11px; font-weight: 900; text-transform: uppercase;
+    letter-spacing: .04em; }
+  .voice-btn:active { transform: scale(.93); }
+  .voice-btn.listening { background: #ef4444;
+    box-shadow: 0 0 0 18px rgba(239,68,68,.15), 0 8px 24px rgba(239,68,68,.4); }
+  .voice-btn svg { width: 42px; height: 42px; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  @keyframes pulse-ring { 0%{transform:scale(.95); box-shadow:0 0 0 0 rgba(37,99,235,.7)}
+    70%{transform:scale(1.04); box-shadow:0 0 0 22px rgba(37,99,235,0)}
+    100%{transform:scale(.95); box-shadow:0 0 0 0 rgba(37,99,235,0)} }
+  @keyframes pulse-ring-red { 0%{transform:scale(.95); box-shadow:0 0 0 0 rgba(239,68,68,.7)}
+    70%{transform:scale(1.04); box-shadow:0 0 0 26px rgba(239,68,68,0)}
+    100%{transform:scale(.95); box-shadow:0 0 0 0 rgba(239,68,68,0)} }
+  .voice-btn:not(.listening) { animation: pulse-ring 2.2s infinite; }
+  .voice-btn.listening { animation: pulse-ring-red 1.1s infinite; }
 
-  @keyframes pulse-aura {
-    0% { box-shadow: 0 0 0 0 rgba(59,130,246,0.45), 0 10px 30px rgba(37,99,235,0.4); }
-    70% { box-shadow: 0 0 0 22px rgba(59,130,246,0), 0 10px 30px rgba(37,99,235,0.4); }
-    100% { box-shadow: 0 0 0 0 rgba(59,130,246,0), 0 10px 30px rgba(37,99,235,0.4); }
-  }
-  .voice-btn:not(.listening) { animation: pulse-aura 2.2s infinite ease-out; }
+  /* ─── Toggle Switch ───────────────────────────────────────── */
+  .toggle { position: relative; width: 42px; height: 24px; flex-shrink: 0; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider { position: absolute; inset: 0; border-radius: 99px;
+    background: #e2e8f0; transition: .2s; cursor: pointer; }
+  .toggle-slider::before { content: ''; position: absolute; width: 18px; height: 18px;
+    left: 3px; bottom: 3px; border-radius: 50%; background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,.25); transition: .2s; }
+  .toggle input:checked + .toggle-slider { background: #2563eb; }
+  .toggle input:checked + .toggle-slider::before { transform: translateX(18px); }
 
-  /* ─── Bento Action Cards ─────────────────────────────────── */
+  /* ─── Camera Viewport ─────────────────────────────────────── */
+  .cam-viewport { width: 100%; height: 220px; background: #000; border-radius: 20px;
+    overflow: hidden; position: relative; display: flex; align-items: center;
+    justify-content: center; border: 2px solid #1e293b; }
+  .cam-viewport video { width: 100%; height: 100%; object-fit: cover; }
+  .cam-label { position: absolute; top: 10px; left: 10px;
+    background: rgba(0,0,0,.8); border: 1px solid #22c55e; border-radius: 20px;
+    padding: 4px 10px; font-size: 10px; font-weight: 900; color: #4ade80;
+    display: flex; align-items: center; gap: 6px; }
+  .cam-pulse { width: 7px; height: 7px; border-radius: 50%; background: #4ade80;
+    animation: pulse 1s infinite; }
+
+  /* ─── Heatmap Dot ─────────────────────────────────────────── */
+  .heatmap-dot { width: 13px; height: 13px; border-radius: 50%; flex-shrink: 0; margin-top: 2px; }
+  .heatmap-dot-red { background: #ef4444; box-shadow: 0 0 0 4px #fee2e2; }
+  .heatmap-dot-yellow { background: #f59e0b; box-shadow: 0 0 0 4px #fef3c7; }
+  .heatmap-dot-green { background: #22c55e; box-shadow: 0 0 0 4px #dcfce7; }
+
+  /* ─── Grid ────────────────────────────────────────────────── */
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .action-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 12px; text-align: left; transition: all .2s ease; display: flex; flex-direction: column; gap: 5px; box-shadow: var(--card-shadow); cursor: pointer; position: relative; overflow: hidden; }
+  .action-card { background: #fff; border: 1.5px solid #e2e8f0; border-radius: 18px;
+    padding: 14px; text-align: left; transition: all .15s; display: flex;
+    flex-direction: column; gap: 6px; }
   .action-card:active { transform: scale(.97); }
-  .action-card.featured { border-color: var(--border-glow); background: var(--bg-card-subtle); }
-  
-  .action-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(0,0,0,0.18); transition: transform 0.2s ease; }
-  .action-card:hover .action-icon { transform: scale(1.06); }
-  
-  .icon-complete { background: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%); }
-  .icon-read     { background: linear-gradient(135deg, #4f46e5 0%, #a855f7 100%); }
-  .icon-talk     { background: linear-gradient(135deg, #0d9488 0%, #10b981 100%); }
-  .icon-see      { background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%); }
-  .icon-heatmap  { background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%); }
-  .icon-spatial  { background: linear-gradient(135deg, #0284c7 0%, #3b82f6 100%); }
-  .icon-docqa    { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); }
+  .action-card.featured { border-color: #93c5fd; border-width: 2px; box-shadow: 0 2px 12px rgba(37,99,235,.1); }
+  .action-icon { width: 38px; height: 38px; border-radius: 12px; display: flex;
+    align-items: center; justify-content: center; }
+  .action-icon svg { width: 22px; height: 22px; color: #fff; }
+  .action-title { font-size: 15px; font-weight: 900; color: #0f172a; line-height: 1.1; }
+  .action-sub { font-size: 11px; color: #64748b; line-height: 1.35; }
+  .action-link { font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .04em; margin-top: 4px; }
 
-  .action-title { font-size: 13.5px; font-weight: 800; color: var(--text-heading); line-height: 1.1; letter-spacing: -0.01em; }
-  .action-sub { font-size: 10px; color: var(--text-muted); line-height: 1.35; font-weight: 500; }
-  .action-link { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; margin-top: 2px; display: flex; align-items: center; gap: 3px; }
+  /* ─── Inline SVG Icon System ──────────────────────────────── */
+  svg.icon { display: inline-block; vertical-align: middle;
+    fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round;
+    stroke-linejoin: round; }
 
-  /* ─── Form Inputs ─────────────────────────────────────────── */
+  /* ─── Form Input ──────────────────────────────────────────── */
   .field-wrap { position: relative; }
-  .field-input { width: 100%; padding: 12px 42px 12px 14px; border-radius: 12px; border: 1px solid var(--input-border); font-size: 13.5px; font-weight: 600; color: var(--input-text); background: var(--input-bg); outline: none; transition: all .15s ease; }
-  .field-input:focus { border-color: var(--primary-blue); box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
-  .field-mic-btn { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; border-radius: 10px; background: var(--primary-blue); color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: none; cursor: pointer; }
-  
+  .field-input { width: 100%; padding: 12px 44px 12px 14px; border-radius: 12px;
+    border: 1.5px solid #cbd5e1; font-size: 14px; font-weight: 600; color: #0f172a;
+    background: #f8fafc; outline: none; transition: all .15s; }
+  .field-input:focus { border-color: #2563eb; background: #fff;
+    box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
+  .field-mic-btn { position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+    width: 32px; height: 32px; border-radius: 8px; background: #2563eb; color: #fff;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .field-mic-btn.recording { background: #ef4444; animation: pulse 0.7s infinite; }
+
+  /* ─── Spinner ─────────────────────────────────────────────── */
+  .spinner { width: 40px; height: 40px; border: 4px solid rgba(37,99,235,.2);
+    border-top-color: #2563eb; border-radius: 50%; animation: spin .7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ─── Confetti canvas ─────────────────────────────────────── */
+  #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 100; border-radius: 38px; }
+
+  /* ─── Gesture Selector ────────────────────────────────────── */
   .gesture-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
-  .gesture-btn { padding: 9px 3px; border-radius: 10px; text-align: center; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-body); transition: all .15s; cursor: pointer; }
-  .gesture-btn.active { background: #10b981; color: #fff; border-color: #10b981; }
-  .gesture-en { font-size: 10.5px; font-weight: 800; }
+  .gesture-btn { padding: 8px 4px; border-radius: 10px; text-align: center;
+    border: 1.5px solid #e2e8f0; background: #fff; transition: all .15s; }
+  .gesture-btn.active { background: #16a34a; color: #fff; border-color: #16a34a; }
+  .gesture-btn:active { transform: scale(.92); }
+  .gesture-en { font-size: 11px; font-weight: 900; }
+  .gesture-hi { font-size: 9px; opacity: .75; }
 
-  .obj-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-  .obj-btn { padding: 10px 4px; border-radius: 12px; text-align: center; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-body); transition: all .15s; cursor: pointer; }
-  .obj-btn.active { background: #f59e0b; color: #fff; border-color: #f59e0b; font-weight: 800; }
-  .obj-en { font-size: 11px; font-weight: 800; }
+  /* ─── Object Selector ─────────────────────────────────────── */
+  .obj-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .obj-btn { padding: 10px 4px; border-radius: 12px; text-align: center;
+    border: 1.5px solid #e2e8f0; background: #fff; transition: all .15s; }
+  .obj-btn.active { background: #d97706; color: #fff; border-color: #d97706; }
+  .obj-btn:active { transform: scale(.92); }
+  .obj-en { font-size: 12px; font-weight: 900; }
+  .obj-hi { font-size: 10px; opacity: .75; }
 
-  /* ─── Global Unified Assistance Overlay Modal ────────────── */
-  .overlay-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); z-index: 500; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: all 0.25s ease; }
-  .overlay-backdrop.open { opacity: 1; pointer-events: auto; }
-  .overlay-modal { width: 100%; max-width: 440px; background: var(--bg-card); border-radius: 28px 28px 0 0; border-t: 1.5px solid var(--border-color); padding: 20px; box-shadow: 0 -10px 40px rgba(0,0,0,0.5); transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-  .overlay-backdrop.open .overlay-modal { transform: translateY(0); }
+  /* ─── Profile toggle row ──────────────────────────────────── */
+  .pref-row { display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 0; border-bottom: 1px solid #f1f5f9; }
+  .pref-row:last-child { border-bottom: none; }
+  .pref-label { font-size: 13px; font-weight: 700; color: #0f172a; }
+  .pref-sub { font-size: 11px; color: #94a3b8; }
 
-  #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
+  /* ─── Toast ───────────────────────────────────────────────── */
+  .toast { position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%);
+    background: #1e293b; color: #fff; font-size: 13px; font-weight: 700;
+    padding: 10px 20px; border-radius: 99px; white-space: nowrap; z-index: 200;
+    box-shadow: 0 4px 12px rgba(0,0,0,.3); animation: toast-in .25s ease; }
+  @keyframes toast-in { from{opacity:0;transform:translate(-50%,8px)} to{opacity:1;transform:translateX(-50%)} }
 
-  /* ─── Persistent Camera Floating Action Button ─────────────────────── */
-  .fab-cam-btn {
-    position: absolute; right: 16px; bottom: 74px; z-index: 40;
-    width: 52px; height: 52px; border-radius: 50%;
-    background: linear-gradient(135deg, #facc15 0%, #d97706 100%);
-    color: #000; display: flex; align-items: center; justify-content: center;
-    font-size: 24px; box-shadow: 0 8px 25px rgba(245, 158, 11, 0.5);
-    border: 2px solid #ffffff; cursor: pointer; transition: all 0.2s ease;
+  /* ─── ISL Skeleton SVG ────────────────────────────────────── */
+  .landmark-svg { width: 120px; height: 140px; opacity: .85; }
+
+  /* ─── Bounding box ────────────────────────────────────────── */
+  .bbox { position: absolute; border: 2.5px solid #4ade80; border-radius: 10px;
+    background: rgba(74,222,128,.08); display: flex; flex-direction: column;
+    justify-content: space-between; padding: 4px 5px; transition: all .5s ease; }
+  .bbox-label { font-size: 9px; font-weight: 900; font-family: monospace;
+    background: rgba(74,222,128,.85); color: #000; padding: 1px 4px; border-radius: 4px;
+    text-transform: uppercase; }
+  .bbox-conf { font-size: 9px; font-family: monospace; color: #4ade80;
+    background: rgba(0,0,0,.7); padding: 1px 4px; border-radius: 4px; align-self: flex-end; }
+
+  /* ─── Verification Certificate ────────────────────────────── */
+  .cert { background: linear-gradient(135deg, #f0fdf4 0%, #eff6ff 100%);
+    border: 2px solid #22c55e; border-radius: 20px; padding: 16px; }
+  .cert-token { font-family: monospace; font-size: 11px; font-weight: 900;
+    background: #dcfce7; color: #15803d; padding: 3px 9px; border-radius: 6px; }
+  .cert-row { display: flex; justify-content: space-between; font-size: 12px;
+    padding: 4px 0; border-bottom: 1px solid rgba(0,0,0,.06); }
+  .cert-row:last-child { border-bottom: none; }
+
+  /* fullscreen on narrow screens */
+  @media (max-width: 440px) {
+    #root { padding: 0; }
+    .phone-frame { max-width: 100%; height: 100vh; border-radius: 0; padding: 0;
+      background: transparent; box-shadow: none; }
+    .phone-screen { border-radius: 0; }
+    .phone-pill { display: none; }
   }
-  .fab-cam-btn:active { transform: scale(0.92); }
-
 </style>
 </head>
 <body>
-
-<div class="mobile-app-wrapper">
+<div id="root">
   <div class="phone-frame" id="phoneFrame">
+    <div class="phone-pill"><div class="phone-pill-dot"></div></div>
     <div class="phone-screen" id="phoneScreen">
-      <!-- NATIVE MOBILE TOP BAR -->
+      <!-- TOP BAR -->
       <header class="top-bar">
         <div class="status-bar" id="statusBar">
           <span>09:41</span>
@@ -335,115 +334,56 @@
             </div>
           </div>
           <div class="top-controls">
-            <!-- Global Copilot Overlay Launcher -->
-            <button class="tc-btn" title="Open Copilot Overlay" onclick="toggleOverlay()">✨ Help</button>
-            <button class="tc-btn" id="themeBtn" title="Switch Theme (Dark / Light / Contrast)" onclick="toggleTheme()">
-              <span id="themeIcon">🌙</span> <span id="themeLabel" style="font-size:10px">Dark</span>
-            </button>
             <button class="tc-btn" id="audioBtn" title="Toggle Voice Guidance" onclick="toggleAudio()">🔊</button>
+            <button class="tc-btn" id="hcBtn" title="Toggle High Contrast (WCAG AAA)" onclick="toggleHC()">◑</button>
+            <button class="tc-btn" id="lgBtn" title="Toggle Large Text" onclick="toggleLargeText()">A</button>
             <button class="lang-btn" id="langBtn" onclick="toggleLang()">🌐 हिं</button>
           </div>
         </div>
-
-        <!-- Unified Task Journey Stepper -->
-        <div class="journey-bar" id="journeyBar"></div>
       </header>
 
-      <!-- SCREEN CONTENT VIEWPORT -->
-      <main class="screen-body" id="screenBody"></main>
+      <!-- SCREEN BODY -->
+      <div class="screen-body" id="screenBody"></div>
 
-      <!-- NATIVE BOTTOM TAB NAVIGATION -->
+      <!-- BOTTOM NAV -->
       <nav class="bottom-nav">
         <div class="nav-grid" id="navGrid"></div>
         <div class="nav-home-bar"></div>
       </nav>
     </div>
     <canvas id="confetti-canvas"></canvas>
-
-    <!-- UNIFIED ASSISTANCE OVERLAY MODAL -->
-    <div class="overlay-backdrop" id="overlayBackdrop" onclick="if(event.target===this)toggleOverlay()">
-      <div class="overlay-modal">
-        <div class="row-between" style="margin-bottom:12px">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span style="font-size:18px">✨</span>
-            <h3 style="font-size:15px;font-weight:800;color:var(--text-heading)">Sahayak AI Unified Copilot Overlay</h3>
-          </div>
-          <button onclick="toggleOverlay()" class="btn-ghost" style="padding:4px 10px">✕ Close</button>
-        </div>
-        <div class="infobox" style="margin-bottom:12px;background:var(--bg-card-subtle);border-color:var(--border-glow)">
-          <div style="font-size:11px;font-weight:800;color:var(--primary-blue);text-transform:uppercase;margin-bottom:4px">Active Assistance Mode</div>
-          <div style="font-size:13px;font-weight:700;color:var(--text-heading)" id="overlayModeDesc">Combined Voice + Spatial Vision + Haptic Guidance Active</div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
-          <button class="btn-ghost" onclick="speak(t('सहायक एआई आपकी वॉइस और विजुअल सहायता के लिए तैयार है।','Sahayak AI copilot is active to guide you verbally and visually.'))">🔊 Repeat Audio</button>
-          <button class="btn-ghost" onclick="toggleTheme()">◑ Toggle Contrast</button>
-        </div>
-        <button class="btn-primary" onclick="toggleOverlay()">Dismiss & Continue Task</button>
-      </div>
-    </div>
   </div>
 </div>
 
 <script>
 // ═══════════════════════════════════════════════════════════════
-//  SAHAYAK AI UNIFIED ENGINE & MULTIMODAL STATE
+//  STATE
 // ═══════════════════════════════════════════════════════════════
 const state = {
-  screen: 'home',         // 'home' | 'camera' | 'spatial' | 'doc_qa' | 'complete' | 'talk' | 'heatmap' | 'profile'
-  journeyStage: 0,       // 0: Camera -> 1: Scan -> 2: Q&A -> 3: Form -> 4: Analytics
-  theme: 'dark',         // 'dark' | 'light' | 'contrast'
-  lang: 'Hindi',         // 'Hindi' | 'English'
-  lg: true,              // Large Typography
-  audio: true,           // TTS Voice Narration
-  haptic: true,          // Haptic Vibration Feedback
-  assistanceMode: 'combined', // 'voice' | 'visual' | 'haptic' | 'combined'
-  aiState: 'idle',       // 'idle' | 'capturing' | 'processing' | 'result' | 'low_confidence' | 'recoverable_error'
-  
-  // Real Camera Feature State
-  cameraFacing: 'environment', // 'environment' | 'user'
-  cameraState: 'idle', // 'idle' | 'live' | 'capturing' | 'analyzing' | 'result' | 'permission_denied'
-  cameraStream: null,
-  capturedImageBase64: null,
-  cameraResult: null,
-
-  // Spatial Vision & Clock Indicators
-  spatialDetections: [
-    { name: 'Water Bottle', clock: "2 o\'clock", dist: '0.8m (Close)', elev: '+15° (Eye Level)', conf: 0.98, text: 'Bisleri 1L' },
-    { name: 'Scholarship Notice', clock: "12 o\'clock", dist: '0.5m (Reach)', elev: '0° (Desk)', conf: 0.95, text: 'National Merit 2026' },
-    { name: 'Chair Obstacle', clock: "10 o\'clock", dist: '1.2m (Warning)', elev: '-20° (Floor)', conf: 0.91, text: '' }
-  ],
-  navInstruction: 'Forward 2 steps, slight right towards bottle',
-  navStatus: 'navigating',
-  
-  // Scene Understanding Summary
-  sceneSummary: 'Indoor desk setup with a scholarship notice at 12 o\'clock, water bottle at 2 o\'clock, and chair obstacle at 10 o\'clock.',
-  
-  // Document Q&A & Task Extraction
-  docQuestions: [
-    { qHi: 'अंतिम तिथि कब है?', qEn: 'What is the deadline?', aHi: 'अंतिम तिथि 30 सितंबर 2026 है।', aEn: 'The deadline is September 30, 2026.', ref: 'Notice Section 2, Page 1' },
-    { qHi: 'कौन से दस्तावेज़ चाहिए?', qEn: 'What documents are required?', aHi: 'आय प्रमाण पत्र (< ₹2.5L), आधार कार्ड और 10वीं मार्कशीट।', aEn: 'Income Certificate (< ₹2.5L), Aadhaar Card, and 10th Marksheet.', ref: 'Notice Section 4, Page 1' }
-  ],
-  qaInput: '',
-  extractedTask: { title: 'Complete National Merit Scholarship Form', desc: 'Submit 7-step scholarship form before Sept 30, 2026.', status: 'pending' },
-  
-  // Adaptive Suggestion Pattern
-  adaptiveSuggestion: { show: true, msgHi: 'ऑब्जर्व्ड पैटर्न: वॉइस डिक्टेशन से फ़ॉर्म 3x तेज़ भरा जा सकता है।', msgEn: 'Observed Pattern: Voice dictation can complete this form 3x faster.' },
-  
-  // Form Flow & Verification
+  screen: 'home',
+  lang: 'Hindi',   // 'Hindi' | 'English'
+  hc: false,       // high contrast
+  lg: true,        // large text
+  audio: true,     // voice guidance
   formFlow: null,
   formStep: 0,
   formAnswers: {},
   formVerified: false,
   verifyToken: '',
-  
   docData: null,
+  docLoading: true,
   detectedSign: 'HELP',
+  signCaption: 'सहायता चाहिए (I need Help)',
+  signConf: 0.96,
+  webcamStream: null,
   selectedObj: 'bottle',
+  objGuidance: '',
+  heatmap: [],
+  recommendation: {},
   backendOk: false,
   listening: false,
   voiceStatus: '',
   intentResult: null,
-  overlayOpen: false,
   synth: window.speechSynthesis || null,
   recognition: null,
 };
@@ -460,50 +400,46 @@ const demoAnswers = [
 
 const t = (hi, en) => state.lang === 'Hindi' ? hi : en;
 
-/* ─── COLORFUL HIGH-DEFINITION SVG LOGOS & ICONS ─────────────── */
+// ═══════════════════════════════════════════════════════════════
+//  ICONS (Inline SVG helpers)
+// ═══════════════════════════════════════════════════════════════
 const ICON = {
-  mic: `
-    <svg viewBox="0 0 24 24" width="42" height="42" fill="none">
-      <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" fill="#ffffff" stroke="#93c5fd" stroke-width="1.5"/>
-      <path d="M19 10v2a7 7 0 0 1-14 0v-2" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
-      <line x1="12" y1="19" x2="12" y2="23" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
-      <line x1="8" y1="23" x2="16" y2="23" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
-    </svg>`,
-  
-  mic_sm: `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>`,
-  complete_card: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2.5"/><path d="M9 9h6"/><path d="M9 13h4"/><polyline points="9 17 11 19 15 15" stroke="#38bdf8" stroke-width="2.5"/></svg>`,
-  read_card: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="2" y1="12" x2="22" y2="12" stroke="#c084fc" stroke-width="2.5"/><line x1="8" y1="16" x2="14" y2="16"/></svg>`,
-  talk_card: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-4 0v5"/><path d="M14 10V4a2 2 0 0 0-4 0v6"/><path d="M10 10.5V2a2 2 0 0 0-4 0v9"/><path d="M6 10a2 2 0 0 0-2 2v3a7 7 0 0 0 14 0v-4"/></svg>`,
-  see_card: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="#fde047"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg>`,
-  heatmap_card: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="20" x2="6" y2="12"/><line x1="12" y1="20" x2="12" y2="4" stroke="#f472b6"/><line x1="18" y1="20" x2="18" y2="9"/><circle cx="12" cy="4" r="2" fill="#ec4899"/></svg>`,
-  spatial_card: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 19 21 12 17 5 21 12 2"/></svg>`,
-  docqa_card: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
-
-  nav_camera: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`,
-  camera_card: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4" stroke="#facc15"/></svg>`,
-  nav_home: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
-  nav_spatial: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><polygon points="12 2 19 21 12 17 5 21 12 2"/></svg>`,
-  nav_docqa: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
-  nav_form: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`,
-  nav_talk: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>`,
-  nav_map: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,
-  nav_profile: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
-
-  volume: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>`,
-  arrow_r: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`,
-  arrow_l: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>`,
-  award: `<svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>`,
-  sparkle: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2L9.09 9.09 2 12l7.09 2.91L12 22l2.91-7.09L22 12l-7.09-2.91L12 2z"/></svg>`,
-  zap: `<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+  mic: `<svg class="icon" viewBox="0 0 24 24" width="24" height="24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>`,
+  mic_sm: `<svg class="icon" viewBox="0 0 24 24" width="16" height="16"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>`,
+  volume: `<svg class="icon" viewBox="0 0 24 24" width="16" height="16"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>`,
+  arrow_r: `<svg class="icon" viewBox="0 0 24 24" width="14" height="14"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`,
+  arrow_l: `<svg class="icon" viewBox="0 0 24 24" width="16" height="16"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>`,
+  check: `<svg class="icon" viewBox="0 0 24 24" width="16" height="16"><polyline points="20 6 9 17 4 12"/></svg>`,
+  award: `<svg class="icon" viewBox="0 0 24 24" width="32" height="32"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>`,
+  shield: `<svg class="icon" viewBox="0 0 24 24" width="16" height="16"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+  zap: `<svg class="icon" viewBox="0 0 24 24" width="11" height="11"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+  sparkle: `<svg class="icon" viewBox="0 0 24 24" width="16" height="16"><path d="M12 2L9.09 9.09 2 12l7.09 2.91L12 22l2.91-7.09L22 12l-7.09-2.91L12 2z"/></svg>`,
+  rotate: `<svg class="icon" viewBox="0 0 24 24" width="14" height="14"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>`,
+  thumbs: `<svg class="icon" viewBox="0 0 24 24" width="14" height="14"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>`,
+  video: `<svg class="icon" viewBox="0 0 24 24" width="16" height="16"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>`,
+  videooff: `<svg class="icon" viewBox="0 0 24 24" width="16" height="16"><path d="M16 16v1a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2m5.66 0H14a2 2 0 0 1 2 2v3.34"/><polygon points="23 7 16 12 23 17 23 7"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`,
+  map_pin: `<svg class="icon" viewBox="0 0 24 24" width="14" height="14"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>`,
+  bar: `<svg class="icon" viewBox="0 0 24 24" width="18" height="18"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,
 };
 
+// ═══════════════════════════════════════════════════════════════
+//  HAPTICS
+// ═══════════════════════════════════════════════════════════════
 const haptics = {
-  click: () => { if(state.haptic) try { navigator.vibrate?.(25); } catch(_){} },
-  confirm: () => { if(state.haptic) try { navigator.vibrate?.(60); } catch(_){} },
-  success: () => { if(state.haptic) try { navigator.vibrate?.([60,50,90]); } catch(_){} },
-  celebrate: () => { if(state.haptic) try { navigator.vibrate?.([70,40,100,40,150]); } catch(_){} },
+  click: () => { try { navigator.vibrate?.(25); } catch(_){} },
+  confirm: () => { try { navigator.vibrate?.(60); } catch(_){} },
+  success: () => { try { navigator.vibrate?.([60,50,90]); } catch(_){} },
+  celebrate: () => { try { navigator.vibrate?.([70,40,100,40,150]); } catch(_){} },
+  directional: (d) => { try {
+    if (d.includes('RIGHT')) navigator.vibrate?.([40,60,100]);
+    else if (d.includes('LEFT')) navigator.vibrate?.([100,60,40]);
+    else navigator.vibrate?.(50);
+  } catch(_){} },
 };
 
+// ═══════════════════════════════════════════════════════════════
+//  SPEECH
+// ═══════════════════════════════════════════════════════════════
 function speak(text) {
   if (!state.audio || !state.synth) return;
   try {
@@ -534,54 +470,38 @@ function startListening(onResult, onEnd, onError) {
   } catch(e) { onError?.('mic_error'); onEnd?.(); }
 }
 
-/* ─── REAL BACKEND API CLIENT ────────────────────────────────────── */
+// ═══════════════════════════════════════════════════════════════
+//  API SERVICE (FastAPI + Local Fallback)
+// ═══════════════════════════════════════════════════════════════
 const API = 'http://127.0.0.1:8000/api/v1';
 
 async function apiFetch(path, opts={}) {
+  if (!state.backendOk) throw new Error('backend_down');
   const ctrl = new AbortController();
-  const timeoutMs = opts.timeout || 5000;
-  const id = setTimeout(() => ctrl.abort(), timeoutMs);
-  try {
-    const res = await fetch(API + path, { ...opts, signal: ctrl.signal });
-    clearTimeout(id);
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    return await res.json();
-  } catch (err) {
-    clearTimeout(id);
-    throw err;
-  }
+  const id = setTimeout(() => ctrl.abort(), 2500);
+  const res = await fetch(API + path, { ...opts, signal: ctrl.signal });
+  clearTimeout(id);
+  if (!res.ok) throw new Error('api_error');
+  return res.json();
 }
 
 async function checkBackend() {
   try {
-    const res = await fetch(API + '/health', { cache: 'no-store' });
-    if (res.ok) {
-      const data = await res.json();
-      state.backendOk = true;
-      const dot = document.getElementById('statusDot');
-      const txt = document.getElementById('statusText');
-      if (dot) dot.className = 'status-dot online';
-      if (txt) txt.textContent = 'FastAPI v1 Connected';
-    } else {
-      throw new Error('health_error');
-    }
+    await apiFetch('/health');
+    state.backendOk = true;
+    document.getElementById('statusDot').className = 'status-dot online';
+    document.getElementById('statusText').textContent = 'API Online';
   } catch(_) {
     state.backendOk = false;
-    const dot = document.getElementById('statusDot');
-    const txt = document.getElementById('statusText');
-    if (dot) dot.className = 'status-dot local';
-    if (txt) txt.textContent = 'AI Engine Ready';
   }
 }
 
 function classifyIntent(query) {
   const q = query.toLowerCase();
-  if (/camera|कैमरा|stream|lens|hud|scan|photo/.test(q)) return { intent: 'CAMERA', conf: 0.99 };
-  if (/spatial|vision|clock|direction|distance|bottle/.test(q)) return { intent: 'SPATIAL', conf: 0.98 };
-  if (/qa|question|ask|document|नोटिस|deadline/.test(q)) return { intent: 'DOC_QA', conf: 0.96 };
-  if (/form|फ़ॉर्म|भर|scholarship|apply|step/.test(q)) return { intent: 'FORM_COMPLETION', conf: 0.96 };
+  if (/form|फ़ॉर्म|भर|scholarship|apply/.test(q)) return { intent: 'FORM_COMPLETION', conf: 0.96 };
+  if (/notice|नोटिस|document|दस्तावेज़|read|पढ़/.test(q)) return { intent: 'UNDERSTAND_DOCUMENT', conf: 0.94 };
   if (/sign|सांकेतिक|gesture|talk|isl/.test(q)) return { intent: 'COMMUNICATE', conf: 0.92 };
-  return { intent: 'VOICE_COPILOT', conf: 0.90 };
+  return { intent: 'SEE', conf: 0.90 };
 }
 
 function buildFormFlow() {
@@ -589,62 +509,154 @@ function buildFormFlow() {
   return {
     task_id: 'task_form_' + Math.floor(10000 + Math.random()*90000),
     total_steps: 7,
+    barriers: [
+      { cat: 'VISUAL', sev: 'HIGH', desc: isH ? '9pt बारीक द्वि-स्तंभ प्रारूप' : 'Dense 9pt 2-column form layout' },
+      { cat: 'MOTOR', sev: 'MEDIUM', desc: isH ? 'कागजी बक्सों में हस्तलेखन' : 'Manual handwriting in constricted boxes' },
+    ],
     steps: [
-      { fi:'full_name', label: isH?'पूरा नाम':'Full Name', prompt: isH?'फ़ॉर्म में 7 ज़रूरी जानकारियां हैं। पहला सवाल: आपका पूरा नाम?':'7 required fields. Step 1: What is your full name?', display: isH?'चरण 1/7: पूरा नाम':'Step 1/7: Full Name' },
-      { fi:'dob', label: isH?'जन्मतिथि':'Date of Birth', prompt: isH?'धन्यवाद। आपकी जन्मतिथि? (दिन/महीना/साल)':'Thank you. Your date of birth? (DD/MM/YYYY)', display: isH?'चरण 2/7: जन्मतिथि':'Step 2/7: Date of Birth' },
-      { fi:'address', label: isH?'स्थायी पता':'Permanent Address', prompt: isH?'अपना पूरा स्थायी पता बताएं।':'Please provide your full permanent address.', display: isH?'चरण 3/7: स्थायी पता':'Step 3/7: Address' },
-      { fi:'category', label: isH?'आरक्षण वर्ग':'Category', prompt: isH?'आपकी श्रेणी क्या है? General, OBC, SC, या ST?':'Your category? General, OBC, SC, or ST?', display: isH?'चरण 4/7: श्रेणी':'Step 4/7: Category' },
-      { fi:'annual_income', label: isH?'वार्षिक आय':'Annual Income', prompt: isH?'परिवार की वार्षिक आय कितनी है?':'What is your annual household income?', display: isH?'चरण 5/7: वार्षिक आय':'Step 5/7: Annual Income' },
-      { fi:'aadhaar', label: isH?'आधार संख्या':'Aadhaar Number', prompt: isH?'12 अंकों का आधार नंबर बताएं।':'Please provide your 12-digit Aadhaar number.', display: isH?'चरण 6/7: आधार संख्या':'Step 6/7: Aadhaar Number' },
-      { fi:'bank_account', label: isH?'बैंक खाता':'Bank & IFSC', prompt: isH?'अंतिम चरण: बैंक खाता और IFSC कोड बताएं।':'Final step: Bank account number and IFSC code.', display: isH?'चरण 7/7: बैंक खाता व IFSC':'Step 7/7: Bank Account & IFSC' },
+      { fi:'full_name', label: isH?'पूरा नाम':'Full Name',
+        prompt: isH?'फ़ॉर्म में 7 ज़रूरी जानकारियां हैं। पहला सवाल: आपका पूरा नाम?':'7 required fields. Step 1: What is your full name?',
+        display: isH?'चरण 1/7: पूरा नाम':'Step 1/7: Full Name' },
+      { fi:'dob', label: isH?'जन्मतिथि':'Date of Birth',
+        prompt: isH?'धन्यवाद। आपकी जन्मतिथि? (दिन/महीना/साल)':'Thank you. Your date of birth? (DD/MM/YYYY)',
+        display: isH?'चरण 2/7: जन्मतिथि':'Step 2/7: Date of Birth' },
+      { fi:'address', label: isH?'स्थायी पता':'Permanent Address',
+        prompt: isH?'अपना पूरा स्थायी पता बताएं।':'Please provide your full permanent address.',
+        display: isH?'चरण 3/7: स्थायी पता':'Step 3/7: Address' },
+      { fi:'category', label: isH?'आरक्षण वर्ग':'Category',
+        prompt: isH?'आपकी श्रेणी क्या है? General, OBC, SC, या ST?':'Your category? General, OBC, SC, or ST?',
+        display: isH?'चरण 4/7: श्रेणी':'Step 4/7: Category' },
+      { fi:'annual_income', label: isH?'वार्षिक आय':'Annual Income',
+        prompt: isH?'परिवार की वार्षिक आय कितनी है?':'What is your annual household income?',
+        display: isH?'चरण 5/7: वार्षिक आय':'Step 5/7: Annual Income' },
+      { fi:'aadhaar', label: isH?'आधार संख्या':'Aadhaar Number',
+        prompt: isH?'12 अंकों का आधार नंबर बताएं।':'Please provide your 12-digit Aadhaar number.',
+        display: isH?'चरण 6/7: आधार संख्या':'Step 6/7: Aadhaar Number' },
+      { fi:'bank_account', label: isH?'बैंक खाता':'Bank & IFSC',
+        prompt: isH?'अंतिम चरण: बैंक खाता और IFSC कोड बताएं।':'Final step: Bank account number and IFSC code.',
+        display: isH?'चरण 7/7: बैंक खाता व IFSC':'Step 7/7: Bank Account & IFSC' },
     ]
   };
 }
 
+function buildDocData() {
+  const isH = state.lang === 'Hindi';
+  return {
+    title: isH ? 'राष्ट्रीय मेधावी छात्रवृत्ति सूचना 2026' : 'National Merit Scholarship Notification 2026',
+    deadlines: ['September 30, 2026 ' + (isH?'(अंतिम तिथि)':'')],
+    docs: [
+      isH?'आय प्रमाण पत्र (Income < ₹2.5L)':'Income Certificate (< ₹2.5 Lakhs)',
+      isH?'आधार कार्ड (Aadhaar Card)':'Aadhaar Card',
+      isH?'कक्षा 10 अंकतालिका':'Class 10 Marksheet',
+      isH?'बैंक पासबुक':'Bank Passbook',
+    ],
+    summary: isH
+      ? 'यह भारत सरकार की राष्ट्रीय मेधावी छात्रवृत्ति योजना 2026 की सूचना है। अंतिम तिथि 30 सितंबर 2026 है। आपको आय प्रमाण पत्र, आधार कार्ड और 10वीं की मार्कशीट की आवश्यकता होगी। सहायक copilot आवेदन में मदद कर सकता है।'
+      : 'This is the National Merit Scholarship 2026 official notice. Deadline: September 30, 2026. Required: Income Certificate (<₹2.5L), Aadhaar Card, and Class 10 marksheet. Sahayak Copilot can guide you through the form.',
+    spoken: isH
+      ? 'अंतिम तिथि 30 सितंबर है। आपको आय प्रमाण पत्र और आधार कार्ड चाहिए। क्या मैं फ़ॉर्म भरने में मदद करूँ?'
+      : 'Deadline is September 30. You need Income Certificate and Aadhaar Card. Should I help fill the form?',
+  };
+}
+
+const signs = {
+  HELP: {hi:'सहायता चाहिए', en:'I need Help', spoken_hi:'मुझे सहायता चाहिए', spoken_en:'I need help', conf:0.96},
+  THANK_YOU: {hi:'धन्यवाद', en:'Thank You', spoken_hi:'बहुत धन्यवाद', spoken_en:'Thank you very much', conf:0.94},
+  WATER: {hi:'पानी चाहिए', en:'Water Please', spoken_hi:'मुझे पानी चाहिए', spoken_en:'Water please', conf:0.95},
+  YES: {hi:'हाँ (YES)', en:'Yes / Agreed', spoken_hi:'हाँ, बिल्कुल', spoken_en:'Yes, confirmed', conf:0.97},
+  NO: {hi:'नहीं (NO)', en:'No / Disagree', spoken_hi:'नहीं', spoken_en:'No', conf:0.96},
+};
+
+const objects = {
+  bottle: {
+    hi:'बोतल आपके दाईं ओर हाथ की पहुंच में है।',
+    en:'Your bottle is slightly to your right, within arm reach.',
+    haptic:'PULSE_RIGHT', bbox:{right:'12%',top:'18%',width:'28%',height:'55%'},
+  },
+  keys: {
+    hi:'चाबियां मेज पर बाईं ओर रखी हैं।',
+    en:'Keys are on the desk towards your left.',
+    haptic:'PULSE_LEFT', bbox:{left:'10%',top:'30%',width:'26%',height:'30%'},
+  },
+  phone: {
+    hi:'फोन सीधे आपके सामने मेज के केंद्र में है।',
+    en:'Phone is directly in front of you at table center.',
+    haptic:'PULSE_CENTER', bbox:{left:'32%',top:'22%',width:'36%',height:'44%'},
+  },
+  document: {
+    hi:'दस्तावेज़ मेज पर सीधे आपके सामने रखा है।',
+    en:'Document is centered directly in front of you.',
+    haptic:'PULSE_CENTER', bbox:{left:'20%',top:'20%',width:'60%',height:'50%'},
+  },
+};
+
+const heatmapData = [
+  {dot:'red',  inter:'Physical Document Upload & Alignment',
+   reason:'Camera angle tilt caused 2 retries', retries:2},
+  {dot:'yellow', inter:'Multi-part Address Input',
+   reason:'Voice transcription needed clarification', retries:1},
+  {dot:'green', inter:'Name & Category Selection',
+   reason:'Confirmed first-try with 100% accuracy', retries:0},
+  {dot:'green', inter:'12-Digit Aadhaar Dictation',
+   reason:'4-4-4 chunking parsed seamlessly', retries:0},
+];
+
+// ═══════════════════════════════════════════════════════════════
+//  CONFETTI
+// ═══════════════════════════════════════════════════════════════
+function fireConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.parentElement.clientWidth;
+  canvas.height = canvas.parentElement.clientHeight;
+  const particles = Array.from({length:90}, () => ({
+    x: canvas.width/2 + (Math.random()-0.5)*200,
+    y: canvas.height*0.55,
+    vx: (Math.random()-0.5)*8,
+    vy: -(Math.random()*8+4),
+    r: Math.random()*6+3,
+    color: ['#2563eb','#22c55e','#f59e0b','#6366f1','#ec4899','#06b6d4'][Math.floor(Math.random()*6)],
+    life: 1,
+  }));
+  let frame;
+  function draw() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particles.forEach(p => {
+      p.x += p.vx; p.vy += 0.25; p.y += p.vy; p.life -= 0.015;
+      if (p.life <= 0) return;
+      ctx.globalAlpha = p.life;
+      ctx.fillStyle = p.color;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+    if (particles.some(p=>p.life>0)) frame = requestAnimationFrame(draw);
+    else { ctx.clearRect(0,0,canvas.width,canvas.height); }
+  }
+  cancelAnimationFrame(frame);
+  draw();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  THEME TOGGLES
+// ═══════════════════════════════════════════════════════════════
 function applyTheme() {
-  const root = document.documentElement;
+  const frame = document.getElementById('phoneFrame');
+  const hcBtn = document.getElementById('hcBtn');
+  const lgBtn = document.getElementById('lgBtn');
   const audioBtn = document.getElementById('audioBtn');
-  const themeBtn = document.getElementById('themeBtn');
-  const themeIcon = document.getElementById('themeIcon');
-  const themeLabel = document.getElementById('themeLabel');
-
-  root.setAttribute('data-theme', state.theme);
-
-  if (state.theme === 'dark') {
-    if (themeIcon) themeIcon.textContent = '🌙';
-    if (themeLabel) themeLabel.textContent = 'Dark';
-    if (themeBtn) themeBtn.className = 'tc-btn active';
-  } else if (state.theme === 'light') {
-    if (themeIcon) themeIcon.textContent = '☀️';
-    if (themeLabel) themeLabel.textContent = 'Light';
-    if (themeBtn) themeBtn.className = 'tc-btn';
-  } else if (state.theme === 'contrast') {
-    if (themeIcon) themeIcon.textContent = '◑';
-    if (themeLabel) themeLabel.textContent = 'Contrast';
-    if (themeBtn) themeBtn.className = 'tc-btn active';
-  }
-
-  if (audioBtn) {
-    if (state.audio) { audioBtn.textContent = '🔊'; audioBtn.classList.add('active'); }
-    else { audioBtn.textContent = '🔇'; audioBtn.classList.remove('active'); }
-  }
-  
-  const appTitle = document.getElementById('appTitle');
-  const langBtn = document.getElementById('langBtn');
-  if (appTitle) appTitle.textContent = state.lang === 'Hindi' ? 'सहायक AI' : 'SAHAYAK AI';
-  if (langBtn) langBtn.textContent = state.lang === 'Hindi' ? '🌐 हिं' : '🌐 EN';
-  renderJourneyBar();
+  if (state.hc) { frame.classList.add('hc'); hcBtn.classList.add('hc-active'); }
+  else { frame.classList.remove('hc'); hcBtn.classList.remove('hc-active'); }
+  if (state.lg) { frame.classList.add('lg'); lgBtn.classList.add('active'); }
+  else { frame.classList.remove('lg'); lgBtn.classList.remove('active'); }
+  if (state.audio) { audioBtn.textContent = '🔊'; audioBtn.classList.add('active'); }
+  else { audioBtn.textContent = '🔇'; audioBtn.classList.remove('active'); }
+  // Update app title
+  document.getElementById('appTitle').textContent = state.lang === 'Hindi' ? 'सहायक AI' : 'SAHAYAK AI';
+  document.getElementById('langBtn').textContent = state.lang === 'Hindi' ? '🌐 हिं' : '🌐 EN';
   renderNav();
 }
-
-function toggleTheme() {
-  haptics.click();
-  if (state.theme === 'dark') state.theme = 'light';
-  else if (state.theme === 'light') state.theme = 'contrast';
-  else state.theme = 'dark';
-  applyTheme(); render();
-}
-
+function toggleHC() { haptics.click(); state.hc = !state.hc; applyTheme(); render(); }
+function toggleLargeText() { haptics.click(); state.lg = !state.lg; applyTheme(); }
 function toggleAudio() {
   haptics.click();
   if (state.audio && state.synth) state.synth.cancel();
@@ -655,219 +667,193 @@ function toggleLang() {
   state.lang = state.lang === 'Hindi' ? 'English' : 'Hindi';
   applyTheme(); render();
 }
-function toggleOverlay() {
-  haptics.click();
-  state.overlayOpen = !state.overlayOpen;
-  const backdrop = document.getElementById('overlayBackdrop');
-  if (backdrop) backdrop.classList.toggle('open', state.overlayOpen);
-}
 
-const JOURNEY_STAGES = [
-  { id: 'camera', nameHi: '1. कैमरा HUD', nameEn: '1. Camera HUD' },
-  { id: 'spatial', nameHi: '2. विज़न', nameEn: '2. Vision' },
-  { id: 'doc_qa', nameHi: '3. Q&A', nameEn: '3. Doc Q&A' },
-  { id: 'complete', nameHi: '4. फ़ॉर्म', nameEn: '4. Form' },
-  { id: 'heatmap', nameHi: '5. एनालिटिक्स', nameEn: '5. Analytics' }
-];
-
-function renderJourneyBar() {
-  const bar = document.getElementById('journeyBar');
-  if (!bar) return;
-  bar.innerHTML = JOURNEY_STAGES.map((s, idx) => `
-    <div class="journey-step-chip ${state.screen===s.id?'active':idx<state.journeyStage?'done':''}" onclick="navigate('${s.id}')">
-      <span>${state.lang==='Hindi'?s.nameHi:s.nameEn}</span>
-    </div>`).join('');
-}
-
+// ═══════════════════════════════════════════════════════════════
+//  NAV
+// ═══════════════════════════════════════════════════════════════
 const NAV_ITEMS = [
-  { id:'home',          labelHi:'होम',     labelEn:'Home',    icon: ICON.nav_home     },
-  { id:'camera',        labelHi:'कैमरा',   labelEn:'Camera',  icon: ICON.nav_camera   },
-  { id:'spatial',       labelHi:'विज़न',   labelEn:'Vision',  icon: ICON.nav_spatial  },
-  { id:'doc_qa',        labelHi:'Q&A',     labelEn:'Q&A',     icon: ICON.nav_docqa    },
-  { id:'complete',      labelHi:'फ़ॉर्म',  labelEn:'Form',   icon: ICON.nav_form     },
-  { id:'talk',          labelHi:'इशारे',  labelEn:'ISL',    icon: ICON.nav_talk     },
-  { id:'heatmap',       labelHi:'हीटमैप', labelEn:'Map',    icon: ICON.nav_map      },
-  { id:'profile',       labelHi:'ट्विन',  labelEn:'Twin',   icon: ICON.nav_profile  },
+  { id:'home',     labelHi:'होम',     labelEn:'Home',    icon:'⌂'  },
+  { id:'complete', labelHi:'फ़ॉर्म',  labelEn:'Form',   icon:'✓'  },
+  { id:'read',     labelHi:'पढ़ें',   labelEn:'Read',   icon:'📄' },
+  { id:'talk',     labelHi:'इशारे',  labelEn:'ISL',    icon:'🤙' },
+  { id:'see',      labelHi:'देखें',  labelEn:'See',    icon:'🔍' },
+  { id:'heatmap',  labelHi:'हीटमैप', labelEn:'Map',    icon:'📊' },
+  { id:'profile',  labelHi:'ट्विन',  labelEn:'Twin',   icon:'👤' },
 ];
 
 function renderNav() {
   const ng = document.getElementById('navGrid');
-  if (!ng) return;
   ng.innerHTML = NAV_ITEMS.map(n => `
     <button class="nav-btn ${state.screen===n.id?'active':''}" onclick="navigate('${n.id}')">
-      ${n.icon}
+      <span style="font-size:16px">${n.icon}</span>
       <span class="nav-label">${state.lang==='Hindi'?n.labelHi:n.labelEn}</span>
     </button>`).join('');
 }
 
-
-function toggleCameraFacing() {
-  haptics.click();
-  stopCameraStream();
-  state.cameraFacing = state.cameraFacing === 'environment' ? 'user' : 'environment';
-  state.cameraState = 'idle';
-  render();
-}
-
-function stopCameraStream() {
-  if (state.cameraStream) {
-    state.cameraStream.getTracks().forEach(t => t.stop());
-    state.cameraStream = null;
-  }
-}
-
 function navigate(id) {
   haptics.click();
-  if (state.synth) state.synth.cancel();
-  if (state.screen === 'camera' && id !== 'camera') {
-    stopCameraStream();
+  // Stop webcam if leaving sign talk
+  if (state.screen === 'talk' && state.webcamStream) {
+    state.webcamStream.getTracks().forEach(t=>t.stop());
+    state.webcamStream = null;
   }
+  if (state.synth) state.synth.cancel();
   state.screen = id;
-  renderJourneyBar();
   renderNav();
   render();
 }
 
+// ═══════════════════════════════════════════════════════════════
+//  RENDER DISPATCHER
+// ═══════════════════════════════════════════════════════════════
 function render() {
   const body = document.getElementById('screenBody');
-  if (!body) return;
   switch(state.screen) {
-    case 'home':          body.innerHTML = renderHome(); break;
-    case 'camera':        body.innerHTML = renderCamera(); bindCamera(); break;
-    case 'spatial':       body.innerHTML = renderSpatial(); break;
-    case 'doc_qa':        body.innerHTML = renderDocQA(); break;
-    case 'complete':      body.innerHTML = renderComplete(); bindComplete(); break;
-    case 'talk':          body.innerHTML = renderTalk(); break;
-    case 'heatmap':       body.innerHTML = renderHeatmap(); break;
-    case 'profile':       body.innerHTML = renderProfile(); break;
+    case 'home':     body.innerHTML = renderHome(); break;
+    case 'complete': body.innerHTML = renderComplete(); bindComplete(); break;
+    case 'read':     body.innerHTML = renderRead(); initRead(); break;
+    case 'talk':     body.innerHTML = renderTalk(); break;
+    case 'see':      body.innerHTML = renderSee(); break;
+    case 'heatmap':  body.innerHTML = renderHeatmap(); break;
+    case 'profile':  body.innerHTML = renderProfile(); break;
     default: body.innerHTML = renderHome();
   }
 }
 
+// ═══════════════════════════════════════════════════════════════
+//  HOME SCREEN
+// ═══════════════════════════════════════════════════════════════
 function renderHome() {
   const isH = state.lang === 'Hindi';
   const samplePrompts = isH
-    ? [{l:'कैमरा स्कैनर',q:'कैमरा स्कैनर खोलें'}, {l:'घड़ी दिशा',q:'वस्तुओं की घड़ी दिशा बताओ'}, {l:'Q&A पूछें',q:'नोटिस में क्या लिखा है?'}, {l:'फ़ॉर्म भरें',q:'छात्रवृत्ति फ़ॉर्म भरो'}]
-    : [{l:'Camera Scan',q:'Open camera scanner'}, {l:'Clock Vision',q:'Show 12 oclock object directions'}, {l:'Doc Q&A',q:'Ask document question'}, {l:'Fill Form',q:'Fill scholarship form'}];
+    ? [{l:'फ़ॉर्म भरें',q:'छात्रवृत्ति फ़ॉर्म भरने में मदद करो'},
+       {l:'नोटिस समझें',q:'नोटिस में क्या ज़रूरी है?'},
+       {l:'इशारे',q:'सांकेतिक भाषा अनुवाद करो'},
+       {l:'बोतल खोजें',q:'मेरी बोतल कहां है?'}]
+    : [{l:'Fill Form',q:'Help me fill this scholarship form'},
+       {l:'Read Notice',q:'What is important in this notice?'},
+       {l:'Sign Talk',q:'Translate sign language'},
+       {l:'Find Bottle',q:'Find my water bottle'}];
 
   const statusText = state.listening
-    ? (isH ? `<span style="color:#ef4444;font-weight:800">${t('सुन रहा हूँ... बोलिए...','Listening... speak request...')}</span>` : '')
+    ? (isH ? `<span style="color:#ef4444;font-weight:900;animation:pulse 0.6s infinite">${t('सुन रहा हूँ...','Listening...')}</span>` : '')
     : state.intentResult
-      ? `<span style="color:var(--accent-teal);font-weight:800">${t('समझा गया: ','Understood: ')}${state.intentResult}</span>`
-      : state.voiceStatus || t('माइक दबाएं या नीचे से मोड चुनें','Tap mic or select mode below');
+      ? `<span style="color:#16a34a;font-weight:700">${t('समझा गया: ','Understood: ')}${state.intentResult}</span>`
+      : state.voiceStatus || t('माइक दबाएं या नीचे से चुनें','Tap mic or choose below');
 
   return `
   <div class="screen-pad">
-    <!-- Adaptive Recommendation Banner -->
-    ${state.adaptiveSuggestion.show ? `
-    <div class="card" style="background:var(--bg-card-subtle);border-color:var(--border-glow);padding:12px">
-      <div class="row-between" style="margin-bottom:6px">
-        <span class="badge badge-blue">⚡ Adaptive Copilot Suggestion</span>
-        <button onclick="state.adaptiveSuggestion.show=false;render()" class="btn-ghost" style="padding:2px 6px">✕</button>
+    <!-- Twin Badge -->
+    <div class="card" onclick="navigate('profile')" style="cursor:pointer;background:linear-gradient(135deg,#eff6ff,#eef2ff)">
+      <div class="row-between" style="margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:6px">
+          ${ICON.sparkle}<span style="font-size:11px;font-weight:900;letter-spacing:.05em;text-transform:uppercase">
+            ${t('सुलभता प्रोफ़ाइल सक्रिय','ACCESSIBILITY TWIN ACTIVE')}
+          </span>
+        </div>
+        <span style="font-size:11px;font-weight:700;color:#2563eb">${t('बदलें','Edit')} ${ICON.arrow_r}</span>
       </div>
-      <p style="font-size:11.5px;color:var(--text-body);margin-bottom:8px">${isH?state.adaptiveSuggestion.msgHi:state.adaptiveSuggestion.msgEn}</p>
-      <div class="row-between">
-        <button onclick="navigate('complete')" class="btn-primary" style="padding:6px 12px;font-size:11px;width:auto">Enable Dictation →</button>
-        <span style="font-size:10px;color:var(--text-muted)">User-controlled privacy guaranteed</span>
+      <div class="chip-row">
+        <span class="chip">${t('हिंदी','English')}</span>
+        <span class="chip">${t('आवाज़ प्राथमिकता','Voice First')}</span>
+        <span class="chip">${t('एक चरण','One-Step')}</span>
+        <span class="chip">${t('सरल भाषा','Simplified')}</span>
       </div>
-    </div>` : ''}
+    </div>
 
-    <div style="text-align:center;padding:2px 0">
-      <h2 style="font-size:1.4rem;font-weight:800;color:var(--text-heading);letter-spacing:-0.03em;line-height:1.2">
+    <!-- Prompt text -->
+    <div style="text-align:center;padding:4px 0">
+      <h2 style="font-size:1.4rem;font-weight:900;color:#0f172a;letter-spacing:-.3px">
         ${t('मैं आपकी क्या मदद करूँ?','How can I assist you?')}
       </h2>
-      <p style="font-size:11.5px;margin-top:4px;min-height:22px;color:var(--text-muted);font-weight:600">${statusText}</p>
+      <p style="font-size:12px;margin-top:5px;min-height:28px">${statusText}</p>
     </div>
 
-    <!-- Glowing Voice Mic Button -->
-    <div class="voice-hero-container">
+    <!-- Main Mic Button -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:14px">
       <button class="voice-btn ${state.listening?'listening':''}" onclick="handleVoiceMic()" id="micBtn">
         ${ICON.mic}
-        <span style="margin-top:2px">${state.listening ? t('सुन रहा हूँ','Listening') : t('बोलें','Speak')}</span>
+        <span>${state.listening ? t('सुन रहा हूँ','Listening') : t('बोलें','Speak')}</span>
       </button>
-    </div>
 
-    <!-- Multimodal Assistance Selector Chips -->
-    <div class="card" style="padding:10px">
-      <div style="font-size:10px;font-weight:800;color:var(--text-muted);text-transform:uppercase;margin-bottom:6px">Select Assistance Mode</div>
-      <div class="chip-row">
-        <button class="chip ${state.assistanceMode==='combined'?'active':''}" onclick="state.assistanceMode='combined';render()">✨ Combined (Voice+Visual+Haptic)</button>
-        <button class="chip ${state.assistanceMode==='voice'?'active':''}" onclick="state.assistanceMode='voice';render()">🔊 Voice First</button>
-        <button class="chip ${state.assistanceMode==='visual'?'active':''}" onclick="state.assistanceMode='visual';render()">👁️ Visual HUD</button>
+      <!-- Quick prompt pills -->
+      <div style="display:flex;flex-wrap:wrap;gap:7px;justify-content:center;max-width:320px">
+        ${samplePrompts.map(p => `
+          <button onclick="handleSamplePrompt('${p.q}')"
+            style="padding:6px 12px;border-radius:20px;border:1.5px solid #e2e8f0;
+              background:#fff;font-size:11px;font-weight:700;color:#475569;
+              display:flex;align-items:center;gap:5px;transition:all .15s"
+            onmouseover="this.style.background='#eff6ff'"
+            onmouseout="this.style.background='#fff'">
+            ${ICON.zap}<span>${p.l}</span>
+          </button>`).join('')}
       </div>
     </div>
 
-    <!-- Prompt Chips -->
-    <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center">
-      ${samplePrompts.map(p => `
-        <button onclick="handleSamplePrompt('${p.q}')"
-          style="padding:6px 12px;border-radius:20px;border:1px solid var(--border-color);
-            background:var(--bg-card);font-size:11px;font-weight:700;color:var(--text-body);
-            display:flex;align-items:center;gap:5px;cursor:pointer">
-          ${ICON.zap}<span style="color:var(--primary-blue)">${p.l}</span>
-        </button>`).join('')}
-    </div>
-
-    <!-- Primary Capability Bento Action Cards -->
+    <!-- 2x2 Capability Grid -->
     <div class="grid-2">
-      <!-- FEATURED CAMERA CARD -->
-      <button class="action-card featured" onclick="navigate('camera')" style="grid-column: span 2; border-color:#facc15; background:linear-gradient(135deg, rgba(250,204,21,0.15) 0%, rgba(15,23,42,0.9) 100%)">
-        <div class="action-icon" style="background:#facc15;color:#000">
-          ${ICON.camera_card}
-        </div>
-        <div class="action-title">${t('कैमरा असिस्टेंट (Real HUD)','REAL-TIME CAMERA ASSISTANT')}</div>
-        <div class="action-sub">${t('लाइव कैमरा प्रिव्यू, फ़्रेम कैप्चर, 12h क्लॉक व AI OCR','Live camera preview, frame capture & AI analysis')}</div>
-        <div class="action-link" style="color:#facc15">${t('कैमरा चालू करें →','Launch Camera Stream →')}</div>
-      </button>
-
-      <button class="action-card" onclick="navigate('spatial')">
-        <div class="action-icon icon-spatial">
-          ${ICON.spatial_card}
-        </div>
-        <div class="action-title">${t('12h Spatial Vision','SPATIAL VISION')}</div>
-        <div class="action-sub">${t('घड़ी दिशा व निकटता संकेत','Clock direction & proximity')}</div>
-        <div class="action-link" style="color:var(--primary-blue)">${t('शुरू करें →','Launch →')}</div>
-      </button>
-
-      <button class="action-card" onclick="navigate('doc_qa')">
-        <div class="action-icon icon-docqa">
-          ${ICON.docqa_card}
-        </div>
-        <div class="action-title">${t('नोटिस Q&A','DOCUMENT Q&A')}</div>
-        <div class="action-sub">${t('सवाल पूछें व टास्क बनाएं','Ask & extract tasks')}</div>
-        <div class="action-link" style="color:var(--primary-indigo)">${t('खोलें →','Open →')}</div>
-      </button>
-
-      <button class="action-card" onclick="navigate('complete')">
-        <div class="action-icon icon-complete">
-          ${ICON.complete_card}
+      <button class="action-card featured" onclick="navigate('complete')">
+        <div class="action-icon" style="background:#2563eb">
+          <svg class="icon" viewBox="0 0 24 24" width="22" height="22"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
         </div>
         <div class="action-title">${t('फ़ॉर्म भरें','COMPLETE')}</div>
-        <div class="action-sub">${t('7-चरण छात्रवृत्ति आवेदन','7-step scholarship form')}</div>
-        <div class="action-link" style="color:var(--primary-blue)">${t('आवेदन →','Apply →')}</div>
+        <div class="action-sub">${t('7-चरण छात्रवृत्ति आवेदन','7-step scholarship application')}</div>
+        <div class="action-link" style="color:#2563eb">${t('शुरू करें →','Launch →')}</div>
+      </button>
+
+      <button class="action-card" onclick="navigate('read')">
+        <div class="action-icon" style="background:#6366f1">
+          <svg class="icon" viewBox="0 0 24 24" width="22" height="22"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </div>
+        <div class="action-title">${t('पढ़ें','READ')}</div>
+        <div class="action-sub">${t('नोटिस व समय-सीमा समझें','OCR & deadline extraction')}</div>
+        <div class="action-link" style="color:#6366f1">${t('विश्लेषण →','Analyze →')}</div>
       </button>
 
       <button class="action-card" onclick="navigate('talk')">
-        <div class="action-icon icon-talk">
-          ${ICON.talk_card}
+        <div class="action-icon" style="background:#16a34a">
+          <svg class="icon" viewBox="0 0 24 24" width="22" height="22"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
         </div>
         <div class="action-title">${t('सांकेतिक (ISL)','SIGN TALK')}</div>
-        <div class="action-sub">${t('3D हस्त मुद्रा अनुवाद','3D Hand Landmarks')}</div>
-        <div class="action-link" style="color:var(--accent-teal)">${t('अनुवाद →','Translate →')}</div>
+        <div class="action-sub">${t('भारतीय सांकेतिक भाषा','Indian Sign Language → Voice')}</div>
+        <div class="action-link" style="color:#16a34a">${t('अनुवाद →','Translate →')}</div>
+      </button>
+
+      <button class="action-card" onclick="navigate('see')">
+        <div class="action-icon" style="background:#d97706">
+          <svg class="icon" viewBox="0 0 24 24" width="22" height="22"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+        </div>
+        <div class="action-title">${t('देखें (See)','SPATIAL SEE')}</div>
+        <div class="action-sub">${t('वस्तु खोजें व दिशा','Object finder & haptic guidance')}</div>
+        <div class="action-link" style="color:#d97706">${t('खोजें →','Find →')}</div>
       </button>
     </div>
+
+    <!-- Stage 7 bar -->
+    <button onclick="navigate('heatmap')" style="width:100%;padding:10px 12px;border-radius:12px;
+      background:#f1f5f9;border:1px solid #e2e8f0;display:flex;align-items:center;
+      justify-content:space-between;font-size:12px;font-weight:700;color:#475569">
+      <span style="display:flex;align-items:center;gap:8px">
+        <span style="width:9px;height:9px;border-radius:50%;background:#22c55e;display:inline-block"></span>
+        ${t('चरण 7: सुलभता हीटमैप','Stage 7: Live Accessibility Heatmap')}
+      </span>
+      ${ICON.arrow_r}
+    </button>
   </div>`;
 }
 
+// ─── Home actions ────────────────────────────────────────────────
 window.handleVoiceMic = function() {
   haptics.confirm(); state.listening = true; state.voiceStatus = ''; state.intentResult = null;
-  render();
+  document.getElementById('micBtn')?.classList.add('listening');
+  document.querySelector('.voice-btn')?.classList.add('listening');
+  render(); // rerender with listening state shown
 
   startListening(
     transcript => { processIntent(transcript); },
     () => { state.listening = false; render(); },
     () => {
-      const q = state.lang==='Hindi' ? 'कैमरा स्कैनर खोलें' : 'Open camera scanner';
+      const q = state.lang==='Hindi' ? 'छात्रवृत्ति फ़ॉर्म भरने में मदद करो' : 'Help me fill this scholarship form';
       processIntent(q);
     }
   );
@@ -886,421 +872,16 @@ function processIntent(query) {
   speak(state.lang==='Hindi' ? `समझा गया: ${r.intent}` : `Intent: ${r.intent}`);
   render();
   setTimeout(() => {
-    if (r.intent === 'CAMERA') navigate('camera');
-    else if (r.intent === 'SPATIAL') navigate('spatial');
-    else if (r.intent === 'DOC_QA') navigate('doc_qa');
-    else if (r.intent === 'FORM_COMPLETION') navigate('complete');
+    if (r.intent === 'FORM_COMPLETION') navigate('complete');
+    else if (r.intent === 'UNDERSTAND_DOCUMENT') navigate('read');
     else if (r.intent === 'COMMUNICATE') navigate('talk');
-    else navigate('camera');
+    else navigate('see');
   }, 1000);
 }
 
-/* ─── 0. REAL BROWSER CAMERA & AI ANALYSIS SCREEN ─────────────────── */
-function renderCamera() {
-  const isH = state.lang === 'Hindi';
-  const cState = state.cameraState;
-  const res = state.cameraResult;
-
-  if (cState === 'permission_denied') {
-    return `
-    <div class="screen-pad">
-      <div class="row-between">
-        <button class="back-btn" onclick="navigate('home')">${ICON.arrow_l} ${t('वापस','Back')}</button>
-        <span class="badge badge-rose">Permission Denied</span>
-      </div>
-      <div class="card" style="text-align:center;padding:24px 14px;background:rgba(244,63,94,0.08);border-color:#f43f5e">
-        <div style="font-size:36px;margin-bottom:8px">📷❌</div>
-        <h3 style="font-size:16px;font-weight:800;color:var(--text-heading);margin-bottom:6px">
-          ${isH?'कैमरा अनुमति अस्वीकृत':'Camera Access Denied'}
-        </h3>
-        <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;line-height:1.5">
-          ${isH?'कृपया ब्राउज़र सेटिंग्स में कैमरा एक्सेस को अनुमति दें और पुन: प्रयास करें।':'Please allow camera access in your browser settings to scan documents and objects.'}
-        </p>
-        <button class="btn-primary" onclick="state.cameraState='idle';render()" style="background:#f43f5e">
-          ${isH?'पुन: प्रयास करें':'Retry Camera Access'}
-        </button>
-      </div>
-    </div>`;
-  }
-
-  if (cState === 'analyzing') {
-    return `
-    <div class="screen-pad">
-      <div class="row-between">
-        <button class="back-btn" onclick="navigate('home')">${ICON.arrow_l} ${t('वापस','Back')}</button>
-        <span class="badge badge-blue">AI Processing...</span>
-      </div>
-      <div class="card" style="text-align:center;padding:32px 14px">
-        <div class="waveform-box" style="margin-bottom:12px">
-          <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
-        </div>
-        <h3 style="font-size:16px;font-weight:800;color:var(--text-heading);margin-bottom:4px">
-          ${isH?'एआई द्वारा विश्लेषण जारी है...':'AI Engine Analyzing Frame...'}
-        </h3>
-        <p style="font-size:11.5px;color:var(--text-muted)">
-          ${isH?'ऑब्जेक्ट, OCR टेक्स्ट और 12h घड़ी दिशाओं को एक्सट्रैक्ट किया जा रहा है...':'Extracting 12h spatial clock directions & document OCR text...'}
-        </p>
-      </div>
-    </div>`;
-  }
-
-  if (cState === 'result' && res) {
-    return `
-    <div class="screen-pad">
-      <div class="row-between">
-        <button class="back-btn" onclick="state.cameraState='live';render()">${ICON.arrow_l} ${t('पुन: कैप्चर','Scan Again')}</button>
-        <span class="badge badge-green">AI Analysis Complete (${res.processing_time_ms}ms)</span>
-      </div>
-
-      <!-- Captured Image Preview Card -->
-      <div style="position:relative;width:100%;height:200px;border-radius:18px;overflow:hidden;border:2px solid var(--border-glow);box-shadow:var(--card-shadow)">
-        ${state.capturedImageBase64 
-          ? `<img src="${state.capturedImageBase64}" style="width:100%;height:100%;object-fit:cover" />`
-          : `<div style="width:100%;height:100%;background:#090d16;display:flex;align-items:center;justify-content:center;color:#94a3b8">Captured Frame</div>`}
-        
-        <div style="position:absolute;top:10px;right:10px;background:rgba(15,23,42,0.85);backdrop-filter:blur(6px);padding:4px 10px;border-radius:12px;font-size:10px;font-weight:800;color:#fde047;border:1px solid #facc15">
-          LIGHTING: ${res.lighting_condition.toUpperCase()} • STABILITY: ${Math.round(res.stability_score*100)}%
-        </div>
-      </div>
-
-      <!-- AI Guidance Prompt Banner -->
-      <div class="card" style="background:rgba(250,204,21,0.12);border-color:#facc15;padding:10px">
-        <div class="row-between">
-          <div style="display:flex;align-items:start;gap:8px">
-            <span style="color:#facc15;font-size:16px">✨</span>
-            <p style="font-size:12px;font-weight:700;color:var(--text-heading);margin:0">${res.guidance_prompt}</p>
-          </div>
-          <button onclick="speak('${res.guidance_prompt}')" class="btn-ghost" style="padding:3px 8px;font-size:11px">🔊 Voice</button>
-        </div>
-      </div>
-
-      <!-- Grounded Spatial Objects & OCR Results -->
-      <div>
-        <div class="section-label">${t('पहचाने गए ऑब्जेक्ट्स व टेक्स्ट (FastAPI Response)','Detected Objects & Spatial OCR Output')}</div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          ${res.detected_objects.map(o => `
-            <div class="card" style="padding:10px;border-color:var(--border-glow)">
-              <div class="row-between" style="margin-bottom:4px">
-                <span style="font-size:13px;font-weight:800;color:var(--text-heading)">${o.label}</span>
-                <span class="badge badge-amber">${o.clock_position || "12 o\'clock"}</span>
-              </div>
-              <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">
-                Distance: <strong>${o.distance_meters}m</strong> • Elevation: <strong>${o.elevation}</strong> • Match: <strong>${Math.round(o.confidence*100)}%</strong>
-              </div>
-            </div>`).join('')}
-
-          ${res.recognized_text ? `
-            <div class="card" style="padding:10px;background:rgba(56,189,248,0.08);border-color:#38bdf8">
-              <div class="row-between" style="margin-bottom:4px">
-                <span style="font-size:11px;font-weight:800;color:#38bdf8;text-transform:uppercase">📄 Grounded OCR Readout</span>
-                <button onclick="speak('${res.recognized_text}')" class="btn-ghost" style="padding:2px 6px">🔊 Read Text</button>
-              </div>
-              <p style="font-size:12px;color:var(--text-heading);font-weight:600;line-height:1.5">${res.recognized_text}</p>
-            </div>` : ''}
-        </div>
-      </div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-        <button class="btn-ghost" onclick="state.cameraState='live';render()" style="padding:12px">🔄 ${isH?'पुन: स्कैन करें':'Scan Again'}</button>
-        <button class="btn-primary" onclick="navigate('complete')" style="padding:12px">${isH?'फ़ॉर्म में भरें →':'Fill Form →'}</button>
-      </div>
-    </div>`;
-  }
-
-  // Live Camera Viewport
-  return `
-  <div class="screen-pad">
-    <div class="row-between">
-      <button class="back-btn" onclick="navigate('home')">${ICON.arrow_l} ${t('वापस','Back')}</button>
-      <span class="badge badge-amber" id="camStatusBadge">LIVE WEBCAM HUD</span>
-    </div>
-
-    <!-- Live WebRTC Camera Viewport -->
-    <div class="cam-hud-viewport" style="position:relative;height:240px;background:#090d16;border:2px solid var(--border-glow);border-radius:18px;overflow:hidden">
-      <!-- Top Status Pill -->
-      <div style="position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:20;background:rgba(15,23,42,0.9);backdrop-filter:blur(8px);border:1px solid rgba(56,189,248,0.3);padding:4px 12px;border-radius:20px;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(0,0,0,0.5)">
-        <span style="width:7px;height:7px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981"></span>
-        <span style="color:#f8fafc;font-size:10.5px;font-weight:800;letter-spacing:0.02em;white-space:nowrap">📷 Real-Time Spatial Camera Feed Active</span>
-      </div>
-
-      <video id="cameraVideo" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover;display:none"></video>
-
-      <!-- Target Box Reticle Overlay -->
-      <div style="position:relative;z-index:10;width:200px;height:140px;border:2px dashed #facc15;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:8px;background:rgba(0,0,0,0.35);backdrop-filter:blur(2px)">
-        <span style="font-size:10px;font-family:monospace;color:#fde047;background:rgba(0,0,0,0.7);padding:2px 6px;border-radius:4px">
-          🎯 12 O'CLOCK TARGET • LIGHT: GOOD
-        </span>
-        <div style="width:40px;height:40px;border-radius:50%;border:2px solid #facc15;display:flex;align-items:center;justify-content:center;color:#facc15;font-size:18px">
-          👁️
-        </div>
-        <span style="font-size:10px;font-family:monospace;color:#fde047;background:rgba(0,0,0,0.7);padding:2px 6px;border-radius:4px">
-          STABILITY: 95% • 15 FPS
-        </span>
-      </div>
-    </div>
-
-    <!-- Interactive Camera Action Controls -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
-      <button id="btnStartCamera" class="btn-ghost" style="padding:10px 4px;font-size:11px;font-weight:800">
-        📷 ${state.cameraStream ? (isH?'चालू':'Active') : (isH?'चालू करें':'Start')}
-      </button>
-      <button onclick="toggleCameraFacing()" class="btn-ghost" style="padding:10px 4px;font-size:11px;font-weight:800">
-        🔄 ${state.cameraFacing==='environment' ? (isH?'पीछे':'Back Cam') : (isH?'सामने':'Front Cam')}
-      </button>
-      <button id="btnCaptureAnalyze" class="btn-primary" style="padding:10px 4px;font-size:11px">
-        📸 ${isH?'कैप्चर':'Capture'}
-      </button>
-    </div>
-
-    <!-- AI Live Guidance Banner -->
-    <div class="card" style="background:rgba(250,204,21,0.12);border-color:#facc15;padding:10px">
-      <div class="row-between">
-        <div style="display:flex;align-items:start;gap:8px">
-          <span style="color:#facc15;font-size:16px">✨</span>
-          <p style="font-size:12px;font-weight:700;color:var(--text-heading);margin:0" id="camGuidanceText">
-            ${isH?'कैमरा स्थिर रखें और दस्तावेज़ को 12 बजे की दिशा में केंद्रित करें।':'Hold camera steady and align document centered at 12 o\'clock.'}
-          </p>
-        </div>
-        <button onclick="speak(document.getElementById('camGuidanceText').innerText)" class="btn-ghost" style="padding:3px 8px;font-size:11px">🔊 Voice</button>
-      </div>
-    </div>
-  </div>`;
-}
-
-function bindCamera() {
-  setTimeout(async () => {
-    const video = document.getElementById('cameraVideo');
-    const btnStart = document.getElementById('btnStartCamera');
-    const btnCapture = document.getElementById('btnCaptureAnalyze');
-
-    // Auto-start camera if mediaDevices available
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia && !state.cameraStream && state.cameraState !== 'permission_denied') {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: state.cameraFacing, width: { ideal: 1280 }, height: { ideal: 720 } }
-        });
-        state.cameraStream = stream;
-        state.cameraState = 'live';
-        if (video) {
-          video.srcObject = stream;
-          video.style.display = 'block';
-          video.play();
-        }
-        if (btnStart) btnStart.innerText = state.lang==='Hindi' ? '📷 कैमरा चालू है' : '📷 Camera Active';
-      } catch (err) {
-        console.warn("Auto camera start error:", err);
-      }
-    } else if (state.cameraStream && video) {
-      video.srcObject = state.cameraStream;
-      video.style.display = 'block';
-      video.play();
-    }
-
-    if (btnStart) {
-      btnStart.onclick = async () => {
-        haptics.click();
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: state.cameraFacing, width: { ideal: 1280 }, height: { ideal: 720 } }
-          });
-          state.cameraStream = stream;
-          state.cameraState = 'live';
-          const video = document.getElementById('cameraVideo');
-          if (video) {
-            video.srcObject = stream;
-            video.style.display = 'block';
-            video.play();
-          }
-          btnStart.innerText = state.lang==='Hindi' ? '📷 कैमरा चालू है' : '📷 Camera Active';
-        } catch (err) {
-          console.warn("Camera permission error:", err);
-          state.cameraState = 'permission_denied';
-          render();
-        }
-      };
-    }
-
-    if (btnCapture) {
-      btnCapture.onclick = async () => {
-        haptics.confirm();
-        const video = document.getElementById('cameraVideo');
-        
-        let b64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
-        if (video && video.videoWidth > 0) {
-          const canvas = document.createElement('canvas');
-          canvas.width = video.videoWidth;
-          canvas.height = video.videoHeight;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-          b64 = canvas.toDataURL('image/jpeg', 0.85);
-        }
-
-        state.capturedImageBase64 = b64;
-        state.cameraState = 'analyzing';
-        render();
-
-        try {
-          const res = await apiFetch('/camera/process', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              image_base64: b64,
-              width: 1280,
-              height: 720,
-              camera_position: state.cameraFacing
-            })
-          });
-          state.cameraResult = res;
-          state.cameraState = 'result';
-        } catch (err) {
-          console.warn("Backend camera API call failed, using heuristic result:", err);
-          state.cameraResult = {
-            success: true,
-            session_id: "session_camera_001",
-            detected_objects: [
-              { label: "Scholarship Form 7F Document", confidence: 0.98, bbox: [0.15, 0.20, 0.75, 0.85], clock_position: "12 o\'clock", distance_meters: 0.45, elevation: "0° (Desk Level)" },
-              { label: "Water Bottle", confidence: 0.94, bbox: [0.20, 0.10, 0.65, 0.40], clock_position: "2 o\'clock", distance_meters: 0.80, elevation: "+15° (Eye Level)" }
-            ],
-            recognized_text: "National Merit Scholarship Notification 2026 - Deadline Sept 30",
-            lighting_condition: "good",
-            stability_score: 0.95,
-            guidance_prompt: state.lang === 'Hindi'
-              ? "कैमरा स्थिर रखें। स्कॉलरशिप दस्तावेज़ 12 बजे केंद्रित है।"
-              : "Hold camera steady. Scholarship document centered at 12 o\'clock.",
-            processing_time_ms: 16.8
-          };
-          state.cameraState = 'result';
-        }
-        render();
-      };
-    }
-  }, 100);
-}
-
-/* ─── 1. ENHANCED SPATIAL VISION & OBJECT+OCR FUSION SCREEN ─────── */
-function renderSpatial() {
-  const isH = state.lang === 'Hindi';
-  return `
-  <div class="screen-pad">
-    <div class="row-between">
-      <button class="back-btn" onclick="navigate('home')">${ICON.arrow_l} ${t('वापस','Back')}</button>
-      <span class="badge badge-blue">SPATIAL HUD + OCR FUSION</span>
-    </div>
-
-    <!-- Live HUD Camera Viewport -->
-    <div class="cam-hud-viewport" style="position:relative;height:240px;background:#090d16;border:2px solid var(--border-glow);border-radius:18px;overflow:hidden">
-      <!-- Top Status Pill -->
-      <div style="position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:20;background:rgba(15,23,42,0.9);backdrop-filter:blur(8px);border:1px solid rgba(56,189,248,0.3);padding:4px 12px;border-radius:20px;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(0,0,0,0.5)">
-        <span style="width:7px;height:7px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981"></span>
-        <span style="color:#f8fafc;font-size:10.5px;font-weight:800;letter-spacing:0.02em;white-space:nowrap">📷 Real-Time Spatial Camera Feed Active</span>
-      </div>
-
-      <div class="cam-hud-overlay" style="position:absolute;inset:0">
-        <!-- Target Box 1: Bottle -->
-        <div class="spatial-target-box" style="left:6%;top:26%;width:42%;height:58%">
-          <div class="spatial-label-badge">Water Bottle (98%)</div>
-          <div class="spatial-clock-pill">🕒 2 o\'clock · 0.8m</div>
-        </div>
-        <!-- Target Box 2: Document OCR -->
-        <div class="spatial-target-box" style="right:6%;top:26%;width:44%;height:58%;border-color:#c084fc">
-          <div class="spatial-label-badge" style="background:#9333ea">OCR Notice Text</div>
-          <div class="spatial-clock-pill">🕒 12 o\'clock · 0.5m</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Obstacle Warning Alert Bar -->
-    <div class="card" style="background:rgba(239,68,68,0.12);border-color:#ef4444;padding:10px">
-      <div class="row-between">
-        <div style="display:flex;align-items:center;gap:8px">
-          <span style="color:#ef4444;font-size:16px">⚠️</span>
-          <span style="font-size:12px;font-weight:800;color:#ef4444">${isH?'बाधा चेतावनी: 10 o\'clock पर कुर्सी (1.2m)':'Obstacle Warning: Chair at 10 o\'clock (1.2m)'}</span>
-        </div>
-        <button onclick="haptics.confirm();speak(state.navInstruction)" class="btn-ghost" style="padding:3px 8px;font-size:11px">🔊 Audio Cue</button>
-      </div>
-    </div>
-
-    <!-- Scene Understanding Summary Card -->
-    <div class="card">
-      <div class="row-between" style="margin-bottom:6px">
-        <span style="font-size:11px;font-weight:800;color:var(--primary-blue);text-transform:uppercase">AI Scene Understanding Summary</span>
-        <button class="btn-ghost" style="padding:2px 8px;font-size:10.5px" onclick="speak(state.sceneSummary)">🔊 Read Scene</button>
-      </div>
-      <p style="font-size:12px;color:var(--text-heading);line-height:1.55;font-weight:600">${state.sceneSummary}</p>
-    </div>
-
-    <!-- Spatial Object List & Direction Cards -->
-    <div>
-      <div class="section-label">${t('पहचाने गए ऑब्जेक्ट्स (Clock Positions)','Detected Spatial Objects')}</div>
-      <div style="display:flex;flex-direction:column;gap:8px">
-        ${state.spatialDetections.map(d => `
-          <div class="card" style="padding:10px">
-            <div class="row-between" style="margin-bottom:4px">
-              <span style="font-size:13px;font-weight:800;color:var(--text-heading)">${d.name}</span>
-              <span class="badge badge-amber">${d.clock}</span>
-            </div>
-            <div class="row-between" style="font-size:11px;color:var(--text-muted)">
-              <span>Proximity: <strong>${d.dist}</strong></span>
-              <span>Elevation: <strong>${d.elev}</strong></span>
-            </div>
-            ${d.text ? `<div style="margin-top:6px;font-size:11px;color:#38bdf8;background:rgba(56,189,248,0.1);padding:4px 8px;border-radius:6px">📄 OCR Text: "${d.text}"</div>` : ''}
-          </div>`).join('')}
-      </div>
-    </div>
-
-    <button class="btn-primary" onclick="navigate('doc_qa')">${t('📄 दस्तावेज़ Q&A पर जाएं →','Proceed to Document Q&A →')}</button>
-  </div>`;
-}
-
-/* ─── 8 & 9. DOCUMENT Q&A + DOCUMENT TO TASK EXTRACTION SCREEN ───── */
-function renderDocQA() {
-  const isH = state.lang === 'Hindi';
-  return `
-  <div class="screen-pad">
-    <div class="row-between">
-      <button class="back-btn" onclick="navigate('spatial')">${ICON.arrow_l} ${t('वापस','Back')}</button>
-      <span class="badge badge-indigo">DOCUMENT Q&A + TASK EXTRACTION</span>
-    </div>
-
-    <!-- Scanned Document Context Card -->
-    <div class="card">
-      <div class="row-between" style="margin-bottom:6px">
-        <h3 style="font-size:14px;font-weight:800;color:var(--text-heading)">National Merit Scholarship Notice 2026</h3>
-        <span class="badge badge-green">OCR Verified</span>
-      </div>
-      <p style="font-size:11.5px;color:var(--text-muted);line-height:1.5">Official notification details scanned & parsed with grounded citations.</p>
-    </div>
-
-    <!-- Document Questions & Grounded Answers -->
-    <div>
-      <div class="section-label">${t('सुझाए गए सवाल व उत्तर (Grounded Q&A)','Suggested Document Q&A')}</div>
-      <div style="display:flex;flex-direction:column;gap:8px">
-        ${state.docQuestions.map(q => `
-          <div class="card" style="padding:10px">
-            <div class="row-between" style="margin-bottom:4px">
-              <span style="font-size:12px;font-weight:800;color:var(--primary-blue)">❓ ${isH?q.qHi:q.qEn}</span>
-              <button onclick="speak('${isH?q.aHi:q.aEn}')" class="btn-ghost" style="padding:2px 6px">🔊 Speak</button>
-            </div>
-            <p style="font-size:12px;color:var(--text-heading);margin-bottom:4px;font-weight:600">${isH?q.aHi:q.aEn}</p>
-            <div style="font-size:10px;color:var(--text-muted)">Source Reference: <em>${q.ref}</em></div>
-          </div>`).join('')}
-      </div>
-    </div>
-
-    <!-- Document -> Task Conversion Card -->
-    <div class="card" style="border-color:var(--border-glow);background:var(--bg-card-subtle)">
-      <div class="row-between" style="margin-bottom:6px">
-        <span class="badge badge-purple">🎯 Document → Actionable Task</span>
-        <span style="font-size:10.5px;font-weight:800;color:#10b981">Auto-Extracted</span>
-      </div>
-      <h4 style="font-size:13.5px;font-weight:800;color:var(--text-heading);margin-bottom:4px">${state.extractedTask.title}</h4>
-      <p style="font-size:11.5px;color:var(--text-muted);margin-bottom:10px">${state.extractedTask.desc}</p>
-      <button class="btn-primary" onclick="navigate('complete')">${t('📝 फ़ॉर्म आवेदन चालू करें →','Launch Form Completion Workflow →')}</button>
-    </div>
-  </div>`;
-}
-
-/* ─── 6. LINEARIZED FORM COMPLETION & WCAG CERTIFICATE SCREEN ───── */
+// ═══════════════════════════════════════════════════════════════
+//  COMPLETE FORM SCREEN
+// ═══════════════════════════════════════════════════════════════
 function renderComplete() {
   const isH = state.lang === 'Hindi';
   if (!state.formFlow || state.formFlow._lang !== state.lang) {
@@ -1309,7 +890,9 @@ function renderComplete() {
     state.formStep = 0; state.formAnswers = {}; state.formVerified = false;
   }
   const flow = state.formFlow;
+
   if (state.formVerified) return renderVerified();
+
   const step = flow.steps[state.formStep];
   const prog = Math.round(((state.formStep+1)/flow.total_steps)*100);
   const demo = demoAnswers[state.formStep];
@@ -1318,228 +901,664 @@ function renderComplete() {
   return `
   <div class="screen-pad">
     <div class="row-between">
-      <button class="back-btn" onclick="navigate('doc_qa')">${ICON.arrow_l} ${t('वापस','Back')}</button>
+      <button class="back-btn" onclick="navigate('home')">${ICON.arrow_l} ${t('वापस','Back')}</button>
       <span class="badge badge-blue">${state.formStep+1} / ${flow.total_steps}</span>
     </div>
 
+    <!-- Progress bar -->
     <div>
-      <div class="row-between" style="font-size:11px;font-weight:700;margin-bottom:6px">
-        <span>${step.display}</span>
-        <span style="font-family:monospace;font-weight:800;color:var(--primary-blue)">${prog}%</span>
+      <div class="row-between" style="font-size:11px;font-weight:700;margin-bottom:5px">
+        <span style="color:#475569">${t('प्रगति (Linearized Flow)','Task Progress')}</span>
+        <span style="font-family:monospace;font-weight:900">${prog}%</span>
       </div>
-      <div class="progress-track"><div class="progress-fill" style="width:${prog}%"></div></div>
+      <div class="progress-track">
+        <div class="progress-fill" style="width:${prog}%"></div>
+      </div>
     </div>
 
+    ${state.formStep===0 ? `
+    <div class="infobox infobox-amber" style="display:flex;gap:8px">
+      <span>⚠️</span>
+      <div>
+        <strong>${t('बाधा सुधार सक्रिय:','Barriers Remediated:')}</strong><br>
+        ${flow.barriers[0].desc} → <em>${isH?'एक-चरण आवाज़ प्रस्तुति':'One-step voice linearization'}</em>
+      </div>
+    </div>` : ''}
+
+    <!-- Step card -->
     <div class="card">
       <div class="row-between" style="margin-bottom:8px">
-        <label style="font-size:11px;font-weight:800;color:var(--primary-blue);text-transform:uppercase">${step.label}</label>
-        <button onclick="speak('${step.prompt}')" class="btn-ghost" style="padding:2px 8px">🔊 Speak</button>
+        <div>
+          <div style="font-size:10px;font-weight:900;color:#2563eb;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px">
+            ${step.label}
+          </div>
+          <h2 style="font-size:1.25rem;font-weight:900;color:#0f172a;line-height:1.2">${step.display}</h2>
+        </div>
+        <button onclick="speakStep()" style="width:38px;height:38px;border-radius:12px;
+          background:#eff6ff;color:#2563eb;display:flex;align-items:center;justify-content:center;
+          border:none;flex-shrink:0" title="Speak prompt">
+          ${ICON.volume}
+        </button>
       </div>
-      <h3 style="font-size:14px;font-weight:800;color:var(--text-heading);margin-bottom:12px">${step.prompt}</h3>
+      <p style="font-size:11px;color:#64748b;font-style:italic;line-height:1.5;margin-bottom:12px">
+        "${step.prompt}"
+      </p>
 
+      <!-- Input -->
       <div class="field-wrap">
-        <input type="text" class="field-input" id="formInput" placeholder="${t('उत्तर लिखें या माइक दबाएं...','Type answer or tap mic...')}" value="${state.formAnswers[step.fi] || ''}" />
-        <button class="field-mic-btn" onclick="dictateFormField()">${ICON.mic_sm}</button>
+        <input class="field-input" id="stepInput" type="text"
+          placeholder="${t('उत्तर लिखें या बोलें...','Type or dictate your answer...')}"
+          value="${demoVal}"
+          oninput=""/>
+        <button class="field-mic-btn" id="fieldMicBtn" onclick="dictateStep()" title="Dictate">
+          ${ICON.mic_sm}
+        </button>
       </div>
 
-      <div style="margin-top:10px;display:flex;gap:6px">
-        <button class="btn-ghost" onclick="document.getElementById('formInput').value='${demoVal}';haptics.click();" style="font-size:11px">⚡ Auto-fill Demo: "${demoVal}"</button>
+      <!-- Demo fill helper -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
+        <span style="font-size:11px;color:#94a3b8">${t('त्वरित डेमो:','Demo Answer:')}</span>
+        <button onclick="document.getElementById('stepInput').value='${demoVal.replace(/'/g, "&#39;")}'"
+          style="font-size:11px;font-weight:700;color:#2563eb;text-decoration:underline">
+          ${demoVal}
+        </button>
       </div>
     </div>
 
-    <div style="display:flex;gap:8px">
-      ${state.formStep > 0 ? `<button class="btn-ghost" onclick="state.formStep--;render();" style="flex:1">← ${t('पिछला','Previous')}</button>` : ''}
-      <button class="btn-primary" onclick="saveFormStep('${step.fi}')" style="flex:2">
-        ${state.formStep===flow.total_steps-1 ? t('सत्यापित व सबमिट करें 🎯','Submit & Verify 🎯') : t('अगला चरण →','Next Step →')}
-      </button>
-    </div>
-  </div>`;
-}
+    <div style="flex:1"></div>
 
-function bindComplete() {
-  setTimeout(() => {
-    const inp = document.getElementById('formInput');
-    if (inp) {
-      inp.focus();
-      inp.onkeydown = e => { if(e.key === 'Enter') { const flow = state.formFlow; if (flow) saveFormStep(flow.steps[state.formStep].fi); } };
-    }
-  }, 100);
-}
-
-window.dictateFormField = function() {
-  haptics.confirm();
-  startListening(
-    t => {
-      const inp = document.getElementById('formInput');
-      if (inp) { inp.value = t; haptics.success(); }
-    },
-    null,
-    () => {
-      const demo = demoAnswers[state.formStep];
-      const inp = document.getElementById('formInput');
-      if (inp) inp.value = state.lang==='Hindi' ? demo.hi : demo.en;
-    }
-  );
-};
-
-window.saveFormStep = function(fieldKey) {
-  const inp = document.getElementById('formInput');
-  const val = inp ? inp.value.trim() : '';
-  const flow = state.formFlow;
-  if (!val) {
-    haptics.confirm();
-    speak(t('कृपया फ़ील्ड भरें','Please fill out this field'));
-    return;
-  }
-  haptics.success();
-  state.formAnswers[fieldKey] = val;
-  if (state.formStep < flow.total_steps - 1) {
-    state.formStep++;
-    render();
-  } else {
-    state.formVerified = true;
-    state.verifyToken = 'SAHAYAK-VERIFY-2026-OK';
-    state.journeyStage = 4;
-    render();
-    haptics.celebrate();
-  }
-};
-
-function renderVerified() {
-  return `
-  <div class="screen-pad" style="text-align:center;padding:24px 14px">
-    <div style="width:64px;height:64px;border-radius:50%;background:#10b981;color:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:32px">✓</div>
-    <span class="badge badge-green">WCAG AAA Certified Submission</span>
-    <h2 style="font-size:18px;font-weight:800;color:var(--text-heading);margin:10px 0 4px">
-      ${t('आवेदन सफलतापूर्वक जमा हुआ!','Application Submitted Successfully!')}
-    </h2>
-    <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px">
-      ${t('7-चरण आवेदन पूर्ण व डिजिटल सत्यापन कोड जारी।','All 7 fields verified with digital token generation.')}
-    </p>
-
-    <div class="card" style="margin-bottom:16px;text-align:left">
-      <div style="font-size:10px;font-weight:800;color:var(--primary-blue);text-transform:uppercase;margin-bottom:4px">Verification Token</div>
-      <div style="font-family:monospace;font-size:13px;font-weight:800;color:var(--text-heading)">${state.verifyToken}</div>
-    </div>
-
-    <button class="btn-primary" onclick="state.formVerified=false;state.formStep=0;state.formAnswers={};navigate('heatmap')">
-      ${t('हीटमैप व एनालिटिक्स देखें →','View Interaction Analytics →')}
+    <button class="btn-primary" onclick="submitStep()">
+      ${state.formStep+1===flow.total_steps
+        ? t('✓ सत्यापित करें और जमा करें','✓ Verify & Submit Form')
+        : t('अगला चरण →','Confirm & Continue →')}
     </button>
   </div>`;
 }
 
-/* ─── 5. ISL SIGN LANGUAGE TRANSLATOR SCREEN ────────────────────── */
+function renderVerified() {
+  const isH = state.lang === 'Hindi';
+  return `
+  <div class="screen-pad">
+    <div style="text-align:center;padding:10px 0 6px">
+      <div style="width:60px;height:60px;border-radius:50%;background:#22c55e;color:#fff;
+        margin:0 auto 10px;display:flex;align-items:center;justify-content:center;
+        box-shadow:0 4px 16px rgba(34,197,94,.4)">${ICON.award}</div>
+      <div class="badge badge-green" style="margin-bottom:6px">${t('चरण 6: कार्य सत्यापन सफल','STAGE 6: TASK VERIFIED')}</div>
+      <h2 style="font-size:1.6rem;font-weight:900;color:#0f172a">${t('फ़ॉर्म पूर्ण!','Form Completed!')}</h2>
+      <p style="font-size:12px;color:#64748b;margin-top:4px">${t('सभी 7 अनिवार्य क्षेत्र सत्यापित हो चुके हैं।','All 7 required fields verified and validated.')}</p>
+    </div>
+
+    <div class="cert">
+      <div class="row-between" style="border-bottom:1px solid #bbf7d0;padding-bottom:8px;margin-bottom:8px">
+        <span style="font-size:11px;font-weight:900;color:#15803d">${t('सत्यापन टोकन','Verification Token')}</span>
+        <span class="cert-token">${state.verifyToken}</span>
+      </div>
+      <div class="cert-row"><span style="color:#64748b">Task Type:</span><strong>SCHOLARSHIP_FORM_7F</strong></div>
+      <div class="cert-row"><span style="color:#64748b">Fields:</span><strong style="color:#16a34a">7 / 7 (100%)</strong></div>
+      <div class="cert-row"><span style="color:#64748b">Applicant:</span><strong>${state.formAnswers['full_name']||'Satvik Sharma'}</strong></div>
+      <div class="cert-row"><span style="color:#64748b">Aadhaar:</span><code>${state.formAnswers['aadhaar']||'9824 5510 1289'}</code></div>
+      <div class="cert-row"><span style="color:#64748b">Bank:</span><code>${state.formAnswers['bank_account']||'SBI0004921'}</code></div>
+    </div>
+
+    <div class="infobox infobox-green" style="display:flex;gap:8px">
+      ${ICON.check}<span>${t('WCAG AAA सुलभ प्रवाह पूर्ण। आधिकारिक प्रमाण पत्र जारी।','WCAG AAA accessible workflow completed. Digital certificate issued.')}</span>
+    </div>
+
+    <button class="btn-primary" onclick="navigate('home')">${t('🏠 मुख्य पृष्ठ','Return to Home')}</button>
+    <button class="btn-ghost" style="width:100%;margin-top:4px" onclick="resetForm()">
+      ${ICON.rotate} ${t('पुनः प्रारंभ','Start New Application')}
+    </button>
+  </div>`;
+}
+
+function bindComplete() {
+  const flow = state.formFlow;
+  if (!flow) return;
+  const step = flow.steps[state.formStep];
+  window.speakStep = () => { haptics.click(); speak(step.prompt); };
+  window.dictateStep = () => {
+    haptics.click();
+    const btn = document.getElementById('fieldMicBtn');
+    btn?.classList.add('recording');
+    startListening(
+      t => { document.getElementById('stepInput').value = t; btn?.classList.remove('recording'); haptics.confirm(); },
+      () => btn?.classList.remove('recording'),
+      () => {
+        btn?.classList.remove('recording');
+        const d = demoAnswers[state.formStep];
+        document.getElementById('stepInput').value = state.lang==='Hindi' ? d.hi : d.en;
+      }
+    );
+  };
+  window.submitStep = () => {
+    haptics.confirm();
+    const inp = document.getElementById('stepInput');
+    const val = (inp?.value||'').trim() || (state.lang==='Hindi'?demoAnswers[state.formStep].hi:demoAnswers[state.formStep].en);
+    state.formAnswers[step.fi] = val;
+    if (state.formStep+1 < flow.total_steps) {
+      state.formStep++;
+      render();
+      speak(flow.steps[state.formStep].prompt);
+    } else {
+      state.formVerified = true;
+      state.verifyToken = 'VERIFIED_SAHAYAK_' + Math.floor(100000+Math.random()*900000);
+      haptics.celebrate();
+      render();
+      fireConfetti();
+      speak(t('बधाई हो! फ़ॉर्म सफलतापूर्वक सत्यापित।','Congratulations! Scholarship form fully verified.'));
+    }
+  };
+  window.resetForm = () => {
+    haptics.click(); state.formFlow = null; state.formVerified = false;
+    state.formStep = 0; state.formAnswers = {}; render();
+  };
+  // Speak first prompt on load
+  if (!state.formFlow._spoken) {
+    state.formFlow._spoken = true;
+    setTimeout(() => speak(step.prompt), 400);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  READ DOCUMENT SCREEN
+// ═══════════════════════════════════════════════════════════════
+function renderRead() {
+  const isH = state.lang === 'Hindi';
+  const d = state.docData;
+  return `
+  <div class="screen-pad">
+    <div class="row-between">
+      <button class="back-btn" onclick="navigate('home')">${ICON.arrow_l} ${t('वापस','Back')}</button>
+      <span class="badge badge-indigo">DEMO 1: OCR & READ</span>
+    </div>
+
+    <div class="infobox infobox-blue" style="display:flex;align-items:center;gap:10px">
+      <span>📖</span>
+      <span style="font-weight:700">${isH?'"इस नोटिस में क्या ज़रूरी है?"':'"What is important in this notice?"'}</span>
+    </div>
+
+    ${state.docLoading ? `
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 0;gap:12px">
+      <div class="spinner"></div>
+      <p style="font-size:13px;font-weight:700">${t('OCR एवं बाधा विश्लेषण जारी...','Running OCR & Barrier Analysis...')}</p>
+    </div>` : d ? `
+    <div class="card">
+      <div class="row-between" style="margin-bottom:8px">
+        <div>
+          <div style="font-size:10px;font-weight:900;color:#6366f1;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">
+            ${t('दस्तावेज़ शीर्षक','Document Identified')}
+          </div>
+          <h3 style="font-size:15px;font-weight:900;color:#0f172a;line-height:1.2">${d.title}</h3>
+        </div>
+        <button onclick="speak('${d.spoken.replace(/'/g,"&#39;")}')"
+          style="width:36px;height:36px;border-radius:10px;background:#e0e7ff;color:#6366f1;
+            display:flex;align-items:center;justify-content:center;border:none;flex-shrink:0">
+          ${ICON.volume}
+        </button>
+      </div>
+      <div style="background:#f8fafc;border-radius:10px;padding:10px;font-size:11px;color:#475569;line-height:1.6">
+        ${d.summary}
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+        <span>📅</span>
+        <h4 style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.05em">${t('अंतिम समय-सीमा','Key Deadlines')}</h4>
+      </div>
+      ${d.deadlines.map(dl=>`
+        <div style="background:#fef2f2;border-radius:8px;padding:8px 10px;
+          font-weight:700;font-size:12px;color:#b91c1c;display:flex;align-items:center;justify-content:space-between">
+          <span>${dl}</span><span style="font-size:10px;font-weight:900;background:#fecaca;padding:2px 6px;border-radius:4px">URGENT</span>
+        </div>`).join('')}
+    </div>
+
+    <div class="section-card">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+        <span>📋</span>
+        <h4 style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.05em">${t('आवश्यक प्रमाणपत्र','Required Documents')}</h4>
+      </div>
+      ${d.docs.map(doc=>`
+        <div style="display:flex;align-items:center;gap:8px;padding:5px 0;font-size:12px;font-weight:600;color:#0f172a">
+          ${ICON.check}<span style="color:#16a34a">${doc}</span>
+        </div>`).join('')}
+    </div>
+
+    <div class="infobox infobox-blue" style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;gap:8px;align-items:flex-start">
+        ${ICON.sparkle}
+        <div>
+          <strong style="display:block">${t('सक्रिय मार्गदर्शन','Proactive Assistance')}</strong>
+          <p style="font-size:11px;color:#1e40af;margin-top:2px">${t('क्या मैं छात्रवृत्ति फ़ॉर्म भरने में मदद करूँ?','Shall Sahayak guide you through the application form now?')}</p>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="navigate('complete')" style="background:#4f46e5">
+        ${t('📝 फ़ॉर्म आवेदन शुरू करें','Start Form Guidance (Demo 2)')} ${ICON.arrow_r}
+      </button>
+    </div>
+    ` : ''}
+  </div>`;
+}
+
+function initRead() {
+  state.docLoading = true;
+  setTimeout(() => {
+    state.docData = buildDocData();
+    state.docLoading = false;
+    render();
+    speak(state.docData.spoken);
+  }, 1200);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  SIGN TALK SCREEN (ISL)
+// ═══════════════════════════════════════════════════════════════
 function renderTalk() {
   const isH = state.lang === 'Hindi';
-  const signs = ['HELP', 'WATER', 'SCHOLARSHIP', 'YES', 'THANK YOU'];
+  const s = signs[state.detectedSign];
+  const caption = isH ? s.hi : s.en;
+  const gestures = Object.keys(signs);
+
   return `
   <div class="screen-pad">
     <div class="row-between">
       <button class="back-btn" onclick="navigate('home')">${ICON.arrow_l} ${t('वापस','Back')}</button>
-      <span class="badge badge-green">3D ISL HAND TRANSLATOR</span>
+      <span class="badge badge-green">DEMO 3: ISL INTERPRETER</span>
     </div>
 
-    <div class="cam-hud-viewport" style="height:200px">
-      <div style="text-align:center">
-        <div style="font-size:32px;margin-bottom:4px">🤟</div>
-        <div style="font-size:12px;font-weight:800;color:#10b981">ISL Gesture Landmark Detection Active</div>
+    <!-- Camera viewport -->
+    <div class="cam-viewport" id="camViewport">
+      <video id="camVideo" autoplay playsinline muted style="display:none;width:100%;height:100%;object-fit:cover"></video>
+      <!-- MediaPipe skeleton simulation -->
+      <div id="landmarkView" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:10px">
+        <svg class="landmark-svg" viewBox="0 0 180 200">
+          <!-- Palm -->
+          <ellipse cx="90" cy="165" rx="30" ry="18" fill="none" stroke="#4ade80" stroke-width="1.5" opacity=".4"/>
+          <!-- Bones to fingers -->
+          <line x1="90" y1="160" x2="55" y2="110" stroke="#4ade80" stroke-width="2"/>
+          <line x1="90" y1="155" x2="78" y2="80" stroke="#4ade80" stroke-width="2"/>
+          <line x1="90" y1="155" x2="105" y2="75" stroke="#4ade80" stroke-width="2"/>
+          <line x1="90" y1="158" x2="130" y2="90" stroke="#4ade80" stroke-width="2"/>
+          <line x1="90" y1="162" x2="155" y2="120" stroke="#4ade80" stroke-width="2"/>
+          <!-- Joints -->
+          ${[[55,110],[42,88],[32,68],[78,80],[74,55],[70,32],[105,75],[108,48],[110,25],[130,90],[136,65],[140,42],[155,120],[162,100],[168,82]].map(([cx,cy])=>`<circle cx="${cx}" cy="${cy}" r="3.5" fill="#34d399" opacity=".9"/>`).join('')}
+        </svg>
+        <span style="font-size:10px;color:#4ade80;font-family:monospace">MediaPipe 3D — 21 Landmarks</span>
+      </div>
+      <div class="cam-label">
+        <div class="cam-pulse"></div>MEDIAPIPE 3D ACTIVE
+      </div>
+      <button onclick="toggleWebcam()" style="position:absolute;top:10px;right:10px;
+        background:rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.2);border-radius:99px;
+        padding:6px 10px;font-size:11px;color:#fff;display:flex;align-items:center;gap:4px" id="camToggleBtn">
+        ${ICON.video} ${t('कैमरा','Live Cam')}
+      </button>
+      <div style="position:absolute;bottom:8px;right:10px;font-family:monospace;font-size:9px;
+        color:#4ade80;background:rgba(0,0,0,.7);padding:2px 6px;border-radius:4px">
+        Conf: ${(s.conf*100).toFixed(1)}% · FPS: 30
       </div>
     </div>
 
-    <div class="card">
+    <!-- Detected sign output -->
+    <div class="card" style="border-color:#bbf7d0">
       <div class="row-between" style="margin-bottom:6px">
-        <span style="font-size:11px;font-weight:800;color:var(--primary-blue)">Select Hand Gesture</span>
-        <button onclick="speak('${state.detectedSign}')" class="btn-ghost" style="padding:2px 6px">🔊 Audio</button>
+        <span style="font-size:10px;font-weight:900;color:#16a34a;text-transform:uppercase;letter-spacing:.05em">
+          ${t('पहचाना गया इशारा','Detected Sign Gesture')}
+        </span>
+        <button onclick="speak('${(isH?s.spoken_hi:s.spoken_en).replace(/'/g,"&#39;")}')"
+          style="padding:5px;border-radius:8px;background:#dcfce7;color:#15803d;border:none;
+            display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700">
+          ${ICON.volume}${t('सुनें','Speak')}
+        </button>
       </div>
-      <div class="gesture-grid" style="margin-bottom:10px">
-        ${signs.map(s => `
-          <button class="gesture-btn ${state.detectedSign===s?'active':''}" onclick="state.detectedSign='${s}';render();haptics.click()">
-            <div class="gesture-en">${s}</div>
+      <div style="font-size:1.5rem;font-weight:900;color:#0f172a;line-height:1.2" id="signOutput">${caption}</div>
+      <p style="font-size:11px;color:#64748b;margin-top:6px">
+        ${t('हाथ की 21 निर्देशांक गतियों से वास्तविक समय में भाषण एवं स्पर्श प्रतिक्रिया।',
+           '21 3D hand landmarks classified in real-time to speech and haptic output.')}
+      </p>
+    </div>
+
+    <!-- Gesture selector -->
+    <div>
+      <div class="section-label">${t('इशारा चुनें (Demo):','Select Gesture to Interpret:')}</div>
+      <div class="gesture-grid">
+        ${Object.entries(signs).map(([id,sv]) => `
+          <button class="gesture-btn ${state.detectedSign===id?'active':''}" onclick="selectGesture('${id}')">
+            <div class="gesture-en">${id.replace('_',' ')}</div>
+            <div class="gesture-hi">${sv.hi}</div>
           </button>`).join('')}
       </div>
-      <div style="padding:10px;background:rgba(16,185,129,0.1);border:1px solid #10b981;border-radius:12px">
-        <div style="font-size:10px;font-weight:800;color:#10b981;text-transform:uppercase">Translated Speech Output</div>
-        <p style="font-size:14px;font-weight:800;color:var(--text-heading);margin-top:2px">"${state.detectedSign}"</p>
+    </div>
+  </div>`;
+}
+
+window.selectGesture = function(id) {
+  haptics.click();
+  state.detectedSign = id;
+  const s = signs[id];
+  haptics.success();
+  speak(state.lang==='Hindi' ? s.spoken_hi : s.spoken_en);
+  render();
+};
+
+window.toggleWebcam = async function() {
+  if (state.webcamStream) {
+    state.webcamStream.getTracks().forEach(t=>t.stop());
+    state.webcamStream = null;
+    const v = document.getElementById('camVideo');
+    if (v) { v.style.display = 'none'; v.srcObject = null; }
+    const lv = document.getElementById('landmarkView');
+    if (lv) lv.style.display = 'flex';
+  } else {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}});
+      state.webcamStream = stream;
+      const v = document.getElementById('camVideo');
+      const lv = document.getElementById('landmarkView');
+      if (v) { v.srcObject = stream; v.style.display = 'block'; }
+      if (lv) lv.style.display = 'none';
+    } catch(e) { showToast(t('कैमरा उपलब्ध नहीं','Camera not available')); }
+  }
+};
+
+// ═══════════════════════════════════════════════════════════════
+//  SEE SCREEN
+// ═══════════════════════════════════════════════════════════════
+function renderSee() {
+  const obj = objects[state.selectedObj];
+  const guidance = state.lang==='Hindi' ? obj.hi : obj.en;
+  const bb = obj.bbox;
+
+  const objKeys = Object.keys(objects);
+  const objLabels = {bottle:{hi:'बोतल',en:'Bottle'},keys:{hi:'चाबियां',en:'Keys'},phone:{hi:'मोबाइल',en:'Phone'},document:{hi:'दस्तावेज़',en:'Doc'}};
+
+  return `
+  <div class="screen-pad">
+    <div class="row-between">
+      <button class="back-btn" onclick="navigate('home')">${ICON.arrow_l} ${t('वापस','Back')}</button>
+      <span class="badge badge-amber">SPATIAL VISION COPILOT</span>
+    </div>
+
+    <!-- Camera viewport -->
+    <div class="cam-viewport" style="height:200px;background:linear-gradient(180deg,#111827,#000)">
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+        color:rgba(255,255,255,.1);font-size:48px">⊕</div>
+
+      <!-- Bounding box -->
+      <div class="bbox" id="objBbox"
+        style="${Object.entries(bb).map(([k,v])=>`${k}:${v}`).join(';')}">
+        <span class="bbox-label" id="bboxLabel">${state.selectedObj}</span>
+        <span class="bbox-conf">94%</span>
+      </div>
+
+      <div class="cam-label"><div class="cam-pulse"></div>YOLO VISION ACTIVE</div>
+      <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);
+        background:rgba(0,0,0,.8);border:1px solid rgba(255,255,255,.2);border-radius:99px;
+        padding:4px 12px;font-size:11px;color:#fbbf24;display:flex;align-items:center;gap:5px">
+        ${ICON.map_pin}<span id="distLabel">${t('हाथ की पहुंच (~45 सेमी)','Near (~45 cm, arm reach)')}</span>
+      </div>
+    </div>
+
+    <!-- Guidance card -->
+    <div class="card" style="border-color:#fde68a">
+      <div class="row-between" style="margin-bottom:6px">
+        <span style="font-size:10px;font-weight:900;color:#d97706;text-transform:uppercase;letter-spacing:.05em">
+          ${t('स्थानिक दिशा निर्देश','Spatial Guidance Cue')}
+        </span>
+        <button onclick="speak('${guidance.replace(/'/g,"&#39;")}')"
+          style="padding:5px;border-radius:8px;background:#fef3c7;color:#d97706;border:none;
+            display:flex;align-items:center;gap:4px;font-size:11px;font-weight:700">
+          ${ICON.volume}${t('सुनें','Speak')}
+        </button>
+      </div>
+      <h3 style="font-size:15px;font-weight:900;color:#0f172a;line-height:1.3" id="guidanceText">${guidance}</h3>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;
+        background:#fef3c7;border-radius:8px;padding:7px 10px;font-size:11px">
+        <span style="color:#92400e">${t('हैप्टिक संकेत:','Haptic Cue:')}</span>
+        <code style="font-weight:900;color:#d97706">${obj.haptic}</code>
+      </div>
+    </div>
+
+    <!-- Object selector -->
+    <div>
+      <div class="section-label">${t('ढूंढने की वस्तु चुनें:','Select Target Object:')}</div>
+      <div class="obj-grid">
+        ${objKeys.map(k => `
+          <button class="obj-btn ${state.selectedObj===k?'active':''}" onclick="selectObject('${k}')">
+            <div class="obj-en">${objLabels[k].en}</div>
+            <div class="obj-hi">${objLabels[k].hi}</div>
+          </button>`).join('')}
       </div>
     </div>
   </div>`;
 }
 
-/* ─── 7. STAGE 7 FRICTION HEATMAP ANALYTICS SCREEN ──────────────── */
+window.selectObject = function(key) {
+  haptics.click();
+  state.selectedObj = key;
+  const obj = objects[key];
+  haptics.directional(obj.haptic);
+  speak(state.lang==='Hindi' ? obj.hi : obj.en);
+  render();
+};
+
+// ═══════════════════════════════════════════════════════════════
+//  HEATMAP SCREEN
+// ═══════════════════════════════════════════════════════════════
 function renderHeatmap() {
   const isH = state.lang === 'Hindi';
+  const rec = {tasks:6, voice:92, best:'Step-by-step voice guidance', hard:'Document camera framing'};
+
   return `
   <div class="screen-pad">
     <div class="row-between">
       <button class="back-btn" onclick="navigate('home')">${ICON.arrow_l} ${t('वापस','Back')}</button>
-      <span class="badge badge-purple">STAGE 7 FRICTION TELEMETRY</span>
+      <span class="badge badge-purple">STAGE 7: LEARNING</span>
     </div>
 
-    <div class="card" style="background:var(--bg-card-subtle);border-color:var(--border-glow)">
-      <div class="row-between" style="margin-bottom:6px">
-        <h3 style="font-size:14px;font-weight:800;color:var(--text-heading)">Accessibility Twin Friction Log</h3>
-        <span class="badge badge-green">0 Barriers Detected</span>
+    <!-- Stats card -->
+    <div class="section-card">
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px">
+        ${ICON.bar}<h3 style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.05em">${t('स्थानीय इंटरैक्शन विश्लेषण','Local Interaction Telemetry')}</h3>
       </div>
-      <p style="font-size:11.5px;color:var(--text-muted);line-height:1.5">Live telemetry tracking dwell time, dictation speed & motor interactions.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="background:#f8fafc;border-radius:10px;padding:10px">
+          <div style="font-size:10px;color:#94a3b8">${t('कार्य पूर्ण','Tasks Completed')}</div>
+          <div style="font-size:1.4rem;font-weight:900;color:#0f172a">${rec.tasks}</div>
+        </div>
+        <div style="background:#f0fdf4;border-radius:10px;padding:10px">
+          <div style="font-size:10px;color:#94a3b8">${t('आवाज़ प्राथमिकता','Voice Usage Rate')}</div>
+          <div style="font-size:1.4rem;font-weight:900;color:#16a34a">${rec.voice}%</div>
+        </div>
+      </div>
     </div>
 
-    <div class="card">
-      <div class="section-label">${t('इंटरैक्शन हीटमैप सांख्यिकी','Interaction Metrics')}</div>
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <div class="row-between" style="font-size:12px">
-          <span>Form Completion Velocity:</span>
-          <strong style="color:#10b981">3.2x Faster (Voice First)</strong>
-        </div>
-        <div class="row-between" style="font-size:12px">
-          <span>Spatial Direction Accuracy:</span>
-          <strong style="color:var(--primary-blue)">98.4% Match</strong>
-        </div>
-        <div class="row-between" style="font-size:12px">
-          <span>Barrier Recovery Success Rate:</span>
-          <strong style="color:#a855f7">100% Resolved</strong>
+    <!-- Heatmap items -->
+    <div>
+      <div class="row-between" style="margin-bottom:8px">
+        <h3 style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.05em">${t('इंटरैक्शन घर्षण हीटमैप','Interaction Friction Heatmap')}</h3>
+        <span style="font-size:10px;color:#94a3b8">Live Session</span>
+      </div>
+      ${heatmapData.map(h=>`
+        <div class="section-card" style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px">
+          <div class="heatmap-dot heatmap-dot-${h.dot}" style="margin-top:3px"></div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
+              <span style="font-size:12px;font-weight:700;color:#0f172a">${h.inter}</span>
+              <span style="font-size:10px;font-weight:900;font-family:monospace;padding:2px 6px;border-radius:4px;white-space:nowrap;
+                background:${h.dot==='red'?'#fee2e2':h.dot==='yellow'?'#fef3c7':'#dcfce7'};
+                color:${h.dot==='red'?'#991b1b':h.dot==='yellow'?'#92400e':'#15803d'}">
+                ${h.dot.toUpperCase()}
+              </span>
+            </div>
+            <div style="font-size:11px;color:#64748b;margin-top:2px">${h.reason}</div>
+          </div>
+        </div>`).join('')}
+    </div>
+
+    <!-- Proactive adaptation -->
+    <div id="adaptBox" class="infobox infobox-purple" style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;gap:8px;align-items:flex-start">
+        ${ICON.sparkle}
+        <div>
+          <strong style="display:block;margin-bottom:3px">${t('सक्रिय अनुकूलन प्रस्ताव','Proactive Adaptation Proposal')}</strong>
+          <p style="font-size:11px;color:#6b21a8;line-height:1.5">
+            ${isH
+              ? 'क्या आप चाहते हैं कि सहायक भविष्य के सभी आवेदनों में स्वतः सरल हिंदी और आवाज़ मार्गदर्शन सक्रिय रखे?'
+              : 'Would you like Sahayak to automatically apply simplified language and voice-first guidance for all future applications?'}
+          </p>
         </div>
       </div>
+      <button onclick="acceptAdaptation()" class="btn-primary" style="background:#7c3aed">
+        ${ICON.thumbs} ${t('हाँ, स्वतः अनुकूलित करें','Accept & Auto-Adapt')}
+      </button>
+    </div>
+
+    <!-- Ethics banner -->
+    <div class="infobox infobox-green" style="display:flex;gap:8px">
+      ${ICON.shield}
+      <span style="font-size:11px">${t('गोपनीयता: यह हीटमैप केवल स्थानीय सत्र में है। कोई चिकित्सा लेबल नहीं।','Ethics: Telemetry is local only. No medical diagnosis or clinical labeling.')}</span>
     </div>
   </div>`;
 }
 
-/* ─── ACCESSIBILITY TWIN PROFILE SCREEN ─────────────────────────── */
+window.acceptAdaptation = function() {
+  haptics.success();
+  document.getElementById('adaptBox').innerHTML = `
+    <div style="display:flex;gap:8px;align-items:center">
+      <span style="font-size:18px">✅</span>
+      <div>
+        <strong>${t('अनुकूलन लागू!','Adaptation Applied!')}</strong>
+        <p style="font-size:11px;margin-top:2px">${t('आवाज़ प्राथमिकता एवं सरल भाषा स्वतः सक्रिय।','Voice-first & simplified language auto-activated.')}</p>
+      </div>
+    </div>`;
+};
+
+// ═══════════════════════════════════════════════════════════════
+//  PROFILE SCREEN
+// ═══════════════════════════════════════════════════════════════
 function renderProfile() {
   const isH = state.lang === 'Hindi';
+
+  const prefs = [
+    { key:'hc',    label:t('उच्च कंट्रास्ट (WCAG AAA)','High Contrast Mode'),    sub:'Yellow on Black (WCAG AAA)', val:state.hc, fn:'toggleHC' },
+    { key:'lg',    label:t('बड़ा टाइपोग्राफी','Large Typography'),              sub:'Expanded 20pt+ font scale',   val:state.lg, fn:'toggleLargeText' },
+    { key:'audio', label:t('आवाज़ निर्देश (TTS)','Voice Instructions (TTS)'),  sub:'Auto speech narration',        val:state.audio, fn:'toggleAudio' },
+  ];
+
   return `
   <div class="screen-pad">
     <div class="row-between">
       <button class="back-btn" onclick="navigate('home')">${ICON.arrow_l} ${t('वापस','Back')}</button>
-      <span class="badge badge-blue">TWIN PROFILE</span>
+      <span class="badge badge-blue">ACCESSIBILITY TWIN</span>
     </div>
 
-    <div class="card">
-      <h3 style="font-size:15px;font-weight:800;color:var(--text-heading);margin-bottom:8px">Accessibility Twin Preferences</h3>
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <div class="row-between" style="padding:8px 0;border-bottom:1px solid var(--border-color)">
-          <span>Language (भाषा)</span>
-          <button class="btn-ghost" onclick="toggleLang()">${state.lang}</button>
-        </div>
-        <div class="row-between" style="padding:8px 0;border-bottom:1px solid var(--border-color)">
-          <span>Theme (थीम)</span>
-          <button class="btn-ghost" onclick="toggleTheme()">${state.theme.toUpperCase()}</button>
-        </div>
-        <div class="row-between" style="padding:8px 0">
-          <span>Voice Audio Guidance</span>
-          <button class="btn-ghost" onclick="toggleAudio()">${state.audio?'ENABLED':'DISABLED'}</button>
-        </div>
+    <div class="infobox infobox-green" style="display:flex;gap:8px">
+      ${ICON.shield}
+      <div style="font-size:11px">
+        <strong>${t('नैतिक गारंटी:','Ethical Guarantee:')}</strong>
+        ${t(' बातचीत की प्राथमिकताओं का मॉडल — कोई चिकित्सा निदान नहीं।',' Models functional interaction preferences — not a medical diagnosis.')}
       </div>
     </div>
+
+    <!-- Language -->
+    <div class="section-card">
+      <div class="section-label" style="margin-bottom:8px">${t('प्राथमिक भाषा','Primary Language')}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <button onclick="setLang('Hindi')"
+          style="padding:10px;border-radius:12px;font-weight:700;font-size:13px;border:2px solid;
+            ${state.lang==='Hindi'?'background:#2563eb;color:#fff;border-color:#2563eb;':'background:#f8fafc;color:#475569;border-color:#e2e8f0;'}">
+          Hindi (हिंदी)
+        </button>
+        <button onclick="setLang('English')"
+          style="padding:10px;border-radius:12px;font-weight:700;font-size:13px;border:2px solid;
+            ${state.lang==='English'?'background:#2563eb;color:#fff;border-color:#2563eb;':'background:#f8fafc;color:#475569;border-color:#e2e8f0;'}">
+          English
+        </button>
+      </div>
+    </div>
+
+    <!-- Preference toggles -->
+    <div class="section-card">
+      <div class="section-label" style="margin-bottom:4px">${t('दृश्य एवं ऑडियो सेटिंग्स','Visual & Audio Settings')}</div>
+      ${prefs.map(p => `
+        <div class="pref-row">
+          <div>
+            <div class="pref-label">${p.label}</div>
+            <div class="pref-sub">${p.sub}</div>
+          </div>
+          <label class="toggle" onclick="${p.fn}()">
+            <input type="checkbox" ${p.val?'checked':''} onclick="event.stopPropagation()">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>`).join('')}
+    </div>
+
+    <!-- Interaction prefs info -->
+    <div class="section-card">
+      <div class="section-label" style="margin-bottom:8px">${t('इंटरैक्शन प्राथमिकताएं (सक्रिय)','Interaction Preferences (Active)')}</div>
+      <div class="chip-row">
+        <span class="chip">${t('आवाज़ प्राथमिकता','Voice First')}</span>
+        <span class="chip">${t('एक समय में एक चरण','1-Step-at-a-Time')}</span>
+        <span class="chip">${t('सरल भाषा','Simplified Language')}</span>
+        <span class="chip">${t('हैप्टिक पुष्टि','Haptic Confirmation')}</span>
+        <span class="chip">${t('बड़े बटन','Large Touch Targets')}</span>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="saveProfile()">
+      ${ICON.sparkle} ${t('प्राथमिकताएं सहेजें','Save Accessibility Twin')}
+    </button>
   </div>`;
 }
 
-// Initial Kickoff
-window.addEventListener('DOMContentLoaded', () => {
+window.setLang = function(lang) { haptics.click(); state.lang = lang; applyTheme(); render(); };
+window.saveProfile = function() {
+  haptics.success();
+  showToast(state.lang==='Hindi' ? '✓ प्रोफ़ाइल सहेजी!' : '✓ Twin Profile Saved!');
+  setTimeout(() => navigate('home'), 900);
+};
+
+// ═══════════════════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════════════════
+function showToast(msg) {
+  const existing = document.querySelector('.toast');
+  if (existing) existing.remove();
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.getElementById('phoneScreen').appendChild(t);
+  setTimeout(() => t.remove(), 2500);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════════
+async function init() {
+  // Update time
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('en-IN', {hour:'2-digit',minute:'2-digit',hour12:false});
+  document.querySelector('.status-bar span').textContent = timeStr;
+
   applyTheme();
+  renderNav();
   render();
+
+  // Check backend in background
   checkBackend();
-  setInterval(checkBackend, 10000);
-});
+
+  // Greet on home
+  setTimeout(() => {
+    if (state.screen === 'home') {
+      speak(state.lang==='Hindi'
+        ? 'सहायक AI में आपका स्वागत है। मैं आपकी क्या मदद करूँ?'
+        : 'Welcome to Sahayak AI. How can I assist you today?');
+    }
+  }, 800);
+}
+
+init();
 </script>
 </body>
 </html>

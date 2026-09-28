@@ -84,22 +84,18 @@ export const HomeScreen: React.FC = () => {
         setActiveScreen('talk');
       } else if (result.intent === 'SEE') {
         setActiveScreen('see');
-      } else if (query.toLowerCase().includes('camera') || query.toLowerCase().includes('कैमरा')) {
-        setActiveScreen('camera');
       }
     }, 1100);
   };
 
   const samplePrompts = isHindi
     ? [
-        { label: 'कैमरा असिस्टेंट', query: 'कैमरा असिस्टेंट चालू करो' },
         { label: 'फ़ॉर्म भरें', query: 'छात्रवृत्ति फ़ॉर्म भरने में मदद करो' },
         { label: 'नोटिस समझें', query: 'इस छात्रवृत्ति नोटिस में क्या महत्वपूर्ण है?' },
         { label: 'सांकेतिक भाषा', query: 'सांकेतिक भाषा का अनुवाद करो' },
         { label: 'बोतल खोजें', query: 'मेरी पानी की बोतल कहां रखी है?' },
       ]
     : [
-        { label: 'Camera Assistant', query: 'Open camera assistant HUD' },
         { label: 'Fill Form', query: 'Help me fill this scholarship form' },
         { label: 'Notice Info', query: 'What is important in this scholarship notice?' },
         { label: 'Sign Talk', query: 'Translate sign language gestures' },

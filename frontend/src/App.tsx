@@ -8,7 +8,6 @@ import { SignTalkScreen } from './components/screens/SignTalkScreen';
 import { SeeScreen } from './components/screens/SeeScreen';
 import { HeatmapScreen } from './components/screens/HeatmapScreen';
 import { ProfileScreen } from './components/screens/ProfileScreen';
-import { CameraAssistantScreen } from './components/screens/CameraAssistantScreen';
 
 const MainAppContent: React.FC = () => {
   const { twin, activeScreen } = useTwin();
@@ -28,8 +27,6 @@ const MainAppContent: React.FC = () => {
         return <SignTalkScreen />;
       case 'see':
         return <SeeScreen />;
-      case 'camera':
-        return <CameraAssistantScreen />;
       case 'heatmap':
         return <HeatmapScreen />;
       case 'profile':
