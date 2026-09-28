@@ -256,7 +256,35 @@ def test_extended_capabilities(doc_id: str):
     print(f"   High Contrast: {p_data['high_contrast']}")
     assert p_data["twin_id"] == "default_user"
 
-    print("\n✓ ALL EXTENDED CAPABILITIES VERIFIED SUCCESSFULLY!")
+    # 8. Camera Intelligence API & Session
+    print("\n8. Testing Camera Intelligence API & Session (/camera/session & /camera/analyze):")
+    cam_sess_res = requests.post(f"{BASE_URL}/camera/session", json={"twin_id": "default_user", "initial_mode": "UNDERSTAND"})
+    assert cam_sess_res.status_code == 200
+    cam_sess_data = cam_sess_res.json()
+    cam_sid = cam_sess_data["session_id"]
+    print(f"   Created Camera Session: {cam_sid}")
+
+    from PIL import Image as PILImage
+    import io as pyio
+    test_frame = PILImage.new("RGB", (320, 240), color=(70, 120, 180))
+    buf = pyio.BytesIO()
+    test_frame.save(buf, format="JPEG")
+    frame_bytes = buf.getvalue()
+
+    cam_an_res = requests.post(
+        f"{BASE_URL}/camera/analyze",
+        data={"session_id": cam_sid, "mode": "UNDERSTAND", "twin_id": "default_user", "intent": "What is in front of me?"},
+        files={"image": ("camera_frame.jpg", frame_bytes, "image/jpeg")}
+    )
+    assert cam_an_res.status_code == 200
+    cam_an_data = cam_an_res.json()
+    assert cam_an_data["success"] is True
+    print(f"   Camera Analysis Mode: {cam_an_data['mode']}")
+    print(f"   Spoken Guidance: '{cam_an_data['assistance']['spoken_response']}'")
+    print(f"   Haptic Cue: {cam_an_data['assistance']['haptic_cue']}")
+    print(f"   Processing Latency: {cam_an_data['processing']['latency_ms']}ms")
+
+    print("\n✓ ALL EXTENDED CAPABILITIES & CAMERA INTELLIGENCE VERIFIED SUCCESSFULLY!")
     return True
 
 def main():

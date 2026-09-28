@@ -6,7 +6,7 @@
 
 ---
 
-## Complete API Endpoint Directory (22 Endpoints)
+## Complete API Endpoint Directory (24 Endpoints)
 
 | Category | Method | Path | Status | Purpose |
 | :--- | :--- | :--- | :--- | :--- |
@@ -14,6 +14,9 @@
 | **Profile** | `GET` | `/accessibility/profile` | `IMPLEMENTED` | Fetch user's Accessibility Twin |
 | **Profile** | `POST` | `/accessibility/profile` | `IMPLEMENTED` | Update Accessibility Twin preferences |
 | **Intent** | `POST` | `/intent` | `IMPLEMENTED` | Multilingual intent classification |
+| **Camera** | `POST` | `/camera/analyze` | `IMPLEMENTED` | Intent-aware camera frame intelligence & fusion |
+| **Camera** | `POST` | `/camera/session` | `IMPLEMENTED` | Initialize continuous camera session |
+| **Camera** | `GET` | `/camera/session` | `IMPLEMENTED` | Retrieve active camera session state & history |
 | **Form** | `POST` | `/complete/analyze` | `IMPLEMENTED` | Real OCR form scan & flow compilation |
 | **Form** | `POST` | `/complete/respond` | `IMPLEMENTED` | Submit field response with validation |
 | **Document** | `POST` | `/read` | `IMPLEMENTED` | OCR document notice extraction |
@@ -34,6 +37,7 @@
 | **Learning** | `GET` | `/learning/heatmap` | `IMPLEMENTED` | Interaction friction heatmap & telemetry |
 | **Learning** | `GET` | `/learning/personalization` | `IMPLEMENTED` | Fetch personalization settings |
 | **Learning** | `POST` | `/learning/personalization` | `IMPLEMENTED` | Update personalization settings |
+
 
 ---
 

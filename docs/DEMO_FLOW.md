@@ -23,7 +23,9 @@ In accordance with transparent engineering principles:
 * **Demo 1 (Notice Comprehension)**: `IMPLEMENTED` (RapidOCR CPU ONNX engine, entity parsing, Hindi/English summaries).
 * **Demo 2 (Form Completion)**: `IMPLEMENTED` (Real OCR field discovery, barrier engine, 7-step linearized voice flow, field-level semantic validation, TaskVerificationService token).
 * **Demo 3 (ISL Gesture Recognition)**: `PARTIALLY IMPLEMENTED` (MediaPipe 21-point 3D tracking loaded lazily; verified support for `HELP`, `A`, `ONE`, `TWO`, `YES`, `NO`).
+* **Feature 4 (Camera Intelligence & Fusion)**: `IMPLEMENTED` (Intent-aware camera frame pipeline with AUTO/SEE/READ/FIND/UNDERSTAND/NAVIGATE modes, session continuity, and multimodal responses).
 * **Optional Wow Demo (Spatial Guidance)**: `DEMO/MOCK` (Directional math & haptics functional; live YOLO weights disabled by default to stay within 2.5 GB RAM).
+
 
 ---
 

@@ -58,6 +58,7 @@ sahayak-ai/
 │   ├── main.py              # Application entry point, global recovery & router aggregation
 │   ├── config.py            # Environment configuration & settings
 │   ├── routes/              # Modular Domain Routers
+│   │   ├── camera.py        # /camera/analyze, /camera/session
 │   │   ├── complete.py      # /complete/analyze, /complete/respond
 │   │   ├── read.py          # /read, /read/qa, /read/tasks
 │   │   ├── isl.py           # /isl/predict
@@ -69,6 +70,7 @@ sahayak-ai/
 │   │   ├── verification.py  # /task/verify, /verification/check
 │   │   └── learning.py      # /learning/heatmap, /learning/personalization
 │   └── services/            # Backend Orchestration Services
+│       ├── camera_service.py   # Camera frame validator, preprocessor & mode orchestrator
 │       ├── pipeline_service.py # End-to-end 7-stage coordinator
 │       ├── session_service.py  # Stateful multi-turn session cache
 │       └── response_service.py # Normalized multimodal response builder
@@ -76,6 +78,7 @@ sahayak-ai/
 ├── shared/                  # Common resources & schemas
 │   ├── schemas/
 │   │   ├── models.py        # Core models + aggregated re-exports
+│   │   ├── camera_models.py # CameraAnalysisRequest/Response, CameraObject, CameraText
 │   │   ├── vision_models.py # VisionObject, SceneAnalysis, ObjectTextRelation
 │   │   ├── form_models.py   # FormFieldAnalysis, FormRespond models
 │   │   ├── document_models.py # DocumentSummary, Q&A, DocumentTask

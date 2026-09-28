@@ -1,61 +1,106 @@
 """
-Sahayak AI — Camera Intelligence API Router
-Endpoints for device camera stream analysis, frame quality checks, and session management.
+Sahayak AI — Camera Intelligence Routes
+Endpoints for Real-Time Camera Frame Analysis, Mode Resolution, and Stateful Camera Sessions.
 """
 
 from typing import Optional
-from fastapi import APIRouter, UploadFile, File, Form, HTTPException
-from shared.schemas.camera_models import CameraAnalysisResult, CameraMode
-from ai.camera.camera_engine import CameraEngine
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException, Query
+from pydantic import BaseModel
+from shared.schemas.models import (
+    CameraAnalysisMode,
+    CameraAnalysisResponse,
+    CameraSessionState,
+)
+from backend.services.camera_service import camera_service
+from backend.services.session_service import session_service
 from ai.camera.camera_session import camera_session_manager
 
-router = APIRouter(prefix="/camera", tags=["Camera Intelligence"])
-
-camera_engine = CameraEngine()
+router = APIRouter(tags=["Camera Intelligence"])
 
 
-@router.post("/analyze", response_model=CameraAnalysisResult)
+class CameraSessionCreateRequest(BaseModel):
+    twin_id: str = "default_user"
+    initial_mode: CameraAnalysisMode = CameraAnalysisMode.AUTO
+    target_object: Optional[str] = None
+
+
+@router.post("/camera/analyze", response_model=CameraAnalysisResponse)
 async def analyze_camera_frame(
     image: Optional[UploadFile] = File(None),
-    mode: str = Form("auto"),
-    query: Optional[str] = Form(None),
-    twin_id: str = Form("default_user"),
     session_id: Optional[str] = Form(None),
+    twin_id: str = Form("default_user"),
+    mode: str = Form("AUTO"),
+    intent: Optional[str] = Form(None),
+    query: Optional[str] = Form(None),
     target_object: Optional[str] = Form(None),
+    language: Optional[str] = Form(None),
     skip_duplicate_check: bool = Form(False),
 ):
     """
-    Analyzes an incoming camera frame with automated quality estimation,
-    duplicate suppression, intelligent capability selection, and accessible multimodal output.
+    Analyzes a camera frame in an intent-aware mode (AUTO, SEE, READ, FIND, UNDERSTAND, NAVIGATE).
+    Returns structured vision detections, OCR texts, object-text fusion, and multimodal assistance prompts.
     """
-    image_bytes = None
-    if image is not None:
-        image_bytes = await image.read()
+    # Accept query as intent if intent is not explicitly provided
+    effective_intent = intent or query
 
-    if not image_bytes:
-        # Fallback to simulated blank or placeholder image if none uploaded
-        from PIL import Image
-        import io
-        img = Image.new("RGB", (640, 480), color=(128, 128, 128))
-        buf = io.BytesIO()
-        img.save(buf, format="JPEG")
-        image_bytes = buf.getvalue()
+    # Parse mode enum safely
+    try:
+        parsed_mode = CameraAnalysisMode(mode.upper())
+    except ValueError:
+        parsed_mode = CameraAnalysisMode.AUTO
 
-    result = camera_engine.analyze(
-        image_input=image_bytes,
-        mode=mode,
-        query=query,
-        twin_id=twin_id,
+    image_bytes = await image.read() if image else None
+    filename = image.filename if image else None
+    content_type = image.content_type if image else None
+
+    response = camera_service.analyze_frame(
+        image_bytes=image_bytes,
         session_id=session_id,
+        twin_id=twin_id,
+        requested_mode=parsed_mode,
+        intent=effective_intent,
         target_object=target_object,
+        language=language,
+        filename=filename,
+        content_type=content_type,
         skip_duplicate_check=skip_duplicate_check,
     )
-    return result
+    return response
 
 
-@router.post("/session/reset")
+@router.post("/camera/session", response_model=CameraSessionState)
+async def create_camera_session(req: CameraSessionCreateRequest):
+    """
+    Initializes a new stateful camera session for continuous frame analysis.
+    """
+    sid = session_service.create_camera_session(
+        twin_id=req.twin_id,
+        initial_mode=req.initial_mode.value,
+        target_object=req.target_object,
+    )
+    sess = session_service.get_camera_session(sid)
+    return CameraSessionState(**sess)
+
+
+@router.get("/camera/session", response_model=CameraSessionState)
+async def get_camera_session_state(session_id: str = Query(...)):
+    """
+    Retrieves the current state, detected entities, and history of an active camera session.
+    """
+    sess = session_service.get_camera_session(session_id)
+    if not sess:
+        raise HTTPException(status_code=404, detail=f"Camera session '{session_id}' not found.")
+    return CameraSessionState(**sess)
+
+
+@router.post("/camera/session/reset")
 async def reset_camera_session(session_id: str = Form(...)):
     """Resets frame history and context for a camera session."""
     session = camera_session_manager.get_or_create(session_id)
     session.reset()
+    # Also reset backend session service if active
+    sess = session_service.get_camera_session(session_id)
+    if sess:
+        sess["total_frames_processed"] = 0
+        sess["analysis_history"] = []
     return {"status": "SUCCESS", "message": f"Camera session {session_id} reset."}

@@ -221,11 +221,22 @@ from shared.schemas.task_models import (
 )
 from shared.schemas.camera_models import (
     CameraMode,
+    CameraAnalysisMode,
     FrameQualityMetrics,
     CameraFrame,
+    CameraFrameMetadata,
+    CameraObject,
+    CameraText,
+    CameraObjectTextRelation,
+    CameraSceneAnalysis,
     CameraAnalysisRequest,
     CameraAnalysisResult,
+    CameraAssistanceResponse,
+    CameraError,
+    CameraAnalysisResponse,
+    CameraSessionState,
 )
+
 
 
 # ====================================================

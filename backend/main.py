@@ -15,11 +15,16 @@ Coordinates the 7-stage Intent-Aware Accessibility Pipeline across:
 
 import sys
 import os
+import builtins
+import typing
+builtins.Union = typing.Union
 import logging
 from typing import Optional, Dict, Any
 
+
 # Ensure project root is in python path
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
 if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
@@ -124,6 +129,7 @@ async def health_check():
             "smart_navigation": True,
             "document_qa": True,
             "session_service": True,
+            "camera_intelligence": True,
         },
     }
 
@@ -183,3 +189,4 @@ app.include_router(camera_router, prefix=settings.api_prefix)
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("backend.main:app", host=settings.host, port=settings.port, reload=settings.debug)
+

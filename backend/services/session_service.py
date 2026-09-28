@@ -19,6 +19,7 @@ class SessionService:
         self._document_sessions: Dict[str, Dict[str, Any]] = {}
         self._navigation_sessions: Dict[str, Dict[str, Any]] = {}
         self._voice_sessions: Dict[str, Dict[str, Any]] = {}
+        self._camera_sessions: Dict[str, Dict[str, Any]] = {}
         self._user_personalization: Dict[str, Dict[str, Any]] = {}
 
     # ----------------------------------------------------
@@ -192,6 +193,131 @@ class SessionService:
             return True
 
     # ----------------------------------------------------
+    # Camera Sessions (Continuous Frame Analysis & Context)
+    # ----------------------------------------------------
+    def create_camera_session(
+        self,
+        twin_id: str = "default_user",
+        initial_mode: str = "AUTO",
+        target_object: Optional[str] = None,
+        custom_id: Optional[str] = None
+    ) -> str:
+        session_id = custom_id or f"cam_{uuid.uuid4().hex[:8]}"
+        now_iso = datetime.utcnow().isoformat()
+        with self._lock:
+            self._camera_sessions[session_id] = {
+                "session_id": session_id,
+                "twin_id": twin_id,
+                "active_mode": initial_mode,
+                "target_object": target_object,
+                "current_intent": None,
+                "created_at": now_iso,
+                "updated_at": now_iso,
+                "last_accessed": time.time(),
+                "total_frames_processed": 0,
+                "last_frame_id": None,
+                "latest_scene": None,
+                "detected_objects": [],
+                "detected_texts": [],
+                "fused_relations": [],
+                "hazards": [],
+                "analysis_history": [],
+            }
+        return session_id
+
+    def get_camera_session(self, session_id: str) -> Optional[Dict[str, Any]]:
+        with self._lock:
+            session = self._camera_sessions.get(session_id)
+            if session:
+                session["last_accessed"] = time.time()
+                return dict(session)
+        return None
+
+    def get_or_create_camera_session(
+        self,
+        session_id: Optional[str] = None,
+        twin_id: str = "default_user",
+        mode: str = "AUTO",
+        target_object: Optional[str] = None
+    ) -> Dict[str, Any]:
+        with self._lock:
+            sid = session_id or f"cam_{uuid.uuid4().hex[:8]}"
+            now_iso = datetime.utcnow().isoformat()
+            if sid not in self._camera_sessions:
+                self._camera_sessions[sid] = {
+                    "session_id": sid,
+                    "twin_id": twin_id,
+                    "active_mode": mode,
+                    "target_object": target_object,
+                    "current_intent": None,
+                    "created_at": now_iso,
+                    "updated_at": now_iso,
+                    "last_accessed": time.time(),
+                    "total_frames_processed": 0,
+                    "last_frame_id": None,
+                    "latest_scene": None,
+                    "detected_objects": [],
+                    "detected_texts": [],
+                    "fused_relations": [],
+                    "hazards": [],
+                    "analysis_history": [],
+                }
+            session = self._camera_sessions[sid]
+            session["last_accessed"] = time.time()
+            session["updated_at"] = now_iso
+
+            if target_object:
+                session["target_object"] = target_object
+            if mode:
+                session["active_mode"] = mode
+            return dict(session)
+
+    def update_camera_session(
+        self,
+        session_id: str,
+        frame_id: str,
+        objects: List[Dict[str, Any]],
+        texts: List[Dict[str, Any]],
+        fused_relations: List[Dict[str, Any]],
+        scene: Optional[Dict[str, Any]] = None,
+        hazards: Optional[List[str]] = None,
+        mode: Optional[str] = None,
+        intent: Optional[str] = None,
+        target_object: Optional[str] = None
+    ) -> bool:
+        with self._lock:
+            session = self._camera_sessions.get(session_id)
+            if not session:
+                return False
+            session["total_frames_processed"] += 1
+            session["last_frame_id"] = frame_id
+            session["detected_objects"] = objects
+            session["detected_texts"] = texts
+            session["fused_relations"] = fused_relations
+            if scene:
+                session["latest_scene"] = scene
+            if hazards is not None:
+                session["hazards"] = hazards
+            if mode:
+                session["active_mode"] = mode
+            if intent:
+                session["current_intent"] = intent
+            if target_object:
+                session["target_object"] = target_object
+            session["last_accessed"] = time.time()
+            session["analysis_history"].append({
+                "frame_id": frame_id,
+                "objects_count": len(objects),
+                "texts_count": len(texts),
+                "fused_count": len(fused_relations),
+                "timestamp": datetime.utcnow().isoformat(),
+            })
+            # Keep history bounded to last 20 frames for memory safety
+            if len(session["analysis_history"]) > 20:
+                session["analysis_history"] = session["analysis_history"][-20:]
+            return True
+
+    # ----------------------------------------------------
     # Personalization Cache
     # ----------------------------------------------------
     def update_personalization_profile(self, twin_id: str, profile_data: Dict[str, Any]) -> Dict[str, Any]:
@@ -211,3 +337,4 @@ class SessionService:
 
 # Global singleton instance
 session_service = SessionService()
+
