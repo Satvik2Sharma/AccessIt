@@ -250,18 +250,26 @@ export const CameraAssistantScreen: React.FC = () => {
     }
   };
 
+  // Auto-scan request locking to prevent overlapping API requests
+  const isAnalyzingRef = useRef<boolean>(false);
+  useEffect(() => {
+    isAnalyzingRef.current = isAnalyzing;
+  }, [isAnalyzing]);
+
   // Auto-scan timer effect
   useEffect(() => {
     let timer: any = null;
-    if (autoScan && isStreaming && cameraState === 'active' && !isAnalyzing) {
+    if (autoScan && isStreaming && cameraState === 'active') {
       timer = setInterval(() => {
-        handleAnalyzeFrame();
-      }, 4000);
+        if (!isAnalyzingRef.current) {
+          handleAnalyzeFrame();
+        }
+      }, 4500);
     }
     return () => {
       if (timer) clearInterval(timer);
     };
-  }, [autoScan, isStreaming, cameraState, isAnalyzing]);
+  }, [autoScan, isStreaming, cameraState]);
 
   return (
     <div className={`flex flex-col h-full ${isHC ? 'bg-black text-[#FFD700]' : 'bg-slate-50 text-slate-800'}`}>
