@@ -13,7 +13,15 @@ from shared.schemas.models import (
 )
 from backend.services.camera_service import camera_service
 from backend.services.session_service import session_service
-from ai.camera.camera_session import camera_session_manager
+try:
+    from ai.camera.camera_session import camera_session_manager
+except Exception:
+    class DummyCameraSessionManager:
+        def get_or_create(self, session_id):
+            class DummySession:
+                def reset(self): pass
+            return DummySession()
+    camera_session_manager = DummyCameraSessionManager()
 
 router = APIRouter(tags=["Camera Intelligence"])
 
