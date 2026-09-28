@@ -10,7 +10,12 @@ import base64
 from typing import Union, Tuple, Optional, Dict, Any
 from PIL import Image, ImageOps, ImageEnhance
 import numpy as np
-import cv2
+try:
+    import cv2
+    HAS_CV2 = True
+except ImportError:
+    cv2 = None
+    HAS_CV2 = False
 
 
 class ImagePreprocessor:
@@ -63,15 +68,19 @@ class ImagePreprocessor:
 
     @staticmethod
     def to_cv2(image: Image.Image) -> np.ndarray:
-        """Converts PIL Image (RGB) to OpenCV format (BGR)."""
+        """Converts PIL Image (RGB) to OpenCV format (BGR) or numpy array."""
         np_arr = np.array(image.convert("RGB"))
-        return cv2.cvtColor(np_arr, cv2.COLOR_RGB2BGR)
+        if HAS_CV2 and cv2 is not None:
+            return cv2.cvtColor(np_arr, cv2.COLOR_RGB2BGR)
+        return np_arr
 
     @staticmethod
     def from_cv2(cv_img: np.ndarray) -> Image.Image:
         """Converts OpenCV format (BGR) to PIL Image (RGB)."""
-        rgb = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
-        return Image.fromarray(rgb)
+        if HAS_CV2 and cv2 is not None:
+            rgb = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
+            return Image.fromarray(rgb)
+        return Image.fromarray(cv_img)
 
     @staticmethod
     def normalize_rotation(image: Image.Image) -> Image.Image:
@@ -146,6 +155,8 @@ class ImagePreprocessor:
         Finds document contours and performs 4-point perspective warp.
         If no clear document quad is found, returns original image.
         """
+        if not HAS_CV2 or cv2 is None:
+            return image
         cv_img = ImagePreprocessor.to_cv2(image)
         gray = cv2.cvtColor(cv_img, cv2.COLOR_BGR2GRAY)
         blurred = cv2.GaussianBlur(gray, (5, 5), 0)
