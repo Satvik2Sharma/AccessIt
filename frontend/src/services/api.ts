@@ -1,15 +1,59 @@
 import type { AccessibilityTwin, AccessibleTaskFlow, HeatmapItem, Recommendation, VerificationResult } from '../types';
 
-const API_BASE_URL = 'http://localhost:8000/api/v1';
+const getApiBaseUrl = (): string => {
+  return (import.meta as any).env?.VITE_API_BASE_URL || 'http://localhost:8000/api/v1';
+};
 
 export class ApiService {
   private static backendAvailable: boolean | null = null;
+
+  static async analyzeCameraFrame(
+    imageBlob: Blob | File | null,
+    options: {
+      session_id?: string;
+      twin_id?: string;
+      mode?: string;
+      intent?: string;
+      query?: string;
+      target_object?: string;
+      language?: string;
+      skip_duplicate_check?: boolean;
+    } = {}
+  ): Promise<any> {
+    const baseUrl = getApiBaseUrl();
+    const formData = new FormData();
+    if (imageBlob) {
+      formData.append('image', imageBlob, 'frame.jpg');
+    }
+    if (options.session_id) formData.append('session_id', options.session_id);
+    if (options.twin_id) formData.append('twin_id', options.twin_id);
+    if (options.mode) formData.append('mode', options.mode);
+    if (options.intent) formData.append('intent', options.intent);
+    if (options.query) formData.append('query', options.query);
+    if (options.target_object) formData.append('target_object', options.target_object);
+    if (options.language) formData.append('language', options.language);
+    if (options.skip_duplicate_check !== undefined) {
+      formData.append('skip_duplicate_check', String(options.skip_duplicate_check));
+    }
+
+    const res = await fetch(`${baseUrl}/camera/analyze`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text().catch(() => '');
+      throw new Error(`Camera Analysis Failed (${res.status}): ${errorText || res.statusText}`);
+    }
+
+    return await res.json();
+  }
 
   static async checkHealth(): Promise<{ healthy: boolean; backendType: 'FastAPI' | 'LocalEngine' }> {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 1800);
-      const res = await fetch(`${API_BASE_URL}/health`, { signal: controller.signal });
+      const res = await fetch(`${getApiBaseUrl()}/health`, { signal: controller.signal });
       clearTimeout(timeoutId);
 
       if (res.ok) {
@@ -26,7 +70,7 @@ export class ApiService {
   static async classifyIntent(query: string, twin: AccessibilityTwin): Promise<{ intent: string; confidence: number; summary: string }> {
     if (this.backendAvailable) {
       try {
-        const res = await fetch(`${API_BASE_URL}/intent`, {
+        const res = await fetch(`/intent`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ query, twin_id: twin.id }),
@@ -85,7 +129,7 @@ export class ApiService {
       try {
         const formData = new FormData();
         formData.append('twin_id', twin.id);
-        const res = await fetch(`${API_BASE_URL}/complete/analyze`, {
+        const res = await fetch(`/complete/analyze`, {
           method: 'POST',
           body: formData,
         });
@@ -251,7 +295,7 @@ export class ApiService {
   ): Promise<{ verification: VerificationResult; completedField: string }> {
     if (this.backendAvailable) {
       try {
-        const res = await fetch(`${API_BASE_URL}/complete/respond`, {
+        const res = await fetch(`/complete/respond`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -313,7 +357,7 @@ export class ApiService {
         const formData = new FormData();
         formData.append('query', query);
         formData.append('twin_id', twin.id);
-        const res = await fetch(`${API_BASE_URL}/read`, {
+        const res = await fetch(`/read`, {
           method: 'POST',
           body: formData,
         });
@@ -377,7 +421,7 @@ export class ApiService {
       try {
         const formData = new FormData();
         formData.append('twin_id', twin.id);
-        const res = await fetch(`${API_BASE_URL}/isl/predict`, {
+        const res = await fetch(`/isl/predict`, {
           method: 'POST',
           body: formData,
         });
@@ -458,7 +502,7 @@ export class ApiService {
         const formData = new FormData();
         formData.append('target_object', targetObject);
         formData.append('twin_id', twin.id);
-        const res = await fetch(`${API_BASE_URL}/see`, {
+        const res = await fetch(`/see`, {
           method: 'POST',
           body: formData,
         });
@@ -528,7 +572,7 @@ export class ApiService {
   static async getHeatmap(): Promise<{ heatmap: HeatmapItem[]; recommendation: Recommendation }> {
     if (this.backendAvailable) {
       try {
-        const res = await fetch(`${API_BASE_URL}/learning/heatmap`);
+        const res = await fetch(`/learning/heatmap`);
         if (res.ok) {
           const data = await res.json();
           return {
