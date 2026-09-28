@@ -85,8 +85,8 @@ class TaskVerificationService:
         self,
         task_id: str,
         total_fields: int,
-        completed_fields: Dict[str, Any],
-        required_field_ids: List[str]
+        completed_fields: Optional[Dict[str, Any]] = None,
+        required_field_ids: Optional[List[str]] = None
     ) -> VerificationResult:
         """
         Validates form field completeness, confirmed answers, and data validity.
@@ -94,9 +94,11 @@ class TaskVerificationService:
         missing: List[str] = []
         invalid_fields: List[str] = []
         valid_count = 0
+        fields = completed_fields or {}
+        required = required_field_ids or []
 
-        for req in required_field_ids:
-            field_data = completed_fields.get(req)
+        for req in required:
+            field_data = fields.get(req)
             if not field_data or not field_data.get("value"):
                 missing.append(req)
             else:
@@ -141,11 +143,12 @@ class TaskVerificationService:
     def verify_document_understanding(
         self,
         task_id: str,
-        extracted_info: Dict[str, Any]
+        extracted_info: Optional[Dict[str, Any]] = None
     ) -> VerificationResult:
         """Verifies if key information was successfully comprehended from a document."""
-        deadlines = extracted_info.get("key_deadlines", [])
-        title = extracted_info.get("document_title")
+        info = extracted_info or {}
+        deadlines = info.get("key_deadlines", [])
+        title = info.get("document_title")
 
         if title and len(deadlines) > 0:
             status = VerificationStatus.COMPLETED
@@ -171,11 +174,12 @@ class TaskVerificationService:
         self._verifications[task_id] = result
         return result
 
-    def get_verification(self, task_id: str) -> VerificationResult:
-        if task_id in self._verifications:
-            return self._verifications[task_id]
+    def get_verification(self, task_id: Optional[str] = None) -> VerificationResult:
+        tid = task_id or "unknown"
+        if tid in self._verifications:
+            return self._verifications[tid]
         return VerificationResult(
-            task_id=task_id,
+            task_id=tid,
             status=VerificationStatus.IN_PROGRESS,
             completion_percentage=0.0,
             completed_fields=0,

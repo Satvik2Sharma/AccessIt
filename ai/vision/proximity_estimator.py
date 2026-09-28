@@ -25,20 +25,22 @@ class ProximityEstimator:
         normalized: bool = True,
         image_width: int = 1,
         image_height: int = 1,
-    ) -> Dict[str, str]:
+    ) -> Dict[str, Any]:
         """
         Estimate coarse proximity.
 
         Returns:
-            dict with zone, label, label_hi, haptic_cue
+            dict with zone, label, label_hi, haptic_cue, bbox_area
         """
         xmin, ymin, xmax, ymax = bbox
         if not normalized:
-            xmin /= image_width
-            xmax /= image_width
-            ymin /= image_height
-            ymax /= image_height
-        area = max(0.0, (xmax - xmin) * (ymax - ymin))
+            w = max(1, image_width)
+            h = max(1, image_height)
+            xmin /= w
+            xmax /= w
+            ymin /= h
+            ymax /= h
+        area = max(0.0, min(1.0, (xmax - xmin) * (ymax - ymin)))
         for threshold, zone, label, label_hi, haptic in self.ZONES:
             if area >= threshold:
                 return {"zone": zone, "label": label, "label_hi": label_hi, "haptic_cue": haptic, "bbox_area": round(area, 4)}

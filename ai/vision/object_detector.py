@@ -3,8 +3,11 @@ Sahayak AI — Object Detector Adapter
 Provider-agnostic adapter for physical object detection from camera frames.
 Supports heuristic baseline (no model required) with optional YOLO/MediaPipe backend.
 """
+import logging
 from typing import List, Optional, Dict, Any
 from shared.schemas.models import SpatialObject
+
+logger = logging.getLogger(__name__)
 
 
 class ObjectDetectorAdapter:
@@ -69,7 +72,7 @@ class ObjectDetectorAdapter:
                 txt = response.text.strip().lstrip("```json").rstrip("```").strip()
                 return json.loads(txt)
         except Exception as e:
-            print(f"Gemini object detection error: {e}")
+            logger.warning("Gemini object detection error: %s", e)
         return None
 
     def _detect_yolo(self, image_bytes: bytes, target_labels: Optional[List[str]]) -> Optional[List[Dict[str, Any]]]:
@@ -96,7 +99,7 @@ class ObjectDetectorAdapter:
                     })
             return detections if detections else None
         except Exception as e:
-            print(f"YOLO object detection error: {e}")
+            logger.warning("YOLO object detection error: %s", e)
             return None
 
     def _heuristic_detections(self, target_labels: Optional[List[str]]) -> List[Dict[str, Any]]:

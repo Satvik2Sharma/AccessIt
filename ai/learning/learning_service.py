@@ -25,10 +25,10 @@ class AccessibilityLearningService:
     ):
         """Records an anonymous functional interaction signal."""
         self._telemetry_events.append({
-            "step_id": step_id,
-            "modality_used": modality_used.lower(),
-            "duration_seconds": float(duration_seconds),
-            "retries": int(retries),
+            "step_id": str(step_id or "unknown_step"),
+            "modality_used": (modality_used or "unknown").lower(),
+            "duration_seconds": max(0.0, float(duration_seconds)),
+            "retries": max(0, int(retries)),
             "success": bool(success),
             "notes": notes or "",
         })

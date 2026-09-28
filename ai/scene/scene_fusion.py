@@ -41,10 +41,13 @@ class SceneFusion:
         Associates text detections with bounding boxes of objects using
         both containment and high-overlap intersection.
         """
-        scene: Dict[str, Any] = {"objects": [], "texts": texts}
+        if not objects and not texts:
+            return {"objects": [], "texts": []}
+
+        scene: Dict[str, Any] = {"objects": [], "texts": texts or []}
         obj_list = []
 
-        for obj in objects:
+        for obj in (objects or []):
             obj_copy = dict(obj)
             obj_copy.setdefault("associated_texts", [])
             obj_copy.setdefault("text", None)

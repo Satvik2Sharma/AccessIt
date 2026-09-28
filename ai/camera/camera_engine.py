@@ -5,9 +5,12 @@ and multimodal result synthesis across OCR, Spatial Vision, ISL, Navigation, and
 """
 
 import time
+import logging
 from typing import Union, Optional, Dict, Any, List
 from PIL import Image
 import numpy as np
+
+logger = logging.getLogger(__name__)
 
 from shared.schemas.models import (
     AccessibilityTwin,
@@ -88,7 +91,8 @@ class CameraEngine:
             CameraAnalysisResult with structured multimodal responses
         """
         start_time = time.time()
-        twin = self.twin_service.get_twin(twin_id)
+        user_id = twin_id or "default_user"
+        twin = self.twin_service.get_twin(user_id)
         session = camera_session_manager.get_or_create(session_id)
         is_hindi = twin.language == LanguagePreference.HINDI
 
@@ -97,6 +101,7 @@ class CameraEngine:
             image = self.preprocessor.load_image(image_input)
             image = self.preprocessor.normalize_rotation(image)
         except Exception as e:
+            logger.warning("Camera image loading error: %s", e)
             return CameraAnalysisResult(
                 mode_executed=str(mode),
                 status="ERROR",

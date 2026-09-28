@@ -3,7 +3,7 @@ Sahayak AI — Text-to-Speech Abstraction
 Provider-agnostic TTS adapter. Returns SSML/text ready for device TTS engine.
 Core logic does NOT call device TTS directly — delegates to client layer.
 """
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 from shared.schemas.models import LanguagePreference
 
 
@@ -25,11 +25,12 @@ class TextToSpeechEngine:
         text: str,
         language: LanguagePreference = LanguagePreference.ENGLISH,
         speed: str = "normal",
-        emphasize_words: Optional[list] = None,
+        emphasize_words: Optional[List[str]] = None,
     ) -> Dict[str, Any]:
         """
         Prepare a structured TTS payload for the client.
         """
+        text = text or ""
         lang_code = "hi-IN" if language == LanguagePreference.HINDI else "en-IN"
         speed_rate = self.SPEED_SETTINGS.get(speed, 1.0)
 

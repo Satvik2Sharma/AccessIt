@@ -5,9 +5,12 @@ Does NOT invent information not present in the document.
 Reuses the existing OCR/document parser pipeline.
 """
 import re
+import logging
 from typing import Optional, Dict, Any, List
 from shared.schemas.models import DocumentQuestion, DocumentAnswer
 from ai.ocr.ocr_engine import DocumentOCREngine
+
+logger = logging.getLogger(__name__)
 
 
 # Map of question keywords to document field keys
@@ -107,8 +110,10 @@ class DocumentQAEngine:
             found_in_document=False,
         )
 
-    def answer_batch(self, questions: List[DocumentQuestion]) -> List[DocumentAnswer]:
+    def answer_batch(self, questions: Optional[List[DocumentQuestion]] = None) -> List[DocumentAnswer]:
         """Answer multiple questions about the same document."""
+        if not questions:
+            return []
         return [self.answer(q) for q in questions]
 
     def _gemini_qa(
@@ -146,5 +151,5 @@ class DocumentQAEngine:
                     found_in_document=parsed.get("found_in_document", True),
                 )
         except Exception as e:
-            print(f"Gemini QA error: {e}")
+            logger.warning("Gemini QA error: %s", e)
         return None

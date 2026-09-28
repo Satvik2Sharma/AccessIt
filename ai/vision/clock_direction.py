@@ -43,15 +43,18 @@ class ClockDirectionMapper:
             dict with clock_hour (int), direction (str), direction_hi (str),
             horizontal_zone (str)
         """
-        dx = x_center - 0.5
-        dy = 0.5 - y_center  # invert Y so up=positive
+        x_norm = max(0.0, min(1.0, float(x_center)))
+        y_norm = max(0.0, min(1.0, float(y_center)))
+
+        dx = x_norm - 0.5
+        dy = 0.5 - y_norm  # invert Y so up=positive
         angle_rad = math.atan2(dx, dy)  # angle from top (12 o'clock)
         angle_deg = math.degrees(angle_rad) % 360.0
         clock_hour = max(1, round(angle_deg / 30.0)) % 12 or 12
 
-        if x_center < 0.35:
+        if x_norm < 0.35:
             horizontal_zone = "left"
-        elif x_center > 0.65:
+        elif x_norm > 0.65:
             horizontal_zone = "right"
         else:
             horizontal_zone = "center"
@@ -80,10 +83,12 @@ class ClockDirectionMapper:
         """
         xmin, ymin, xmax, ymax = bbox
         if not normalized:
-            xmin /= image_width
-            xmax /= image_width
-            ymin /= image_height
-            ymax /= image_height
+            w = max(1, image_width)
+            h = max(1, image_height)
+            xmin /= w
+            xmax /= w
+            ymin /= h
+            ymax /= h
         x_center = (xmin + xmax) / 2.0
         y_center = (ymin + ymax) / 2.0
         return self.compute(x_center, y_center)

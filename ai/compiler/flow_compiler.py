@@ -87,13 +87,15 @@ class AccessibleTaskFlowCompiler:
     def compile_form_flow(
         self,
         task_id: str,
-        twin: AccessibilityTwin,
-        barriers: List[Barrier]
+        twin: Optional[AccessibilityTwin] = None,
+        barriers: Optional[List[Barrier]] = None
     ) -> AccessibleTaskFlow:
         """
         Compiles the form into a personalized AccessibleTaskFlow.
         """
-        is_hindi = twin.language == LanguagePreference.HINDI
+        user_twin = twin or AccessibilityTwin(id="default_user")
+        detected_barriers = barriers or []
+        is_hindi = user_twin.language == LanguagePreference.HINDI
         total = len(self._standard_form_fields)
         steps: List[TaskStep] = []
 
@@ -101,7 +103,7 @@ class AccessibleTaskFlowCompiler:
             spoken = item["hi_prompt"] if is_hindi else item["en_prompt"]
             display = item["hi_display"] if is_hindi else item["en_display"]
 
-            if twin.comprehension.simplified_language:
+            if user_twin.comprehension.simplified_language:
                 # Ensure simplified wording
                 pass
 
@@ -119,7 +121,7 @@ class AccessibleTaskFlowCompiler:
                 )
             )
 
-        strategy = "ONE_STEP_AT_A_TIME_VOICE" if twin.comprehension.one_step_at_a_time else "LINEAR_FORM"
+        strategy = "ONE_STEP_AT_A_TIME_VOICE" if user_twin.comprehension.one_step_at_a_time else "LINEAR_FORM"
 
         return AccessibleTaskFlow(
             task_id=task_id,
@@ -128,5 +130,5 @@ class AccessibleTaskFlowCompiler:
             total_steps=total,
             current_step_index=0,
             steps=steps,
-            detected_barriers=barriers,
+            detected_barriers=detected_barriers,
         )

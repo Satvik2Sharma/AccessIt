@@ -4,8 +4,11 @@ Provider-agnostic STT adapter supporting English and Hindi.
 Default: offline keyword fallback. Optional: Google Speech API.
 """
 import re
+import logging
 from typing import Optional, Dict, Any
 from shared.schemas.models import VoiceCommand
+
+logger = logging.getLogger(__name__)
 
 
 class STTProvider:
@@ -55,7 +58,7 @@ class SpeechToTextEngine:
                 raw_text = self._provider.transcribe(audio_bytes, language)
                 source = "stt"
             except Exception as e:
-                print(f"STT error: {e}")
+                logger.warning(f"STT transcription failed: {e}")
                 raw_text = ""
                 source = "stt_failed"
         else:

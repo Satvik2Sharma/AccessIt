@@ -11,8 +11,8 @@ from typing import Dict, Any, Optional, Tuple
 
 class DirectionalFinder:
     def __init__(self, frame_width: int = 640, frame_height: int = 480):
-        self.frame_width = frame_width
-        self.frame_height = frame_height
+        self.frame_width = max(1, frame_width)
+        self.frame_height = max(1, frame_height)
 
     def _calculate_clock_position(self, norm_x: float, norm_y: float) -> Tuple[int, str, str]:
         """
@@ -60,7 +60,7 @@ class DirectionalFinder:
         Takes [xmin, ymin, xmax, ymax] and computes 12-hour clock direction,
         vertical elevation, proximity heuristic, and specialized haptic cues.
         """
-        xmin, ymin, xmax, ymax = bbox
+        xmin, ymin, xmax, ymax = bbox if bbox and len(bbox) == 4 else (0, 0, 0, 0)
         center_x = (xmin + xmax) / 2.0
         center_y = (ymin + ymax) / 2.0
 

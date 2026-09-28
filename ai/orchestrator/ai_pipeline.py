@@ -4,10 +4,13 @@ Single entry point that coordinates all 7-stage pipeline stages
 and selects the appropriate AI capabilities per task/intent.
 Does NOT bypass existing engines.
 """
+import logging
 from typing import Optional, Dict, Any, List
 from shared.schemas.models import (
     AccessibilityTwin, TaskType, LanguagePreference
 )
+
+logger = logging.getLogger(__name__)
 from ai.accessibility.twin import AccessibilityTwinService
 from ai.intent.intent_engine import IntentEngine
 from ai.barrier.barrier_engine import BarrierEngine
@@ -82,10 +85,11 @@ class AIPipeline:
         Returns:
             structured pipeline result with all stage outputs
         """
-        result: Dict[str, Any] = {"twin_id": twin_id, "pipeline_stages": []}
+        user_id = twin_id or "default_user"
+        result: Dict[str, Any] = {"twin_id": user_id, "pipeline_stages": []}
 
         # Stage 1: Accessibility Twin
-        twin = self.twin_service.get_twin(twin_id)
+        twin = self.twin_service.get_twin(user_id)
         result["twin"] = {"language": twin.language.value, "input_modality": twin.preferred_input.value}
         result["pipeline_stages"].append("twin")
 

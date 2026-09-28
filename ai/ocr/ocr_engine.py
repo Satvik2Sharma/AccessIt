@@ -8,9 +8,12 @@ import io
 import os
 import re
 import json
+import logging
 from typing import List, Dict, Any, Optional, Tuple
 import numpy as np
 from PIL import Image
+
+logger = logging.getLogger(__name__)
 
 
 class DocumentOCREngine:
@@ -65,7 +68,7 @@ class DocumentOCREngine:
                 })
             return elements
         except Exception as e:
-            print(f"Error in OCR image processing: {e}")
+            logger.warning("Error in OCR image processing: %s", e)
             return []
 
     def _compute_readability_metrics(self, text: str) -> Dict[str, Any]:

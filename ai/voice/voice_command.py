@@ -3,11 +3,14 @@ Sahayak AI — Voice Command Processor
 Routes voice commands through the existing Intent Engine.
 Does NOT bypass the 7-stage pipeline.
 """
+import logging
 from typing import Optional, Dict, Any
-from shared.schemas.models import VoiceCommand, AccessibilityTwin
+from shared.schemas.models import VoiceCommand, AccessibilityTwin, LanguagePreference
 from ai.voice.speech_to_text import SpeechToTextEngine
 from ai.voice.text_to_speech import TextToSpeechEngine
 from ai.intent.intent_engine import IntentEngine
+
+logger = logging.getLogger(__name__)
 
 
 class VoiceCommandProcessor:
@@ -72,7 +75,6 @@ class VoiceCommandProcessor:
         
         ack_text = f"Processing: {voice_cmd.raw_text}"
         lang_pref = twin.language if twin else None
-        from shared.schemas.models import LanguagePreference
         tts_payload = self.tts.prepare(
             text=ack_text,
             language=lang_pref or LanguagePreference.ENGLISH,

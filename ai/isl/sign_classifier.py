@@ -8,9 +8,12 @@ import io
 import os
 import math
 import json
+import logging
 from typing import Dict, Any, List, Optional, Tuple
 import numpy as np
 from PIL import Image
+
+logger = logging.getLogger(__name__)
 
 
 class ISLInterpreterService:
@@ -188,7 +191,7 @@ class ISLInterpreterService:
                 options = vision.GestureRecognizerOptions(base_options=base_options)
                 self._recognizer = vision.GestureRecognizer.create_from_options(options)
             except Exception as e:
-                print(f"Warning: MediaPipe initialization exception: {e}")
+                logger.warning("MediaPipe initialization exception: %s", e)
                 self._recognizer = None
         return self._recognizer
 
@@ -284,7 +287,7 @@ class ISLInterpreterService:
                         "method": "MEDIAPIPE_3D",
                     }
             except Exception as e:
-                print(f"Error during MediaPipe sign recognition: {e}")
+                logger.warning("Error during MediaPipe sign recognition: %s", e)
 
         # 5. Default Deterministic Fallback
         meta = self.emergency_vocabulary["HELP"]
@@ -302,7 +305,7 @@ class ISLInterpreterService:
 
     def predict_alphabet(self, letter: str = "A") -> Dict[str, Any]:
         """Static letter prediction."""
-        char = letter.upper()
+        char = (letter or "A").strip()[:1].upper() or "A"
         return {
             "sign": char,
             "confidence": 0.98,

@@ -135,17 +135,31 @@ class IntentEngine:
     def analyze_intent(
         self,
         query: str,
-        twin: Optional[AccessibilityTwin] = None
+        twin: Optional[AccessibilityTwin] = None,
+        twin_id: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
         Deep analysis returning candidate scores, extracted entities, and ambiguity status.
         """
+        if not query or not str(query).strip():
+            return {
+                "task_type": TaskType.SEE,
+                "intent": TaskType.SEE.value,
+                "confidence": 0.50,
+                "rationale": "Empty query defaulted to SEE",
+                "entities": {"target_object": None, "detected_language": "en"},
+                "is_ambiguous": False,
+                "disambiguation_options": [],
+                "source": "empty_fallback",
+            }
+
         # Check LLM first if available
         llm_result = self._call_gemini_intent(query)
         if llm_result:
             tt, conf, reason = llm_result
             return {
                 "task_type": tt,
+                "intent": tt.value,
                 "confidence": conf,
                 "rationale": reason,
                 "entities": self._extract_entities(query),
@@ -154,7 +168,7 @@ class IntentEngine:
                 "source": "gemini_llm",
             }
 
-        q = query.lower().strip()
+        q = str(query).lower().strip()
         scores: Dict[TaskType, float] = {}
 
         for task_type, config in self._intent_patterns.items():
@@ -187,6 +201,7 @@ class IntentEngine:
 
         return {
             "task_type": top_task,
+            "intent": top_task.value,
             "confidence": round(confidence, 2),
             "rationale": rationale,
             "entities": self._extract_entities(query),
@@ -198,10 +213,11 @@ class IntentEngine:
     def classify_intent(
         self,
         query: str,
-        twin: Optional[AccessibilityTwin] = None
+        twin: Optional[AccessibilityTwin] = None,
+        twin_id: Optional[str] = None,
     ) -> Tuple[TaskType, float, str]:
         """
         Backwards-compatible interface returning (TaskType, confidence, rationale).
         """
-        analysis = self.analyze_intent(query, twin)
+        analysis = self.analyze_intent(query, twin=twin, twin_id=twin_id)
         return analysis["task_type"], analysis["confidence"], analysis["rationale"]

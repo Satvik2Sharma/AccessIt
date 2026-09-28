@@ -134,5 +134,7 @@ class TaskEngine:
                 {"step": 1, "action": "EXECUTE", "label": f"Execute {task_type.value}"}
             ]
 
-    def get_task(self, task_id: str) -> Optional[Dict[str, Any]]:
+    def get_task(self, task_id: Optional[str] = None) -> Optional[Dict[str, Any]]:
+        if not task_id:
+            return None
         return self._tasks.get(task_id)

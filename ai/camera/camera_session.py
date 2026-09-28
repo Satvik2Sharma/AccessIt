@@ -31,15 +31,17 @@ class CameraSession:
 
     def record_frame(self, frame_hash: str):
         """Records frame perceptual hash and updates timestamp."""
+        if not frame_hash:
+            return
         self._recent_hashes.append(frame_hash)
         self.last_activity = time.time()
         self.turn_count += 1
 
-    def is_duplicate(self, frame_hash: str) -> bool:
+    def is_duplicate(self, frame_hash: Optional[str] = None) -> bool:
         """
         Returns True if the frame matches the immediate previous frame.
         """
-        if not self._recent_hashes:
+        if not frame_hash or not self._recent_hashes:
             return False
         return self._recent_hashes[-1] == frame_hash
 

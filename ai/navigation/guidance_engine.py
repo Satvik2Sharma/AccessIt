@@ -19,7 +19,7 @@ class GuidanceEngine:
 
     def guide(
         self,
-        objects: List[SpatialObject],
+        objects: Optional[List[SpatialObject]] = None,
         target_label: Optional[str] = None,
         twin: Optional[AccessibilityTwin] = None,
     ) -> List[NavigationInstruction]:
@@ -35,10 +35,12 @@ class GuidanceEngine:
             list of NavigationInstruction (ordered by priority)
         """
         is_hindi = twin and twin.language == LanguagePreference.HINDI
+        objects_list = objects or []
+        target = target_label.strip() if target_label else None
         instructions: List[NavigationInstruction] = []
 
         # 1. Check for obstacles
-        obstacles = self.obstacle_detector.detect_obstacles(objects)
+        obstacles = self.obstacle_detector.detect_obstacles(objects_list)
         for obs in obstacles:
             zone = obs["horizontal_zone"]
             if zone == "center":
@@ -65,8 +67,8 @@ class GuidanceEngine:
             ))
 
         # 2. Guide toward target object if specified
-        if target_label:
-            target_objs = [o for o in objects if target_label.lower() in o.label.lower()]
+        if target:
+            target_objs = [o for o in objects_list if target.lower() in o.label.lower()]
             if target_objs:
                 target = target_objs[0]
                 zone = target.horizontal_zone

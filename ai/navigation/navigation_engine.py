@@ -41,7 +41,8 @@ class NavigationEngine:
         Returns:
             dict with scene_summary, instructions, and obstacle_count
         """
-        target_list = [target_label] if target_label else None
+        target = target_label.strip() if target_label else None
+        target_list = [target] if target else None
         scene = self.scene_engine.analyze(
             image_bytes=image_bytes,
             twin=twin,
@@ -51,7 +52,7 @@ class NavigationEngine:
 
         instructions = self.guidance_engine.guide(
             objects=scene.objects,
-            target_label=target_label,
+            target_label=target,
             twin=twin,
         )
 

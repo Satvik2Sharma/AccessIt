@@ -33,14 +33,20 @@ class ObjectTextFusion:
         Returns:
             list of enriched detections with associated_texts list added
         """
+        if not detections:
+            return []
+        ocr_elements = ocr_elements or []
+        width = max(1, image_width)
+        height = max(1, image_height)
+
         enriched = []
         for det in detections:
             det_copy = dict(det)
-            obj_bbox = det_copy.get("bbox", [0, 0, 1, 1])
+            obj_bbox = det_copy.get("bbox") or [0, 0, 1, 1]
             # Normalize object bbox if not already
-            if max(obj_bbox) > 1.0 and image_width > 1:
-                obj_bbox = [obj_bbox[0]/image_width, obj_bbox[1]/image_height,
-                            obj_bbox[2]/image_width, obj_bbox[3]/image_height]
+            if max(obj_bbox) > 1.0 and width > 1:
+                obj_bbox = [obj_bbox[0]/width, obj_bbox[1]/height,
+                            obj_bbox[2]/width, obj_bbox[3]/height]
 
             associated = []
             for ocr in ocr_elements:

@@ -125,8 +125,15 @@ class FrameProcessor:
         h, w = gray.shape
 
         # Sample border margins (5% on each edge)
-        margin_x = int(w * 0.05)
-        margin_y = int(h * 0.05)
+        margin_x = max(1, int(w * 0.05))
+        margin_y = max(1, int(h * 0.05))
+
+        if h <= 2 * margin_y or w <= 2 * margin_x:
+            return {
+                "is_aligned": True,
+                "border_variance": 0.0,
+                "recommendation": "Well aligned",
+            }
 
         border_pixels = np.concatenate([
             gray[:margin_y, :].flatten(),

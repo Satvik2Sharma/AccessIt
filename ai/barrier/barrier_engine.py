@@ -21,16 +21,18 @@ class BarrierEngine:
     def detect_barriers(
         self,
         task_type: TaskType,
-        task_context: Dict[str, Any],
-        twin: AccessibilityTwin
+        task_context: Optional[Dict[str, Any]] = None,
+        twin: Optional[AccessibilityTwin] = None
     ) -> List[Barrier]:
         """
         Analyzes task metadata and twin preferences to return identified barriers.
         """
+        user_twin = twin or AccessibilityTwin(id="default_user")
+        context = task_context or {}
         barriers: List[Barrier] = []
 
         # 1. Visual Barrier Detection
-        if twin.visual.large_text or twin.visual.high_contrast:
+        if user_twin.visual.large_text or user_twin.visual.high_contrast:
             if task_type in [TaskType.FORM_COMPLETION, TaskType.UNDERSTAND_DOCUMENT, TaskType.READ]:
                 barriers.append(
                     Barrier(
@@ -42,7 +44,7 @@ class BarrierEngine:
                 )
 
         # 2. Motor / Physical Input Barrier Detection
-        if twin.motor.voice_input:
+        if user_twin.motor.voice_input:
             if task_type == TaskType.FORM_COMPLETION:
                 barriers.append(
                     Barrier(
@@ -54,9 +56,9 @@ class BarrierEngine:
                 )
 
         # 3. Cognitive & Interaction Complexity Barrier Detection
-        if twin.comprehension.one_step_at_a_time or twin.comprehension.simplified_language:
+        if user_twin.comprehension.one_step_at_a_time or user_twin.comprehension.simplified_language:
             if task_type == TaskType.FORM_COMPLETION:
-                field_count = task_context.get("total_fields", 7)
+                field_count = context.get("total_fields", 7)
                 if field_count > 3:
                     barriers.append(
                         Barrier(
@@ -77,8 +79,8 @@ class BarrierEngine:
                 )
 
         # 4. Language Barrier Detection
-        doc_language = task_context.get("document_language", "English")
-        if twin.language == LanguagePreference.HINDI and doc_language != "Hindi":
+        doc_language = context.get("document_language", "English")
+        if user_twin.language == LanguagePreference.HINDI and doc_language != "Hindi":
             barriers.append(
                 Barrier(
                     category=BarrierCategory.LANGUAGE,
@@ -89,7 +91,7 @@ class BarrierEngine:
             )
 
         # 5. Hearing Barrier Detection
-        if twin.hearing.captions:
+        if user_twin.hearing.captions:
             if task_type == TaskType.COMMUNICATE:
                 barriers.append(
                     Barrier(

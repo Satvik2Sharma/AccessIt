@@ -3,7 +3,7 @@ Sahayak AI — Obstacle Detector
 Identifies potential obstacles from spatial scene analysis.
 Based on proximity and position - NOT GPS/map-based navigation.
 """
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from shared.schemas.models import SpatialObject
 
 # Labels considered navigation obstacles
@@ -21,7 +21,7 @@ class ObstacleDetector:
 
     def detect_obstacles(
         self,
-        objects: List[SpatialObject],
+        objects: Optional[List[SpatialObject]],
     ) -> List[Dict[str, Any]]:
         """
         Identify obstacles from a list of SpatialObjects.
@@ -29,7 +29,9 @@ class ObstacleDetector:
         Returns:
             list of obstacle dicts with label, severity, direction
         """
-        obstacles = []
+        if not objects:
+            return []
+        obstacles: List[Dict[str, Any]] = []
         for obj in objects:
             is_obstacle = any(kw in obj.label.lower() for kw in OBSTACLE_LABELS)
             is_close = obj.proximity in ("very_close", "arm_reach")

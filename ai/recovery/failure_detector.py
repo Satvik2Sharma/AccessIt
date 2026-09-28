@@ -19,8 +19,15 @@ class FailureDetector:
     Returns structured failure dicts for the RecoveryEngine.
     """
 
-    def check_ocr(self, ocr_result: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    def check_ocr(self, ocr_result: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
         """Detect low-confidence or empty OCR results."""
+        if not ocr_result:
+            return {
+                "type": "ocr_low_confidence",
+                "confidence": 0.0,
+                "elements_found": 0,
+                "message": "OCR could not extract sufficient text from the image.",
+            }
         confidence = ocr_result.get("confidence", 1.0)
         element_count = ocr_result.get("raw_ocr_elements_count", -1)
         if element_count == 0 or confidence < FAILURE_THRESHOLDS["ocr_min_confidence"]:
@@ -32,8 +39,15 @@ class FailureDetector:
             }
         return None
 
-    def check_isl(self, isl_result: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    def check_isl(self, isl_result: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
         """Detect unrecognized or low-confidence ISL gestures."""
+        if not isl_result:
+            return {
+                "type": "isl_unrecognized",
+                "confidence": 0.0,
+                "sign": "",
+                "message": "Hand gesture could not be recognized.",
+            }
         confidence = isl_result.get("confidence", 1.0)
         sign = isl_result.get("sign", "")
         if confidence < FAILURE_THRESHOLDS["isl_min_confidence"] or sign == "SEARCHING":
@@ -62,10 +76,17 @@ class FailureDetector:
             }
         return None
 
-    def check_speech(self, voice_cmd_result: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    def check_speech(self, voice_cmd_result: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
         """Detect unclear or empty speech input."""
-        raw_text = voice_cmd_result.get("voice_command", {}).get("raw_text", "")
-        source = voice_cmd_result.get("voice_command", {}).get("source", "")
+        if not voice_cmd_result:
+            return {
+                "type": "unclear_speech",
+                "raw_text": "",
+                "message": "Speech was not recognized clearly.",
+            }
+        voice_cmd = voice_cmd_result.get("voice_command") or {}
+        raw_text = voice_cmd.get("raw_text", "")
+        source = voice_cmd.get("source", "")
         if not raw_text or source == "stt_failed" or raw_text == "[speech input]":
             return {
                 "type": "unclear_speech",

@@ -72,7 +72,7 @@ class RecoveryEngine:
         },
     }
 
-    def recover(self, failure: Dict[str, Any]) -> RecoveryAction:
+    def recover(self, failure: Optional[Dict[str, Any]] = None) -> RecoveryAction:
         """
         Generate a RecoveryAction for a given failure dict.
 
@@ -82,7 +82,8 @@ class RecoveryEngine:
         Returns:
             RecoveryAction with strategy and user instructions
         """
-        failure_type = failure.get("type", "unknown")
+        failure_dict = failure or {}
+        failure_type = failure_dict.get("type", "unknown")
         strategy = self.STRATEGIES.get(failure_type, self.STRATEGIES["unknown"])
         return RecoveryAction(
             failure_type=failure_type,
@@ -95,8 +96,10 @@ class RecoveryEngine:
             user_instruction_hi=strategy.get("user_instruction_hi"),
         )
 
-    def recover_many(self, failures: List[Dict[str, Any]]) -> List[RecoveryAction]:
+    def recover_many(self, failures: Optional[List[Dict[str, Any]]] = None) -> List[RecoveryAction]:
         """Recover from multiple failures, prioritized by severity."""
+        if not failures:
+            return []
         priority_order = [
             "task_timeout", "form_repeated_failure", "ocr_low_confidence",
             "isl_unrecognized", "unclear_speech", "unknown"

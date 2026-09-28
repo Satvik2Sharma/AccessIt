@@ -19,7 +19,7 @@ class DocumentTaskGenerator:
 
     def generate_from_document(
         self,
-        doc_info: Dict[str, Any],
+        doc_info: Optional[Dict[str, Any]] = None,
         twin_id: str = "default_user",
     ) -> Dict[str, Any]:
         """
@@ -32,10 +32,11 @@ class DocumentTaskGenerator:
         Returns:
             dict with task_id, title, deadlines, required_actions, milestones
         """
-        title = doc_info.get("document_title", "Document Task")
-        deadlines = doc_info.get("key_deadlines", [])
-        required_docs = doc_info.get("required_documents", [])
-        action_items = doc_info.get("action_items", [])
+        doc = doc_info or {}
+        title = doc.get("document_title", "Document Task")
+        deadlines = doc.get("key_deadlines", [])
+        required_docs = doc.get("required_documents", [])
+        action_items = doc.get("action_items", [])
 
         # Create a generic task via the existing TaskEngine
         task_id = self.task_engine.create_generic_task(
@@ -69,14 +70,15 @@ class DocumentTaskGenerator:
 
     def generate_submission_task(
         self,
-        doc_info: Dict[str, Any],
+        doc_info: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """
         Create a form submission task from a document with application fields.
         Delegates to the existing TaskEngine form flow.
         """
-        title = doc_info.get("document_title", "Application Form")
-        deadlines = doc_info.get("key_deadlines", [])
+        doc = doc_info or {}
+        title = doc.get("document_title", "Application Form")
+        deadlines = doc.get("key_deadlines", [])
 
         task_id = self.task_engine.create_form_task()
         task = self.task_engine.get_task(task_id)

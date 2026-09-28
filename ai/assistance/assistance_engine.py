@@ -28,13 +28,14 @@ class AccessibilityAssistanceEngine:
         self,
         image_bytes: Optional[bytes],
         query: str,
-        twin: AccessibilityTwin
+        twin: Optional[AccessibilityTwin] = None
     ) -> Dict[str, Any]:
         """
         Coordinates OCR + Document Parsing + Simplification + Localization.
         """
-        doc_data = self.ocr_engine.extract_document_info(image_bytes, query)
-        is_hindi = twin.language == LanguagePreference.HINDI
+        user_twin = twin or AccessibilityTwin(id="default_user")
+        doc_data = self.ocr_engine.extract_document_info(image_bytes, query or "")
+        is_hindi = user_twin.language == LanguagePreference.HINDI
 
         summary = doc_data["simplified_summary_hi"] if is_hindi else doc_data["simplified_summary_en"]
         voice_prompt = summary
@@ -50,32 +51,34 @@ class AccessibilityAssistanceEngine:
             "display_summary": summary,
             "summary_en": doc_data["simplified_summary_en"],
             "summary_hi": doc_data["simplified_summary_hi"],
-            "language": twin.language.value,
+            "language": user_twin.language.value,
             "raw_ocr_elements_count": doc_data.get("raw_ocr_elements_count", 0),
-            "haptic_cue": "SUCCESS_DOUBLE_PULSE" if twin.haptics.enabled else None,
+            "haptic_cue": "SUCCESS_DOUBLE_PULSE" if user_twin.haptics.enabled else None,
         }
 
     def assist_find_object(
         self,
         target_label: str,
-        twin: AccessibilityTwin
+        twin: Optional[AccessibilityTwin] = None
     ) -> Dict[str, Any]:
         """
         Coordinates Object Detection + Spatial Directional Guidance + Haptics.
         """
+        user_twin = twin or AccessibilityTwin(id="default_user")
+        target = target_label.strip() if target_label else "object"
         # Simulated standard bounding box for Demo: bottle on right side
         sample_bbox = (380, 120, 520, 420)
         guidance = self.directional_finder.compute_spatial_guidance(
             bbox=sample_bbox,
-            label=target_label,
-            language="Hindi" if twin.language == LanguagePreference.HINDI else "English",
+            label=target,
+            language="Hindi" if user_twin.language == LanguagePreference.HINDI else "English",
         )
         return guidance
 
     def assist_sign_communication(
         self,
         image_bytes: Optional[bytes],
-        twin: AccessibilityTwin
+        twin: Optional[AccessibilityTwin] = None
     ) -> Dict[str, Any]:
         """
         Coordinates ISL gesture classification + Captioning + TTS.

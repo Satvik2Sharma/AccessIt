@@ -5,7 +5,7 @@ based on camera mode, natural language query, intent classification, and Accessi
 Ensures lightweight execution by running only task-relevant models.
 """
 
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Union
 from shared.schemas.models import AccessibilityTwin, TaskType, LanguagePreference
 from shared.schemas.camera_models import CameraMode
 from ai.intent.intent_engine import IntentEngine

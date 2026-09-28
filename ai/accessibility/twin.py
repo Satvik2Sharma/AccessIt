@@ -60,10 +60,11 @@ class AccessibilityTwinService:
         )
         self._twins[default_twin.id] = default_twin
 
-    def get_twin(self, twin_id: str = "default_user") -> AccessibilityTwin:
-        if twin_id not in self._twins:
+    def get_twin(self, twin_id: Optional[str] = "default_user") -> AccessibilityTwin:
+        user_id = twin_id or "default_user"
+        if user_id not in self._twins:
             self._initialize_default_profile()
-        return self._twins.get(twin_id, self._twins["default_user"])
+        return self._twins.get(user_id, self._twins["default_user"])
 
     def update_twin(self, twin: AccessibilityTwin) -> AccessibilityTwin:
         self._twins[twin.id] = twin

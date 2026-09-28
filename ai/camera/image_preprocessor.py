@@ -87,16 +87,17 @@ class ImagePreprocessor:
         Resizes image so that neither width nor height exceeds max_dim,
         preserving aspect ratio.
         """
+        limit = max(1, max_dim)
         width, height = image.size
-        if width <= max_dim and height <= max_dim:
+        if width <= limit and height <= limit:
             return image
 
         if width > height:
-            new_w = max_dim
-            new_h = int(height * (max_dim / width))
+            new_w = limit
+            new_h = max(1, int(height * (limit / max(1, width))))
         else:
-            new_h = max_dim
-            new_w = int(width * (max_dim / height))
+            new_h = limit
+            new_w = max(1, int(width * (limit / max(1, height))))
 
         return image.resize((new_w, new_h), Image.Resampling.LANCZOS)
 

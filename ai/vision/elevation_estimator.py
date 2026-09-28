@@ -44,9 +44,10 @@ class ElevationEstimator:
         """
         _, ymin, _, ymax = bbox
         if not normalized:
-            ymin /= image_height
-            ymax /= image_height
-        y_center = (ymin + ymax) / 2.0
+            h = max(1, image_height)
+            ymin /= h
+            ymax /= h
+        y_center = max(0.0, min(1.0, (ymin + ymax) / 2.0))
 
         if y_center < 0.35:
             zone = "eye_level"

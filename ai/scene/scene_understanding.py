@@ -3,6 +3,7 @@ Sahayak AI — Scene Understanding Engine
 Combines object detection, OCR, spatial analysis and intent-awareness
 to produce a structured, task-relevant scene representation.
 """
+import logging
 from typing import List, Optional, Dict, Any
 from shared.schemas.models import (
     SpatialObject, SceneAnalysis, AccessibilityTwin, TaskType, LanguagePreference
@@ -12,6 +13,8 @@ from ai.vision.clock_direction import ClockDirectionMapper
 from ai.vision.elevation_estimator import ElevationEstimator
 from ai.vision.proximity_estimator import ProximityEstimator
 from ai.ocr.ocr_engine import DocumentOCREngine
+
+logger = logging.getLogger(__name__)
 
 
 class SceneUnderstandingEngine:
@@ -58,13 +61,14 @@ class SceneUnderstandingEngine:
             try:
                 ocr_elements = self.ocr_engine.ocr_image(image_bytes)
                 text_regions = [el["text"] for el in ocr_elements if len(el.get("text", "")) > 1]
-            except Exception:
+            except Exception as exc:
+                logger.warning("OCR extraction failed during scene analysis: %s", exc)
                 text_regions = []
 
         # 3. Build SpatialObject for each detection
         spatial_objects: List[SpatialObject] = []
         for det in raw_detections:
-            bbox = det.get("bbox", [0.1, 0.1, 0.5, 0.8])
+            bbox = det.get("bbox") or [0.1, 0.1, 0.5, 0.8]
             direction_info = self.clock_mapper.from_bbox(tuple(bbox), normalized=True)
             elevation_info = self.elevation_estimator.estimate(tuple(bbox), normalized=True)
             proximity_info = self.proximity_estimator.estimate(tuple(bbox), normalized=True)
