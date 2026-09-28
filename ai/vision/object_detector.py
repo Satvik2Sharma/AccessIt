@@ -103,14 +103,9 @@ class ObjectDetectorAdapter:
             return None
 
     def _heuristic_detections(self, target_labels: Optional[List[str]]) -> List[Dict[str, Any]]:
-        """Returns deterministic demo detections when no model is available."""
-        defaults = [
-            {"label": "water bottle", "confidence": 0.91, "bbox": [0.52, 0.25, 0.72, 0.87]},
-            {"label": "medicine bottle", "confidence": 0.87, "bbox": [0.10, 0.30, 0.28, 0.80]},
-            {"label": "document", "confidence": 0.85, "bbox": [0.20, 0.10, 0.80, 0.90]},
-        ]
-        if not target_labels:
-            return defaults
-        label_lower = [t.lower() for t in target_labels]
-        filtered = [d for d in defaults if any(l in d["label"].lower() for l in label_lower)]
-        return filtered if filtered else defaults[:1]
+        """
+        When no ML vision detector (Gemini/YOLO) is active or confident,
+        returns an empty list to avoid fabricating fake detections.
+        """
+        logger.info("No active ML vision detector available; returning empty detections.")
+        return []
