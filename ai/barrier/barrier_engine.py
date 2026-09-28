@@ -3,7 +3,7 @@ Sahayak AI — Barrier Engine
 Analyzes task complexity against the user's Accessibility Twin to detect interaction barriers.
 """
 
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from shared.schemas.models import (
     AccessibilityTwin,
     TaskType,

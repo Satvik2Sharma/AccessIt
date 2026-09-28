@@ -4,7 +4,7 @@ Combines object detection, OCR, spatial analysis and intent-awareness
 to produce a structured, task-relevant scene representation.
 """
 import logging
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict, Any, Tuple, Union
 from shared.schemas.models import (
     SpatialObject, SceneAnalysis, AccessibilityTwin, TaskType, LanguagePreference
 )

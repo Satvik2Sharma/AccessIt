@@ -4,7 +4,7 @@ Transforms underlying complex tasks into accessible, personalized interaction fl
 tailored to the user's Accessibility Twin and detected barriers.
 """
 
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from shared.schemas.models import (
     AccessibilityTwin,
     TaskType,

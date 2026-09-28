@@ -5,7 +5,7 @@ and selects the appropriate AI capabilities per task/intent.
 Does NOT bypass existing engines.
 """
 import logging
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any, List, Tuple, Union
 from shared.schemas.models import (
     AccessibilityTwin, TaskType, LanguagePreference
 )

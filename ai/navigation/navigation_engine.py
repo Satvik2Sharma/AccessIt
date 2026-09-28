@@ -3,7 +3,7 @@ Sahayak AI — Navigation Engine
 Orchestrates scene analysis → obstacle detection → guidance generation.
 Provides camera-based LOCAL navigation only (not GPS/map).
 """
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Tuple, Union
 from shared.schemas.models import (
     NavigationInstruction, SceneAnalysis, AccessibilityTwin, TaskType
 )

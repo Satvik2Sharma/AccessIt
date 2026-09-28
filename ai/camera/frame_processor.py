@@ -6,7 +6,7 @@ detects duplicate frames via perceptual hashing, and throttles expensive AI pipe
 
 import time
 import hashlib
-from typing import Tuple, Optional, Dict, Any
+from typing import Tuple, Optional, Dict, Any, List, Union
 from PIL import Image
 import numpy as np
 try:

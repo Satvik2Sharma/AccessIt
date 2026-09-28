@@ -3,7 +3,7 @@ Sahayak AI — Navigation Guidance Engine
 Generates simple camera-based local navigation instructions.
 Does NOT claim GPS or map-level accuracy — strictly local scene guidance.
 """
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Tuple, Union
 from shared.schemas.models import NavigationInstruction, SpatialObject, AccessibilityTwin, LanguagePreference
 from ai.navigation.obstacle_detector import ObstacleDetector
 

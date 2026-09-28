@@ -78,10 +78,12 @@ class AccessibilityAssistanceEngine:
     def assist_sign_communication(
         self,
         image_bytes: Optional[bytes],
-        twin: Optional[AccessibilityTwin] = None
+        twin: Optional[AccessibilityTwin] = None,
+        session_id: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
         Coordinates ISL gesture classification + Captioning + TTS.
         """
-        prediction = self.isl_service.predict_sign(image_bytes)
+        prediction = self.isl_service.predict_sign(image_bytes, session_id=session_id)
         return prediction
+

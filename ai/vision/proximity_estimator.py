@@ -3,7 +3,7 @@ Sahayak AI — Proximity Estimator
 Estimates coarse distance of a detected object from the camera
 based on bounding box area relative to the image.
 """
-from typing import Tuple, Dict
+from typing import Tuple, Dict, Any, List, Optional, Union
 
 
 class ProximityEstimator:
