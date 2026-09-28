@@ -408,15 +408,15 @@ const state = {
 
   // Spatial Vision & Clock Indicators
   spatialDetections: [
-    { name: 'Water Bottle', clock: '2 o'clock', dist: '0.8m (Close)', elev: '+15° (Eye Level)', conf: 0.98, text: 'Bisleri 1L' },
-    { name: 'Scholarship Notice', clock: '12 o'clock', dist: '0.5m (Reach)', elev: '0° (Desk)', conf: 0.95, text: 'National Merit 2026' },
-    { name: 'Chair Obstacle', clock: '10 o'clock', dist: '1.2m (Warning)', elev: '-20° (Floor)', conf: 0.91, text: '' }
+    { name: 'Water Bottle', clock: "2 o\'clock", dist: '0.8m (Close)', elev: '+15° (Eye Level)', conf: 0.98, text: 'Bisleri 1L' },
+    { name: 'Scholarship Notice', clock: "12 o\'clock", dist: '0.5m (Reach)', elev: '0° (Desk)', conf: 0.95, text: 'National Merit 2026' },
+    { name: 'Chair Obstacle', clock: "10 o\'clock", dist: '1.2m (Warning)', elev: '-20° (Floor)', conf: 0.91, text: '' }
   ],
   navInstruction: 'Forward 2 steps, slight right towards bottle',
   navStatus: 'navigating',
   
   // Scene Understanding Summary
-  sceneSummary: 'Indoor desk setup with a scholarship notice at 12 o'clock, water bottle at 2 o'clock, and chair obstacle at 10 o'clock.',
+  sceneSummary: 'Indoor desk setup with a scholarship notice at 12 o\'clock, water bottle at 2 o\'clock, and chair obstacle at 10 o\'clock.',
   
   // Document Q&A & Task Extraction
   docQuestions: [
@@ -973,7 +973,7 @@ function renderCamera() {
             <div class="card" style="padding:10px;border-color:var(--border-glow)">
               <div class="row-between" style="margin-bottom:4px">
                 <span style="font-size:13px;font-weight:800;color:var(--text-heading)">${o.label}</span>
-                <span class="badge badge-amber">${o.clock_position || "12 o'clock"}</span>
+                <span class="badge badge-amber">${o.clock_position || "12 o\'clock"}</span>
               </div>
               <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">
                 Distance: <strong>${o.distance_meters}m</strong> • Elevation: <strong>${o.elevation}</strong> • Match: <strong>${Math.round(o.confidence*100)}%</strong>
@@ -1046,7 +1046,7 @@ function renderCamera() {
         <div style="display:flex;align-items:start;gap:8px">
           <span style="color:#facc15;font-size:16px">✨</span>
           <p style="font-size:12px;font-weight:700;color:var(--text-heading);margin:0" id="camGuidanceText">
-            ${isH?'कैमरा स्थिर रखें और दस्तावेज़ को 12 बजे की दिशा में केंद्रित करें।':'Hold camera steady and align document centered at 12 o'clock.'}
+            ${isH?'कैमरा स्थिर रखें और दस्तावेज़ को 12 बजे की दिशा में केंद्रित करें।':'Hold camera steady and align document centered at 12 o\'clock.'}
           </p>
         </div>
         <button onclick="speak(document.getElementById('camGuidanceText').innerText)" class="btn-ghost" style="padding:3px 8px;font-size:11px">🔊 Voice</button>
@@ -1146,15 +1146,15 @@ function bindCamera() {
             success: true,
             session_id: "session_camera_001",
             detected_objects: [
-              { label: "Scholarship Form 7F Document", confidence: 0.98, bbox: [0.15, 0.20, 0.75, 0.85], clock_position: "12 o'clock", distance_meters: 0.45, elevation: "0° (Desk Level)" },
-              { label: "Water Bottle", confidence: 0.94, bbox: [0.20, 0.10, 0.65, 0.40], clock_position: "2 o'clock", distance_meters: 0.80, elevation: "+15° (Eye Level)" }
+              { label: "Scholarship Form 7F Document", confidence: 0.98, bbox: [0.15, 0.20, 0.75, 0.85], clock_position: "12 o\'clock", distance_meters: 0.45, elevation: "0° (Desk Level)" },
+              { label: "Water Bottle", confidence: 0.94, bbox: [0.20, 0.10, 0.65, 0.40], clock_position: "2 o\'clock", distance_meters: 0.80, elevation: "+15° (Eye Level)" }
             ],
             recognized_text: "National Merit Scholarship Notification 2026 - Deadline Sept 30",
             lighting_condition: "good",
             stability_score: 0.95,
             guidance_prompt: state.lang === 'Hindi'
               ? "कैमरा स्थिर रखें। स्कॉलरशिप दस्तावेज़ 12 बजे केंद्रित है।"
-              : "Hold camera steady. Scholarship document centered at 12 o'clock.",
+              : "Hold camera steady. Scholarship document centered at 12 o\'clock.",
             processing_time_ms: 16.8
           };
           state.cameraState = 'result';
@@ -1187,12 +1187,12 @@ function renderSpatial() {
         <!-- Target Box 1: Bottle -->
         <div class="spatial-target-box" style="left:6%;top:26%;width:42%;height:58%">
           <div class="spatial-label-badge">Water Bottle (98%)</div>
-          <div class="spatial-clock-pill">🕒 2 o'clock · 0.8m</div>
+          <div class="spatial-clock-pill">🕒 2 o\'clock · 0.8m</div>
         </div>
         <!-- Target Box 2: Document OCR -->
         <div class="spatial-target-box" style="right:6%;top:26%;width:44%;height:58%;border-color:#c084fc">
           <div class="spatial-label-badge" style="background:#9333ea">OCR Notice Text</div>
-          <div class="spatial-clock-pill">🕒 12 o'clock · 0.5m</div>
+          <div class="spatial-clock-pill">🕒 12 o\'clock · 0.5m</div>
         </div>
       </div>
     </div>
@@ -1202,7 +1202,7 @@ function renderSpatial() {
       <div class="row-between">
         <div style="display:flex;align-items:center;gap:8px">
           <span style="color:#ef4444;font-size:16px">⚠️</span>
-          <span style="font-size:12px;font-weight:800;color:#ef4444">${isH?'बाधा चेतावनी: 10 o'clock पर कुर्सी (1.2m)':'Obstacle Warning: Chair at 10 o'clock (1.2m)'}</span>
+          <span style="font-size:12px;font-weight:800;color:#ef4444">${isH?'बाधा चेतावनी: 10 o\'clock पर कुर्सी (1.2m)':'Obstacle Warning: Chair at 10 o\'clock (1.2m)'}</span>
         </div>
         <button onclick="haptics.confirm();speak(state.navInstruction)" class="btn-ghost" style="padding:3px 8px;font-size:11px">🔊 Audio Cue</button>
       </div>
