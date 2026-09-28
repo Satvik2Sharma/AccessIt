@@ -198,6 +198,14 @@ flutter run -d chrome
 
 ---
 
+## 👥 Core Contributors & Team
+
+- **Yashika Pundir** — *Web Frontend Lead & AI Camera Interface Architect*
+- **Satvik Sharma** — *Project Lead, Backend Systems & Flutter Mobile Developer*
+- **Varanka** — *AI Lead & Machine Learning Engineer*
+
+---
+
 ## 📜 Licenses & Attribution
 
 Sahayak AI is licensed under the **MIT License**. Third-party components adapted from audited repositories (`VisualAid`, `ISL-Interpreter`, `SightBuddy`, `SightAssist`) are credited under their respective MIT/Apache-2.0 licenses in [`THIRD_PARTY_LICENSES.md`](file:///home/user/Desktop/PROJECTS/AccessIt/THIRD_PARTY_LICENSES.md).
