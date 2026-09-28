@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import '../models/accessibility_twin.dart';
 import '../services/haptics_service.dart';
 import '../services/api_service.dart';
+import '../services/voice_service.dart';
+
 
 class HomeScreen extends StatefulWidget {
   final AccessibilityTwin twin;
@@ -23,41 +25,111 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final MobileVoiceService _voiceService = MobileVoiceService();
   bool _isListening = false;
   String _voiceStatus = 'Tap the microphone or choose a mode below';
 
+  @override
+  void initState() {
+    super.initState();
+    _voiceService.initialize(language: widget.twin.language);
+  }
+
   void _triggerVoiceCopilot() async {
     HapticsService.confirmationPulse();
+    final isHindi = widget.twin.language == 'Hindi';
+
+    if (_isListening) {
+      await _voiceService.stopListening();
+      setState(() => _isListening = false);
+      return;
+    }
+
+    if (_voiceService.isAvailable) {
+      setState(() {
+        _isListening = true;
+        _voiceStatus = isHindi ? 'सुन रहा हूँ... बोलिए...' : 'Listening... speak your request...';
+      });
+
+      await _voiceService.startListening(
+        onResult: (text) {
+          if (!mounted) return;
+          setState(() {
+            _voiceStatus = text;
+          });
+        },
+        onComplete: () {
+          if (!mounted) return;
+          _handleQuery(_voiceService.lastWords);
+        },
+      );
+    } else {
+      // Prompt text input fallback gracefully
+      final text = await MobileVoiceService.showTextFallbackDialog(
+        context: context,
+        title: isHindi ? 'आदेश लिखें (वॉइस अनुपलब्ध)' : 'Enter Query (Voice fallback)',
+        hintText: isHindi ? 'जैसे: फ़ॉर्म भरने में मदद करो' : 'e.g. Help me fill scholarship form',
+        isHindi: isHindi,
+      );
+
+      if (text != null && text.isNotEmpty) {
+        _handleQuery(text);
+      }
+    }
+  }
+
+  void _triggerTextInput() async {
+    final isHindi = widget.twin.language == 'Hindi';
+    final text = await MobileVoiceService.showTextFallbackDialog(
+      context: context,
+      title: isHindi ? 'निर्देश टाइप करें' : 'Type Command',
+      hintText: isHindi ? 'जैसे: फ़ॉर्म भरने में मदद करो' : 'e.g. Help me fill this form',
+      isHindi: isHindi,
+    );
+
+    if (text != null && text.isNotEmpty) {
+      _handleQuery(text);
+    }
+  }
+
+  void _handleQuery(String query) async {
+    if (query.trim().isEmpty) {
+      setState(() => _isListening = false);
+      return;
+    }
+
     setState(() {
-      _isListening = true;
-      _voiceStatus = widget.twin.language == 'Hindi'
-          ? 'सुन रहा हूँ... बोलिए...'
-          : 'Listening... speak your request...';
+      _isListening = false;
+      _voiceStatus = 'Analyzing: "$query"...';
     });
-
-    // Simulate intent voice comprehension
-    await Future.delayed(const Duration(milliseconds: 1400));
-    if (!mounted) return;
-
-    final query = widget.twin.language == 'Hindi'
-        ? 'छात्रवृत्ति फ़ॉर्म भरने में मदद करो'
-        : 'Help me fill this scholarship form';
 
     final intentData = await ApiService.classifyIntent(query, widget.twin);
     final intent = intentData['intent'] ?? 'FORM_COMPLETION';
 
     if (!mounted) return;
     setState(() {
-      _isListening = false;
       _voiceStatus = 'Understood: $intent';
     });
+
+    await _voiceService.speak(
+      widget.twin.language == 'Hindi' ? '$intent खोला जा रहा है' : 'Navigating to $intent',
+      language: widget.twin.language,
+    );
+    if (!mounted) return;
+
 
     if (intent == 'FORM_COMPLETION') {
       Navigator.pushNamed(context, '/complete');
     } else if (intent == 'UNDERSTAND_DOCUMENT') {
       Navigator.pushNamed(context, '/read');
+    } else if (intent == 'COMMUNICATE') {
+      Navigator.pushNamed(context, '/sign_talk');
+    } else if (intent == 'SEE') {
+      Navigator.pushNamed(context, '/see');
     }
+
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +229,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 12),
+            Center(
+              child: TextButton.icon(
+                icon: const Icon(Icons.keyboard, size: 20),
+                label: Text(isHindi ? 'या टाइप करके निर्देश दें' : 'Or type text command'),
+                onPressed: _triggerTextInput,
+              ),
+            ),
+            const SizedBox(height: 20),
+
 
             // Primary Capability Cards (SEE, READ, TALK, COMPLETE)
             _buildModeGrid(theme, isHindi),
