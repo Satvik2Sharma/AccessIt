@@ -57,7 +57,7 @@ class TaskVerificationService:
                 return True, "Valid annual income"
             return False, "Annual income must include a monetary number"
 
-        if field_id == "aadhaar":
+        if "aadhaar" in field_id:
             digits = re.sub(r"\D", "", val)
             if len(digits) == 12:
                 return True, "Valid 12-digit Aadhaar number"
