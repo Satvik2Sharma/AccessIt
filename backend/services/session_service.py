@@ -11,6 +11,12 @@ from typing import Dict, Any, Optional, List
 from threading import Lock
 from datetime import datetime
 
+try:
+    from backend.database import db
+except Exception:
+    db = None
+
+
 
 class SessionService:
     def __init__(self, session_ttl_seconds: int = 3600):
@@ -50,11 +56,21 @@ class SessionService:
                 "qa_history": [],
                 "tasks": [],
             }
+        if db:
+            try:
+                db.save_session(doc_id, "document", self._document_sessions[doc_id], twin_id)
+            except Exception:
+                pass
         return doc_id
 
     def get_document_session(self, doc_id: str) -> Optional[Dict[str, Any]]:
         with self._lock:
             session = self._document_sessions.get(doc_id)
+            if not session and db:
+                persisted = db.get_session(doc_id)
+                if persisted:
+                    self._document_sessions[doc_id] = persisted
+                    session = persisted
             if session:
                 session["last_accessed"] = time.time()
                 return dict(session)
@@ -223,11 +239,21 @@ class SessionService:
                 "hazards": [],
                 "analysis_history": [],
             }
+        if db:
+            try:
+                db.save_session(session_id, "camera", self._camera_sessions[session_id], twin_id)
+            except Exception:
+                pass
         return session_id
 
     def get_camera_session(self, session_id: str) -> Optional[Dict[str, Any]]:
         with self._lock:
             session = self._camera_sessions.get(session_id)
+            if not session and db:
+                persisted = db.get_session(session_id)
+                if persisted:
+                    self._camera_sessions[session_id] = persisted
+                    session = persisted
             if session:
                 session["last_accessed"] = time.time()
                 return dict(session)

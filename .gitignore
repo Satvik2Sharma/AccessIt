@@ -62,3 +62,6 @@ models/*.bin
 scratch/
 test_output/
 *.log
+*.db
+*.sqlite3
+
