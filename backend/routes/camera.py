@@ -35,6 +35,7 @@ class CameraSessionCreateRequest(BaseModel):
 @router.post("/camera/analyze", response_model=CameraAnalysisResponse)
 async def analyze_camera_frame(
     image: Optional[UploadFile] = File(None),
+    image_base64: Optional[str] = Form(None),
     session_id: Optional[str] = Form(None),
     twin_id: str = Form("default_user"),
     mode: str = Form("AUTO"),
@@ -57,9 +58,26 @@ async def analyze_camera_frame(
     except ValueError:
         parsed_mode = CameraAnalysisMode.AUTO
 
-    image_bytes = await image.read() if image else None
-    filename = image.filename if image else None
-    content_type = image.content_type if image else None
+    image_bytes = None
+    filename = None
+    content_type = None
+
+    if image:
+        image_bytes = await image.read()
+        filename = image.filename
+        content_type = image.content_type
+    elif image_base64:
+        import base64
+        b64_str = image_base64
+        if "," in b64_str:
+            b64_str = b64_str.split(",", 1)[1]
+        try:
+            image_bytes = base64.b64decode(b64_str)
+            filename = "frame.jpg"
+            content_type = "image/jpeg"
+        except Exception:
+            image_bytes = None
+
 
     response = camera_service.analyze_frame(
         image_bytes=image_bytes,

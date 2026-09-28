@@ -212,6 +212,16 @@ class CameraAnalysisResponse(BaseModel):
     processing: Dict[str, Any] = Field(default_factory=dict)
     error: Optional[CameraError] = None
 
+    # Top-level convenience projections for lightweight mobile & web client consumption
+    objects: Optional[List[Dict[str, Any]]] = None
+    directions: Optional[List[str]] = None
+    text: Optional[List[str]] = None
+    scene: Optional[str] = None
+    guidance: Optional[str] = None
+    confidence: Optional[float] = None
+    timestamp: Optional[str] = None
+
+
 
 class CameraSessionState(BaseModel):
     session_id: str

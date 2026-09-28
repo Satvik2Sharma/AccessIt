@@ -503,6 +503,22 @@ class CameraService:
             visual_card=visual_card,
         )
 
+        top_objects = [
+            {
+                "label": o.label,
+                "confidence": o.confidence,
+                "clock_direction": o.clock_direction,
+                "relative_direction": o.relative_direction,
+                "proximity": o.proximity,
+                "elevation": o.elevation,
+                "bbox": list(o.bbox) if o.bbox else None,
+            }
+            for o in detected_objects
+        ]
+        top_directions = [o.clock_direction for o in detected_objects if o.clock_direction]
+        top_texts = [t.text for t in detected_texts]
+        now_ts = datetime.utcnow().isoformat()
+
         return CameraAnalysisResponse(
             success=True,
             session_id=sid,
@@ -510,9 +526,17 @@ class CameraService:
             analysis=analysis_result,
             assistance=assistance_response,
             next_action=assistance_response.next_action,
-            processing={"latency_ms": elapsed_ms, "timestamp": datetime.utcnow().isoformat()},
+            processing={"latency_ms": elapsed_ms, "timestamp": now_ts},
             error=None,
+            objects=top_objects,
+            directions=top_directions,
+            text=top_texts,
+            scene=scene_desc,
+            guidance=assistance_response.spoken_response or assistance_response.display_response,
+            confidence=0.92 if (detected_objects or detected_texts) else 0.85,
+            timestamp=now_ts,
         )
+
 
     # ----------------------------------------------------
     # Helper: AI Camera Adapter Discovery

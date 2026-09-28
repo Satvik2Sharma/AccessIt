@@ -2,9 +2,11 @@
 // Demonstrates OCR, notice comprehension, simplification, and localized speech summary.
 
 import 'package:flutter/material.dart';
+import 'package:camera/camera.dart';
 import '../models/accessibility_twin.dart';
 import '../services/api_service.dart';
 import '../services/haptics_service.dart';
+import '../services/camera_service.dart';
 
 class ReadDocumentScreen extends StatefulWidget {
   final AccessibilityTwin twin;
@@ -25,13 +27,14 @@ class _ReadDocumentScreenState extends State<ReadDocumentScreen> {
     _analyzeNotice();
   }
 
-  void _analyzeNotice() async {
+  void _analyzeNotice({List<int>? imageBytes}) async {
     setState(() => _isAnalyzing = true);
     HapticsService.tactileClick();
 
     final data = await ApiService.readDocument(
       'What is important in this notice?',
       widget.twin,
+      imageBytes: imageBytes,
     );
 
     setState(() {
@@ -39,6 +42,67 @@ class _ReadDocumentScreenState extends State<ReadDocumentScreen> {
       _isAnalyzing = false;
     });
     HapticsService.successDoublePulse();
+  }
+
+  Future<void> _captureFromCamera() async {
+    final camera = MobileCameraService();
+    final initialized = await camera.initialize(preferredLens: CameraLensDirection.back);
+    if (!mounted) return;
+    if (!initialized || !camera.isReady) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(camera.errorMessage ?? 'Camera unavailable on this device.')),
+      );
+      return;
+    }
+
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.black,
+      builder: (ctx) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AppBar(
+                title: const Text('Capture Document', style: TextStyle(color: Colors.white)),
+                backgroundColor: Colors.black,
+                iconTheme: const IconThemeData(color: Colors.white),
+                leading: IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.pop(ctx),
+                ),
+              ),
+              AspectRatio(
+                aspectRatio: camera.controller!.value.aspectRatio,
+                child: CameraPreview(camera.controller!),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.tealAccent.shade700,
+                    foregroundColor: Colors.black,
+                    minimumSize: const Size.fromHeight(50),
+                  ),
+                  icon: const Icon(Icons.camera_alt),
+                  label: const Text('Capture & Analyze Notice', style: TextStyle(fontWeight: FontWeight.bold)),
+                  onPressed: () async {
+                    final bytes = await camera.captureFrameBytes();
+                    if (ctx.mounted) {
+                      Navigator.pop(ctx);
+                    }
+                    if (bytes != null && mounted) {
+                      _analyzeNotice(imageBytes: bytes);
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -49,6 +113,13 @@ class _ReadDocumentScreenState extends State<ReadDocumentScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(isHindi ? 'दस्तावेज़ समझें' : 'Understand Document'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.camera_alt),
+            tooltip: isHindi ? 'कैमरे से स्कैन करें' : 'Scan with Camera',
+            onPressed: _captureFromCamera,
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
