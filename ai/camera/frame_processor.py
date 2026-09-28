@@ -9,7 +9,12 @@ import hashlib
 from typing import Tuple, Optional, Dict, Any
 from PIL import Image
 import numpy as np
-import cv2
+try:
+    import cv2
+    HAS_CV2 = True
+except ImportError:
+    cv2 = None
+    HAS_CV2 = False
 
 from shared.schemas.camera_models import FrameQualityMetrics
 from ai.camera.image_preprocessor import ImagePreprocessor
@@ -56,16 +61,21 @@ class FrameProcessor:
                 recommendation="Camera resolution is too low. Please increase video quality.",
             )
 
-        # 2. Convert to grayscale array for OpenCV metrics
-        cv_img = ImagePreprocessor.to_cv2(image)
-        gray = cv2.cvtColor(cv_img, cv2.COLOR_BGR2GRAY)
+        # 2. Convert to grayscale array for quality metrics
+        if HAS_CV2 and cv2 is not None:
+            cv_img = ImagePreprocessor.to_cv2(image)
+            gray = cv2.cvtColor(cv_img, cv2.COLOR_BGR2GRAY)
+            blur_variance = float(cv2.Laplacian(gray, cv2.CV_64F).var())
+            mean_brightness = float(np.mean(gray))
+        else:
+            gray_img = image.convert("L")
+            gray = np.array(gray_img, dtype=np.float64)
+            # Standard variance of gradients as blur proxy
+            gy, gx = np.gradient(gray)
+            blur_variance = float(np.var(gx) + np.var(gy))
+            mean_brightness = float(np.mean(gray))
 
-        # Blur estimation: variance of the Laplacian
-        blur_variance = float(cv2.Laplacian(gray, cv2.CV_64F).var())
         is_blurry = blur_variance < self.blur_threshold
-
-        # Brightness estimation: mean pixel intensity
-        mean_brightness = float(np.mean(gray))
         is_underexposed = mean_brightness < self.min_brightness
         is_overexposed = mean_brightness > self.max_brightness
 
@@ -120,8 +130,11 @@ class FrameProcessor:
         """
         Checks whether prominent content appears centered or clipped at the borders.
         """
-        cv_img = ImagePreprocessor.to_cv2(image)
-        gray = cv2.cvtColor(cv_img, cv2.COLOR_BGR2GRAY)
+        if HAS_CV2 and cv2 is not None:
+            cv_img = ImagePreprocessor.to_cv2(image)
+            gray = cv2.cvtColor(cv_img, cv2.COLOR_BGR2GRAY)
+        else:
+            gray = np.array(image.convert("L"))
         h, w = gray.shape
 
         # Sample border margins (5% on each edge)
