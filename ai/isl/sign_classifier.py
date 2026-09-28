@@ -9,6 +9,7 @@ import os
 import math
 import json
 import logging
+from collections import deque
 from typing import Dict, Any, List, Optional, Tuple
 import numpy as np
 from PIL import Image
@@ -20,7 +21,10 @@ class ISLInterpreterService:
     def __init__(self, model_path: str = "models/gesture_recognizer.task"):
         self.model_path = model_path
         self._recognizer = None
+        self._session_history: Dict[str, deque] = {}
+        self.confidence_threshold = 0.45
         self.static_labels = [str(d) for d in range(1, 10)] + [chr(c) for c in range(ord("A"), ord("Z") + 1)]
+
         self.emergency_vocabulary = {
             "HELP": {
                 "en": "Help",
@@ -198,8 +202,10 @@ class ISLInterpreterService:
     def predict_sign(
         self,
         image_bytes: Optional[bytes] = None,
-        landmarks: Optional[List[Any]] = None
+        landmarks: Optional[List[Any]] = None,
+        session_id: Optional[str] = None,
     ) -> Dict[str, Any]:
+
         """
         Runs real MediaPipe gesture and 3D landmark recognition, landmark geometry analysis,
         or Gemini Vision on camera image.
@@ -229,7 +235,7 @@ class ISLInterpreterService:
         if gemini_result:
             return gemini_result
 
-        # 4. Try MediaPipe Gesture Recognizer
+        # 4. Try MediaPipe Gesture Recognizer on Real Camera Frame
         recognizer = self._get_recognizer()
         if recognizer is not None:
             try:
@@ -244,6 +250,21 @@ class ISLInterpreterService:
                     top_gesture = result.gestures[0][0]
                     category_name = top_gesture.category_name
                     score = float(top_gesture.score)
+
+                    # Check confidence threshold
+                    if score < 0.45:
+                        raw_res = {
+                            "sign": "UNCERTAIN",
+                            "confidence": round(score, 2),
+                            "sign_type": "UNCERTAIN",
+                            "spoken_output": "Gesture unclear",
+                            "hindi_translation": "संकेत स्पष्ट नहीं है",
+                            "haptic_feedback": "NONE",
+                            "caption": "Gesture unclear, please hold steady.",
+                            "landmarks_count": 21 if result.hand_landmarks else 0,
+                            "method": "MEDIAPIPE_3D",
+                        }
+                        return self._smooth_prediction(raw_res, session_id)
 
                     gesture_map = {
                         "Open_Palm": {"sign": "HELP", "spoken": "Help", "hi": "सहायता / मदद", "type": "DYNAMIC_EMERGENCY"},
@@ -262,7 +283,7 @@ class ISLInterpreterService:
                         "type": "GESTURE",
                     })
 
-                    return {
+                    raw_res = {
                         "sign": isl_entry["sign"],
                         "confidence": round(score, 2),
                         "sign_type": isl_entry["type"],
@@ -274,8 +295,18 @@ class ISLInterpreterService:
                         "landmarks_count": 21 if result.hand_landmarks else 0,
                         "method": "MEDIAPIPE_3D",
                     }
+                    return self._smooth_prediction(raw_res, session_id)
+
                 elif result.hand_landmarks and len(result.hand_landmarks) > 0:
-                    return {
+                    # Hand detected! Run geometric landmark analysis
+                    lms = result.hand_landmarks[0]
+                    lm_tuples = [(lm.x, lm.y) for lm in lms]
+                    geom = self._analyze_landmark_geometry(lm_tuples)
+                    if geom and geom.get("confidence", 0) >= 0.5:
+                        geom["method"] = "MEDIAPIPE_LANDMARK_GEOMETRY"
+                        return self._smooth_prediction(geom, session_id)
+
+                    raw_res = {
                         "sign": "GESTURE_TRACKING",
                         "confidence": 0.85,
                         "sign_type": "LANDMARK_STREAM",
@@ -286,12 +317,28 @@ class ISLInterpreterService:
                         "landmarks_count": len(result.hand_landmarks[0]),
                         "method": "MEDIAPIPE_3D",
                     }
+                    return self._smooth_prediction(raw_res, session_id)
+                else:
+                    # No hand in frame! Return clean NO_HAND_DETECTED state
+                    raw_res = {
+                        "sign": "NO_HAND_DETECTED",
+                        "confidence": 0.0,
+                        "sign_type": "NONE",
+                        "spoken_output": "Move your hand into the camera frame",
+                        "hindi_translation": "कृपया हाथ को कैमरे के सामने लाएं",
+                        "haptic_feedback": "NONE",
+                        "caption": "Move your hand into the camera frame.",
+                        "landmarks_count": 0,
+                        "method": "MEDIAPIPE_3D",
+                    }
+                    return self._smooth_prediction(raw_res, session_id)
+
             except Exception as e:
                 logger.warning("Error during MediaPipe sign recognition: %s", e)
 
-        # 5. Default Deterministic Fallback
+        # 5. Default Deterministic Fallback (only when MediaPipe is unavailable)
         meta = self.emergency_vocabulary["HELP"]
-        return {
+        raw_res = {
             "sign": "HELP",
             "confidence": 0.95,
             "sign_type": meta["type"],
@@ -302,6 +349,8 @@ class ISLInterpreterService:
             "landmarks_count": 0,
             "method": "HEURISTIC_FALLBACK",
         }
+        return self._smooth_prediction(raw_res, session_id)
+
 
     def predict_alphabet(self, letter: str = "A") -> Dict[str, Any]:
         """Static letter prediction."""
@@ -315,3 +364,37 @@ class ISLInterpreterService:
             "haptic_feedback": "SINGLE_PULSE",
             "caption": f"Letter {char}",
         }
+
+    def _smooth_prediction(self, raw_res: Dict[str, Any], session_id: Optional[str] = None) -> Dict[str, Any]:
+        """Applies temporal smoothing and debouncing over recent frames to suppress noise and jitter."""
+        if not session_id:
+            return raw_res
+
+        if session_id not in self._session_history:
+            self._session_history[session_id] = deque(maxlen=5)
+
+        history = self._session_history[session_id]
+        history.append(raw_res)
+
+        sign_counts: Dict[str, int] = {}
+        for item in history:
+            s = item.get("sign", "UNKNOWN")
+            sign_counts[s] = sign_counts.get(s, 0) + 1
+
+        majority_sign = max(sign_counts, key=sign_counts.get)
+        # If at least 2 of recent frames agree or history is very short, output stable prediction
+        if sign_counts[majority_sign] >= 2 or len(history) < 3:
+            best_item = next((item for item in reversed(history) if item.get("sign") == majority_sign), raw_res)
+            return dict(best_item)
+
+        result = dict(raw_res)
+        result["temporal_status"] = "DEBOUNCING"
+        return result
+
+    def reset_session(self, session_id: Optional[str] = None) -> None:
+        """Cleans up temporal smoothing history for a session."""
+        if session_id:
+            self._session_history.pop(session_id, None)
+        else:
+            self._session_history.clear()
+
