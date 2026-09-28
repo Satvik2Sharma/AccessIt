@@ -297,6 +297,18 @@
   .overlay-backdrop.open .overlay-modal { transform: translateY(0); }
 
   #confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
+
+  /* ─── Persistent Camera Floating Action Button ─────────────────────── */
+  .fab-cam-btn {
+    position: absolute; right: 16px; bottom: 74px; z-index: 40;
+    width: 52px; height: 52px; border-radius: 50%;
+    background: linear-gradient(135deg, #facc15 0%, #d97706 100%);
+    color: #000; display: flex; align-items: center; justify-content: center;
+    font-size: 24px; box-shadow: 0 8px 25px rgba(245, 158, 11, 0.5);
+    border: 2px solid #ffffff; cursor: pointer; transition: all 0.2s ease;
+  }
+  .fab-cam-btn:active { transform: scale(0.92); }
+
 </style>
 </head>
 <body>
@@ -1044,9 +1056,33 @@ function renderCamera() {
 }
 
 function bindCamera() {
-  setTimeout(() => {
+  setTimeout(async () => {
+    const video = document.getElementById('cameraVideo');
     const btnStart = document.getElementById('btnStartCamera');
     const btnCapture = document.getElementById('btnCaptureAnalyze');
+
+    // Auto-start camera if mediaDevices available
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia && !state.cameraStream && state.cameraState !== 'permission_denied') {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: state.cameraFacing, width: { ideal: 1280 }, height: { ideal: 720 } }
+        });
+        state.cameraStream = stream;
+        state.cameraState = 'live';
+        if (video) {
+          video.srcObject = stream;
+          video.style.display = 'block';
+          video.play();
+        }
+        if (btnStart) btnStart.innerText = state.lang==='Hindi' ? '📷 कैमरा चालू है' : '📷 Camera Active';
+      } catch (err) {
+        console.warn("Auto camera start error:", err);
+      }
+    } else if (state.cameraStream && video) {
+      video.srcObject = state.cameraStream;
+      video.style.display = 'block';
+      video.play();
+    }
 
     if (btnStart) {
       btnStart.onclick = async () => {
